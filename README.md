@@ -60,7 +60,7 @@ Copy `dist` folder to desired project
 
 #### Load Script
 
-`<script nomodule src="/path/to/dist/cookie-compliance-banner.js"></script>`
+`<script nomodule src="/path/to/dist/gardener-search.js"></script>`
 
 Add this code before closing <body> tag:
 
@@ -68,49 +68,7 @@ Add this code before closing <body> tag:
 
 #### Options
 
-<gardener-search cookie-name="Name des Cookies" cookie-domain="example.com"></gardener-search>
-
-#### Text
-
-Siehe index.html dieses Projects
-
-```
-<script>
-    const banner_content = {
-      headline: 'Cookie Einstellungen',
-      paragraph: 'Wir verwenden Cookies, um Ihnen ein optimales Webseiten-Erlebnis zu bieten. Dazu zählen Cookies, die für den Betrieb der Seite und für die Steuerung unserer kommerziellen Unternehmensziele notwendig sind, sowie solche, die lediglich zu anonymen Statistikzwecken oder zur Anzeige personalisierter Inhalte genutzt werden. Sie können selbst entscheiden, welche Kategorien Sie zulassen möchten. Bitte beachten Sie, dass auf Basis Ihrer Einstellungen womöglich nicht mehr alle Funktionalitäten der Seite zur Verfügung stehen. Weitere Informationen finden Sie in unseren Datenschutzhinweisen.',
-      show_details: 'Details anzeigen',
-      description: '<h4>Notwendig</h4><p>Diese Cookies sind für den Betrieb der Seite unbedingt notwendig und ermöglichen beispielsweise sicherheitsrelevante Funktionalitäten. Außerdem können wir mit dieser Art von Cookies ebenfalls erkennen, ob Sie in Ihrem Profil eingeloggt bleiben möchten, um Ihnen unsere Dienste bei einem erneuten Besuch unserer Seite schneller zur Verfügung zu stellen.</p><h4>Statistic</h4><p>Um unser Angebot und unsere Webseite weiter zu verbessern, erfassen wir anonymisierte Daten für Statistiken und Analysen. Mithilfe dieser Cookies können wir beispielsweise die Besucherzahlen und den Effekt bestimmter Seiten unseres Web-Auftritts ermitteln und unsere Inhalte optimieren.</p><h4>Personalisierung</h4><p>Diese Cookies werden genutzt, um Ihnen personalisierte Inhalte, passend zu Ihren Interessen anzuzeigen. Somit können wir Ihnen Angebote präsentieren, die für Sie und ihre geplante Reise besonders relevant sind.</p>',
-      checkboxes: [
-        {
-          key: 'essential',
-          label: 'Notwendig',
-          readOnly: true,
-          disabled: true,
-          checked: true
-        },
-        {
-          key: 'statistics', 
-          label: 'Statistik',
-          attr: ''
-        },
-        {
-          key: 'personalization', 
-          label: 'Personalisierung',
-          attr: ''
-        },
-      ],
-      buttons: {
-        selection: 'Auswahl bestätigen',
-        all: 'Alle auswählen'
-      }
-    }
-
-    const banner = document.querySelector('gardener-search');
-    banner.content = banner_content;
-
-  </script>
-```
+<gardener-search></gardener-search>
 
 
 

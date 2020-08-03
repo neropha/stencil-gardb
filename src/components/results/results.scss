@@ -8,12 +8,29 @@ gardener-results {
   }
 
   table {
-    table-layout: fixed;
-
+    table-layout: auto;
+    width: 100%;
+    
+    .person {
+      width: 20em;
+    }
     .id {
       width: 4em;
       overflow: hidden;
       white-space: nowrap;
+    }
+    .year {
+      width: 4em;
+      overflow: hidden;
+      white-space: nowrap;
+    }
+    .details {
+      width: 1em;
+      overflow: hidden;
+      white-space: nowrap;
+    }
+    .author {
+      min-width: 12em;
     }
 
     a.link {
@@ -23,7 +40,6 @@ gardener-results {
       justify-content: center;
       align-items: center;
       text-decoration: none;
-
     }
 
     td {

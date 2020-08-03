@@ -10,6 +10,9 @@ import { HTMLStencilElement, JSXBase } from '@stencil/core/internal';
 
 
 export namespace Components {
+  interface GardenerDetail {
+    'record': any;
+  }
   interface GardenerResults {
     'results': any;
   }
@@ -20,6 +23,12 @@ export namespace Components {
 
 declare global {
 
+
+  interface HTMLGardenerDetailElement extends Components.GardenerDetail, HTMLStencilElement {}
+  var HTMLGardenerDetailElement: {
+    prototype: HTMLGardenerDetailElement;
+    new (): HTMLGardenerDetailElement;
+  };
 
   interface HTMLGardenerResultsElement extends Components.GardenerResults, HTMLStencilElement {}
   var HTMLGardenerResultsElement: {
@@ -33,13 +42,19 @@ declare global {
     new (): HTMLGardenerSearchElement;
   };
   interface HTMLElementTagNameMap {
+    'gardener-detail': HTMLGardenerDetailElement;
     'gardener-results': HTMLGardenerResultsElement;
     'gardener-search': HTMLGardenerSearchElement;
   }
 }
 
 declare namespace LocalJSX {
+  interface GardenerDetail {
+    'onRecordSelected'?: (event: CustomEvent<any>) => void;
+    'record'?: any;
+  }
   interface GardenerResults {
+    'onRecordSelected'?: (event: CustomEvent<any>) => void;
     'results'?: any;
   }
   interface GardenerSearch {
@@ -47,6 +62,7 @@ declare namespace LocalJSX {
   }
 
   interface IntrinsicElements {
+    'gardener-detail': GardenerDetail;
     'gardener-results': GardenerResults;
     'gardener-search': GardenerSearch;
   }
@@ -58,6 +74,7 @@ export { LocalJSX as JSX };
 declare module "@stencil/core" {
   export namespace JSX {
     interface IntrinsicElements {
+      'gardener-detail': LocalJSX.GardenerDetail & JSXBase.HTMLAttributes<HTMLGardenerDetailElement>;
       'gardener-results': LocalJSX.GardenerResults & JSXBase.HTMLAttributes<HTMLGardenerResultsElement>;
       'gardener-search': LocalJSX.GardenerSearch & JSXBase.HTMLAttributes<HTMLGardenerSearchElement>;
     }

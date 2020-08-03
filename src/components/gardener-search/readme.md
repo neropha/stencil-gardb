@@ -7,12 +7,25 @@
 
 ## Properties
 
-| Property       | Attribute       | Description | Type     | Default            |
-| -------------- | --------------- | ----------- | -------- | ------------------ |
-| `content`      | `content`       |             | `any`    | `undefined`        |
-| `cookieDomain` | `cookie-domain` |             | `string` | `undefined`        |
-| `cookieName`   | `cookie-name`   |             | `string` | `'cookie_consent'` |
+| Property | Attribute | Description | Type     | Default     |
+| -------- | --------- | ----------- | -------- | ----------- |
+| `api`    | `api`     |             | `string` | `undefined` |
 
+
+## Dependencies
+
+### Depends on
+
+- [gardener-detail](../detail)
+- [gardener-results](../results)
+
+### Graph
+```mermaid
+graph TD;
+  gardener-search --> gardener-detail
+  gardener-search --> gardener-results
+  style gardener-search fill:#f9f,stroke:#333,stroke-width:4px
+```
 
 ----------------------------------------------
 

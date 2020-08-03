@@ -1,4 +1,5 @@
 import { Component, Host, h, Prop, State, Watch } from '@stencil/core';
+import { Event, EventEmitter } from '@stencil/core';
 
 @Component({
   tag: 'gardener-results',
@@ -8,8 +9,10 @@ import { Component, Host, h, Prop, State, Watch } from '@stencil/core';
 export class Results {
   @Prop() public results: any;
 
+  @State() selectedRecord: true;
   @State() public page: number = 1;
   @State() public pages: number;
+  @State() public currentRecord: any;
 
   public itemsPerPage: number = 50;
   public total: any;
@@ -63,23 +66,36 @@ export class Results {
     this.pagedResult();
   }
 
+  recordSelectedHandler(e, record) {
+    e.preventDefault();
+    this.recordSelected.emit(record);
+  }
+
+  @Event({
+    eventName: 'recordSelected',
+    composed: true,
+    cancelable: true,
+    bubbles: true,
+  }) recordSelected: EventEmitter<any>;
+
+
   render() {
     return (
       <Host>
         <div id="results">
-          <div class="py-3 py-md-4">
+          <div class="py-3 py-md-4 small">
             Zeige {this.firstItemShown()}–{this.lastItemShown()} von {this.total} Ergebnissen
           </div>
-
-          <table class="table stacktable">
+          <table class="table stacktable border-bottom">
             <thead>
               <tr>
                 {/* <th class="id">ID</th> */}
-                <th>Person</th>
-                <th>Inhalt</th>
-                <th>Dokumententyp</th>
-                <th>Jahr</th>
-                <th>Autor</th>
+                <th class="person">Person</th>
+                <th class="content">Inhalt</th>
+                <th class="type">Dokumententyp</th>
+                <th class="year">Jahr</th>
+                <th class="author">Autor</th>
+                <th class="details">&nbsp;</th>
               </tr>
             </thead>
             <tbody>
@@ -91,7 +107,7 @@ export class Results {
                   <td>{gardener.Dokumententyp}</td>
                   <td>{gardener.Jahr}</td>
                   <td>{gardener.Autor}</td>
-                  <td><a class="link" href="#" title="Detailsansicht"><i class="fa fa-info-circle fa-2x"></i></a></td>
+                  <td><a class="link" href="#" title="Details" onClick={(e) => this.recordSelectedHandler(e, gardener)}><i class="fa fa-info-circle fa-lg"></i></a></td>
                 </tr>
               )}
             </tbody>
@@ -103,7 +119,8 @@ export class Results {
           </nav>
         </div>
       </Host>
-    );
+    )
   }
-
 }
+
+

@@ -1,30 +1,18 @@
-:root {
-  --gs-container-max-width: 100%;
-  --gs-container-padding: 50px;
-
-  --gs-color-bg: #efefef;
-  --gs-color-primary: #71BC51;
-  --gs-color-secondary: #2196F3;
-  --gs-color-text: #333;
-  --gs-color-border: #999;
-  --gs-color-disabled: #ccc;
-  --gs-color-background: #fff;
-
-  --gs-border-radius: 5px;
-  --gs-border-radius-small: 2px;
-
-  --gs-font-size-base: 15px;
-
-  --gs-button-primary: var(--gs-color-primary);
-  --gs-button-primary-focus-color: #c1d6b7;
-  --gs-button-primary-border: var(--gs-color-primary);
-
-  --gs-button-light: #FFF;
-}
-
-
 gardener-search {
   font-weight: 400;
+  font-family: inherit;
+  font-size: var(--gs-font-size-base);
+  -webkit-font-smoothing: antialiased;
+  display: block;
+  background: var(--gs-color-bg);
+  color: var(--gs-color-text);
+  line-height: 1.4;
+  padding: 15px;
+  max-height: 100%;
+
+  @include media-breakpoint-up(md) {
+    padding: 25px;
+  }
 
   * {
     box-sizing: border-box;
@@ -51,20 +39,7 @@ gardener-search {
   }
 
   .gardener-search-wrapper {
-    font-family: inherit;
-    font-size: var(--gs-font-size-base);
-    -webkit-font-smoothing: antialiased;
-    display: block;
-    bottom: 15px;
-    left: 15px;
-    right: 15px;
-    top: 15px;
-    background: var(--gs-color-bg);
-    color: var(--gs-color-text);
-    line-height: 1.4;
     display: flex;
-    padding: 15px;
-    max-height: 100%;
 
     .gardener-search {
       &-content {
@@ -88,7 +63,6 @@ gardener-search {
         flex: 1;
 
         @include media-breakpoint-up(md) {
-          margin: 0 -5px;
           display: flex;
         }
 
@@ -98,14 +72,26 @@ gardener-search {
           -webkit-appearance: none;
           padding-right: 25px;
           padding-left: 25px;
+          display: block;
+          flex: 1;
 
-          @include media-breakpoint-up(md) {
-            margin: 0 5px;
+          &+button {
+            margin-left: 10px;
+          }
+
+          @include media-breakpoint-up(sm) {
+            margin: 0;
+            display: inline-block;
             min-width: 200px;
+            flex: none
           }
         }
       }
     }
+  }
+
+  .h100 {
+    height: 100%;
   }
 
   .glossary {
@@ -115,8 +101,19 @@ gardener-search {
     li {
       text-transform: uppercase;
       font-weight: bold;
+      min-width: 20px;
+      min-height: 20px;
+      text-align: center;
+      line-height: 20px;
+
       a {
         display: block;
+        text-decoration: none;
+        transition: 0.2s all cubic-bezier(0.075, 0.82, 0.165, 1);
+
+        &:hover {
+          transform: scale(1.5);
+        }
       }
     }
   }

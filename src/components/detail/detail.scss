@@ -1,0 +1,15 @@
+gardener-detail {
+  display: block;
+
+  .close {
+    font-size: inherit;
+  }
+  table {
+    table-layout: auto;
+
+    .label {
+      width: 12em;
+      text-transform: capitalize;
+    }
+  }
+}
