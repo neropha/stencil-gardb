@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html dir="ltr" lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=5.0">
+  <title>Stencil Component Starter</title>
+  <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,700&display=swap" rel="stylesheet">
+  <script type="module" src="/build/cookie-compliance-banner.esm.js"></script>
+    <script nomodule src="/build/cookie-compliance-banner.js"></script>
+
+  <style type="text/css">
+    body {
+      padding: 0;
+      box-sizing: border-box;
+      background-color: #00ccd6;
+      background-image: linear-gradient(90deg, transparent 50%, rgba(255, 255, 255, .5) 50%);
+      background-size: 50px 50px;
+      font-family: "Open Sans", sans-serif;
+    }
+
+    main {
+      max-width: 1280px;
+      margin: 0 auto;
+      padding: 25px;
+    }
+
+  </style>
+
+</head>
+
+<body>
+  <main>
+    <h1>markItUp! Universal markup editor</h1>
+
+    <p><img src="https://placekitten.com/600/400"></p>
+
+    <p><strong>markItUp!</strong> is a javascript over jQuery plug-in which allow you to turn any textarea in a markup
+      editor.</p>
+
+    <gardener-search api="http://gbb.local/media/pages/data/043ac73044-1596378153/gardb.json"></gardener-search>
+
+
+    <p><strong>markItUp!</strong> is a lightweight fully customizable engine made to easily fit all developers needs in
+      their CMS, blogs, forums or websites.</p>
+
+    <p><em>Html, Textile, Wiki Syntax, Markdown, BBcode</em> or even your own Markup system can be easily implemented.
+    </p>
+
+    <ul>
+      <li>integrate it easily</li>
+      <li>customize buttons and macros to fit all your need</li>
+      <li>customize keyboard shortcuts</li>
+      <li>customize toolbar and css look and feel
+        <ul>
+          <li>skins</li>
+          <li>icons</li>
+          <li>dropdown menus</li>
+          <li>separators</li>
+        </ul>
+      </li>
+      <li>use the engine from anywhere in the page</li>
+      <li>implement any markup language even your own</li>
+      <li>implement your own javascript macros even the most advanced</li>
+      <li>allows multi-line edition</li>
+      <li>preview ajax result dynamically in any markup parser</li>
+      <li>offers userfriendly experience and effectiveness</li>
+    </ul>
+
+  </main>
+
+
+  <script>
+    const banner_content = {
+      headline: 'Cookie Einstellungen',
+      paragraph: 'Wir verwenden Cookies, um Ihnen ein optimales Webseiten-Erlebnis zu bieten. Dazu zählen Cookies, die für den Betrieb der Seite und für die Steuerung unserer kommerziellen Unternehmensziele notwendig sind, sowie solche, die lediglich zu anonymen Statistikzwecken oder zur Anzeige personalisierter Inhalte genutzt werden. Sie können selbst entscheiden, welche Kategorien Sie zulassen möchten. Bitte beachten Sie, dass auf Basis Ihrer Einstellungen womöglich nicht mehr alle Funktionalitäten der Seite zur Verfügung stehen. Weitere Informationen finden Sie in unseren Datenschutzhinweisen.',
+      show_details: 'Details anzeigen',
+      description: '<h4>Notwendig</h4><p>Diese Cookies sind für den Betrieb der Seite unbedingt notwendig und ermöglichen beispielsweise sicherheitsrelevante Funktionalitäten. Außerdem können wir mit dieser Art von Cookies ebenfalls erkennen, ob Sie in Ihrem Profil eingeloggt bleiben möchten, um Ihnen unsere Dienste bei einem erneuten Besuch unserer Seite schneller zur Verfügung zu stellen.</p><h4>Statistic</h4><p>Um unser Angebot und unsere Webseite weiter zu verbessern, erfassen wir anonymisierte Daten für Statistiken und Analysen. Mithilfe dieser Cookies können wir beispielsweise die Besucherzahlen und den Effekt bestimmter Seiten unseres Web-Auftritts ermitteln und unsere Inhalte optimieren.</p><h4>Personalisierung</h4><p>Diese Cookies werden genutzt, um Ihnen personalisierte Inhalte, passend zu Ihren Interessen anzuzeigen. Somit können wir Ihnen Angebote präsentieren, die für Sie und ihre geplante Reise besonders relevant sind.</p>',
+      checkboxes: [{
+          key: 'essential',
+          label: 'Notwendig',
+          readOnly: true,
+          disabled: true,
+          checked: true
+        },
+        {
+          key: 'statistics',
+          label: 'Statistik',
+          attr: ''
+        },
+        {
+          key: 'personalization',
+          label: 'Personalisierung',
+          attr: ''
+        },
+      ],
+      buttons: {
+        selection: 'Auswahl bestätigen',
+        all: 'Alle auswählen'
+      }
+    }
+
+    const banner = document.querySelector('gardener-search');
+    banner.content = banner_content;
+
+  </script>
+
+</body>
+
+
+</html>

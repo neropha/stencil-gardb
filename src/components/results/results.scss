@@ -1,0 +1,33 @@
+gardener-results {
+  display: block;
+  overflow: hidden;
+
+  #results {
+    width: 100%;
+    overflow: hidden
+  }
+
+  table {
+    table-layout: fixed;
+
+    .id {
+      width: 4em;
+      overflow: hidden;
+      white-space: nowrap;
+    }
+
+    a.link {
+      padding: 0.25em;
+      display: block;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      text-decoration: none;
+
+    }
+
+    td {
+      overflow: hidden;
+    }
+  }
+}
