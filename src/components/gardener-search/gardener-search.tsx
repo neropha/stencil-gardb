@@ -20,7 +20,7 @@ export class MyComponent {
   public loading = true;
 
   async componentWillLoad() {
-    console.log(this.api);
+    // console.log(this.api);
 
     if (!this.api) {
       this.errors.push('Datenbank konnte nicht geladen werden.');
