@@ -51,11 +51,13 @@ export class Results {
 
   pagination() {
     let pages = [];
-    for (let i = 1; i <= this.pages; i++) {
-      if (i === this.page) {
-        pages.push(<li class="page-item active"><a class="page-link">{i}</a></li>)
-      } else {
-        pages.push(<li class="page-item"><a class="page-link" href="#results" onClick={() => this.changePage(i)}>{i}</a></li>)
+    if (this.pages > 1) {
+      for (let i = 1; i <= this.pages; i++) {
+        if (i === this.page) {
+          pages.push(<li class="page-item active"><a class="page-link">{i}</a></li>)
+        } else {
+          pages.push(<li class="page-item"><a class="page-link" href="#results" onClick={() => this.changePage(i)}>{i}</a></li>)
+        }
       }
     }
     return pages;

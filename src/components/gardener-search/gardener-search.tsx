@@ -8,10 +8,12 @@ import { Component, Element, Host, State, h, Prop, Listen } from '@stencil/core'
 export class MyComponent {
   @State() filteredResult: any;
   @State() selectedRecord: true;
+  @State() errors = [];
 
   @Element() host: HTMLElement;
 
   @Prop() public api: string;
+
 
   public inputs: any;
   public gardb: any;
@@ -19,6 +21,11 @@ export class MyComponent {
 
   async componentWillLoad() {
     console.log(this.api);
+
+    if (!this.api) {
+      this.errors.push('Datenbank konnte nicht geladen werden.');
+      return false;
+    }
     try {
       let response = await fetch(this.api, {
         method: 'POST',
@@ -29,16 +36,20 @@ export class MyComponent {
         }
       });
       if (!response.ok) {
-        throw new Error(response.statusText);
+        throw new Error(response.status + ': ' + response.statusText);
       }
-      this.loading = false;
       this.gardb = await response.json();
       this.filteredResult = this.gardb;
-    } catch (err) {
-      console.log(err);
     }
-  }
+    catch (err) {
+      this.errors.push(err.message);
+      this.errors.push('Datenbank konnte nicht gelesen werden.');
+    }
+    finally {
+      this.loading = false;
+    }
 
+  }
 
   private filterByPerson(needle, haystack) {
     if (haystack.Person && haystack.Person.length > 0) {
@@ -157,11 +168,22 @@ export class MyComponent {
   }
 
   render() {
+    if (this.errors.length > 0) {
+      return (
+        <Host>
+          <h5>Fehler</h5>
+          {this.errors.map((error) =>
+            <div>{error}</div>
+          )}
+        </Host>
+      )
+    }
     if (this.selectedRecord) {
       return (
         <gardener-detail record={this.selectedRecord}></gardener-detail>
       )
-    } else {
+    } 
+    else if (this.api) {
       return (
         <Host>
           <div class="gardener-search-wrapper">
@@ -208,9 +230,7 @@ export class MyComponent {
               </form>
             </div>
           </div>
-
           <gardener-results results={this.filteredResult}></gardener-results>
-
         </Host>
       )
     }
