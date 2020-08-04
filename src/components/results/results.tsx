@@ -1,4 +1,4 @@
-import { Component, Host, h, Prop, State, Watch } from '@stencil/core';
+import { Component, Host, h, Prop, State, Watch, Listen } from '@stencil/core';
 import { Event, EventEmitter } from '@stencil/core';
 
 @Component({
@@ -49,27 +49,7 @@ export class Results {
     return this.results.slice(this.firstItemShown(), this.lastItemShown());
   }
 
-  pagination() {
-    let pages = [];
-    if (this.pages > 1) {
-      for (let i = 1; i <= this.pages; i++) {
-        if (i === this.page) {
-          pages.push(<li class="page-item active"><a class="page-link">{i}</a></li>)
-        } else {
-          pages.push(<li class="page-item"><a class="page-link" href="#results" onClick={() => this.changePage(i)}>{i}</a></li>)
-        }
-      }
-    }
-    return pages;
-  }
-
-  changePage(page) {
-    this.page = page;
-    this.pagedResult();
-  }
-
   recordSelectedHandler(e, record) {
-    e.preventDefault();
     this.recordSelected.emit(record);
   }
 
@@ -81,13 +61,31 @@ export class Results {
   }) recordSelected: EventEmitter<any>;
 
 
+  @Listen('pageSelected')
+  changePageHandler(event: CustomEvent<any>) {
+    console.log('Received the custom pageSelected event: ', event.detail);
+    this.selectedRecord = event.detail;
+    this.page = event.detail;
+    this.pagedResult();
+  }
+
+  public resultInfo() {
+    return (
+      <div class="py-3 py-md-4 small">
+        {'Zeige '}
+        {(this.total > 0)
+          ? (this.firstItemShown() + 1) + '–' + this.lastItemShown() + ' von ' + this.total + ' Ergebnissen'
+          : this.firstItemShown() + ' Ergebnisse'
+        }
+      </div>
+    )
+  }
+
   render() {
     return (
       <Host>
         <div id="results">
-          <div class="py-3 py-md-4 small">
-            Zeige {this.firstItemShown()}–{this.lastItemShown()} von {this.total} Ergebnissen
-          </div>
+          {this.resultInfo()}
           <table class="table stacktable border-bottom">
             <thead>
               <tr>
@@ -109,16 +107,12 @@ export class Results {
                   <td>{gardener.Dokumententyp}</td>
                   <td>{gardener.Jahr}</td>
                   <td>{gardener.Autor}</td>
-                  <td><a class="link" href="#" title="Details" onClick={(e) => this.recordSelectedHandler(e, gardener)}><i class="fa fa-info-circle fa-lg"></i></a></td>
+                  <td><a class="link" href="#top" title="Details" onClick={(e) => this.recordSelectedHandler(e, gardener)}><i class="fa fa-info-circle fa-lg"></i></a></td>
                 </tr>
               )}
             </tbody>
           </table>
-          <nav aria-label="Navigate results">
-            <ul class="pagination justify-content-center">
-              {this.pagination()}
-            </ul>
-          </nav>
+          <results-pagination current-page={this.page} pages={this.pages}></results-pagination>
         </div>
       </Host>
     )

@@ -19,6 +19,11 @@ export namespace Components {
   interface GardenerSearch {
     'api': string;
   }
+  interface LoadingSpinner {}
+  interface ResultsPagination {
+    'currentPage': number;
+    'pages': number;
+  }
 }
 
 declare global {
@@ -41,10 +46,24 @@ declare global {
     prototype: HTMLGardenerSearchElement;
     new (): HTMLGardenerSearchElement;
   };
+
+  interface HTMLLoadingSpinnerElement extends Components.LoadingSpinner, HTMLStencilElement {}
+  var HTMLLoadingSpinnerElement: {
+    prototype: HTMLLoadingSpinnerElement;
+    new (): HTMLLoadingSpinnerElement;
+  };
+
+  interface HTMLResultsPaginationElement extends Components.ResultsPagination, HTMLStencilElement {}
+  var HTMLResultsPaginationElement: {
+    prototype: HTMLResultsPaginationElement;
+    new (): HTMLResultsPaginationElement;
+  };
   interface HTMLElementTagNameMap {
     'gardener-detail': HTMLGardenerDetailElement;
     'gardener-results': HTMLGardenerResultsElement;
     'gardener-search': HTMLGardenerSearchElement;
+    'loading-spinner': HTMLLoadingSpinnerElement;
+    'results-pagination': HTMLResultsPaginationElement;
   }
 }
 
@@ -60,11 +79,19 @@ declare namespace LocalJSX {
   interface GardenerSearch {
     'api'?: string;
   }
+  interface LoadingSpinner {}
+  interface ResultsPagination {
+    'currentPage'?: number;
+    'onPageSelected'?: (event: CustomEvent<any>) => void;
+    'pages'?: number;
+  }
 
   interface IntrinsicElements {
     'gardener-detail': GardenerDetail;
     'gardener-results': GardenerResults;
     'gardener-search': GardenerSearch;
+    'loading-spinner': LoadingSpinner;
+    'results-pagination': ResultsPagination;
   }
 }
 
@@ -77,6 +104,8 @@ declare module "@stencil/core" {
       'gardener-detail': LocalJSX.GardenerDetail & JSXBase.HTMLAttributes<HTMLGardenerDetailElement>;
       'gardener-results': LocalJSX.GardenerResults & JSXBase.HTMLAttributes<HTMLGardenerResultsElement>;
       'gardener-search': LocalJSX.GardenerSearch & JSXBase.HTMLAttributes<HTMLGardenerSearchElement>;
+      'loading-spinner': LocalJSX.LoadingSpinner & JSXBase.HTMLAttributes<HTMLLoadingSpinnerElement>;
+      'results-pagination': LocalJSX.ResultsPagination & JSXBase.HTMLAttributes<HTMLResultsPaginationElement>;
     }
   }
 }

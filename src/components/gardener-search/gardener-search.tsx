@@ -19,18 +19,11 @@ export class MyComponent {
   public gardb: any;
   public loading = true;
 
-  async componentWillLoad() {
-    // console.log(this.api);
-
-    if (!this.api) {
-      this.errors.push('Datenbank konnte nicht geladen werden.');
-      return false;
-    }
+  async loadData() {
     try {
       let response = await fetch(this.api, {
-        method: 'POST',
-        mode: 'no-cors',
-        body: JSON.stringify(this.api),
+        method: 'GET',
+        mode: 'cors',
         headers: {
           'Content-Type': 'application/json'
         }
@@ -38,8 +31,7 @@ export class MyComponent {
       if (!response.ok) {
         throw new Error(response.status + ': ' + response.statusText);
       }
-      this.gardb = await response.json();
-      this.filteredResult = this.gardb;
+      this.gardb = this.filteredResult = await response.json();
     }
     catch (err) {
       this.errors.push(err.message);
@@ -48,7 +40,15 @@ export class MyComponent {
     finally {
       this.loading = false;
     }
+  }
 
+  componentWillLoad() {
+    // console.log(this.api);
+    if (!this.api) {
+      this.errors.push('Datenbank konnte nicht geladen werden.');
+    } else {
+      this.loadData();
+    }
   }
 
   private filterByPerson(needle, haystack) {
@@ -139,17 +139,6 @@ export class MyComponent {
     this.filteredResult = this.filteredResult.filter(record => this.filterByInitial(letter, record));
   }
 
-  public loader() {
-    if (this.loading) {
-      return (
-        <div class="d-flex justify-content-lg-center py-3">
-          <i class="fa fa-spinner fa-pulse fa-3x"></i>
-          <span class="sr-only">Loading...</span>
-        </div>
-      )
-    }
-  }
-
   public glossar() {
     let glossary = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z'];
     var output = [];
@@ -167,28 +156,40 @@ export class MyComponent {
     this.selectedRecord = event.detail;
   }
 
+
+  public return_errors() {
+    return (
+      <Host>
+        <h5>Fehler</h5>
+        {
+          this.errors.map((error) =>
+            <div>{error}</div>
+          )
+        }
+      </Host >
+    )
+  }
+  public return_record() {
+    return (
+      <Host id="top">
+        <gardener-detail record={this.selectedRecord}></gardener-detail>
+      </Host>
+    )
+  }
+
   render() {
     if (this.errors.length > 0) {
-      return (
-        <Host>
-          <h5>Fehler</h5>
-          {this.errors.map((error) =>
-            <div>{error}</div>
-          )}
-        </Host>
-      )
+      return this.return_errors()
     }
     if (this.selectedRecord) {
-      return (
-        <gardener-detail record={this.selectedRecord}></gardener-detail>
-      )
-    } 
+      return this.return_record()
+    }
     else if (this.api) {
       return (
-        <Host>
+        <Host id="top">
           <div class="gardener-search-wrapper">
             <div class="gardener-search-container">
-              <form class="gardener-search-filter">
+              <form id="form" class="gardener-search-filter">
                 <div class="row">
                   <div class="col-12 col-md-6 col-xl-5">
                     <div class="h100 border p-3">
@@ -225,12 +226,13 @@ export class MyComponent {
                     <button type="submit" class="btn btn-primary submit-all" onClick={(e) => this.filterResults(e)}>Filtern</button>
                   </div>
                 </div>
-                {this.loader()}
-
               </form>
             </div>
           </div>
-          <gardener-results results={this.filteredResult}></gardener-results>
+          {!this.loading
+            ? <gardener-results results={this.filteredResult}></gardener-results>
+            : <loading-spinner></loading-spinner>
+          }
         </Host>
       )
     }

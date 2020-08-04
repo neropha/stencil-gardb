@@ -31,22 +31,20 @@ export class Detail {
       return (
         <Host>
           <button type="button" class="close btn-sm" aria-label="Close" onClick={(e) => this.closeDetail(e)}>Zurück <i class="fa fa-times-circle fa-lg" aria-hidden="true"></i></button>
-          <form>
-            <h4 class="mb-3 mb-md-4">{this.record.Person}</h4>
-            <table class="table border-bottom stacktable">
-              {Object.keys(this.record).map(key => (
-                <tr>
-                  <td class="label">
-                    <strong>{key}</strong>
-                  </td>
-                  <td>
-                    {this.record[key]}
-                  </td>
-                </tr>
-              ))}
-            </table>
-          </form>
-        </Host >
+          <h4 class="mb-3 mb-md-4">{this.record.Person}</h4>
+          <table class="table border-bottom stacktable">
+            {Object.keys(this.record).map(key => (
+              <tr>
+                <td class="label">
+                  <strong>{key}</strong>
+                </td>
+                <td>
+                  {this.record[key]}
+                </td>
+              </tr>
+            ))}
+          </table>
+        </Host>
       );
     }
   }
