@@ -50,6 +50,7 @@ export class Results {
   }
 
   recordSelectedHandler(e, record) {
+    e.preventDefault();
     this.recordSelected.emit(record);
   }
 
@@ -107,7 +108,7 @@ export class Results {
                   <td>{gardener.Dokumententyp}</td>
                   <td>{gardener.Jahr}</td>
                   <td>{gardener.Autor}</td>
-                  <td><a class="link" href="#top" title="Details" onClick={(e) => this.recordSelectedHandler(e, gardener)}><i class="fa fa-info-circle fa-lg"></i></a></td>
+                  <td><a class="link" title="Details" href="#" onClick={(e) => this.recordSelectedHandler(e, gardener)}><i class="fa fa-info-circle fa-lg"></i></a></td>
                 </tr>
               )}
             </tbody>

@@ -1,0 +1,16 @@
+{
+  "entries": [
+    "components/results/results.js",
+    "components/detail/detail.js",
+    "components/spinner/spinner.js",
+    "components/pagination/pagination.js",
+    "components/gardener-search/gardener-search.js"
+  ],
+  "compiler": {
+    "name": "@stencil/core",
+    "version": "1.8.8",
+    "typescriptVersion": "3.7.5"
+  },
+  "collections": [],
+  "bundles": []
+}

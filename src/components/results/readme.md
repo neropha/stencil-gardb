@@ -25,9 +25,14 @@
 
  - [gardener-search](../gardener-search)
 
+### Depends on
+
+- [results-pagination](../pagination)
+
 ### Graph
 ```mermaid
 graph TD;
+  gardener-results --> results-pagination
   gardener-search --> gardener-results
   style gardener-results fill:#f9f,stroke:#333,stroke-width:4px
 ```
