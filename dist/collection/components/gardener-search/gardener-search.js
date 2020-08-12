@@ -117,6 +117,7 @@ export class MyComponent {
     }
     filterLetter(e) {
         e.preventDefault();
+        this.filterReset(e);
         this.filteredResult = this.gardb;
         var letter = e.toElement.innerText.toLowerCase();
         this.filteredResult = this.filteredResult.filter(record => this.filterByInitial(letter, record));
@@ -156,29 +157,31 @@ export class MyComponent {
                 h("div", { class: "gardener-search-wrapper" },
                     h("div", { class: "gardener-search-container" },
                         h("form", { id: "form", class: "gardener-search-filter" },
-                            h("div", { class: "row" },
-                                h("div", { class: "col-12 col-md-6 col-xl-5" },
-                                    h("div", { class: "h100 border p-3" },
-                                        h("h4", { class: "mb-3" }, "Datensatz finden"),
-                                        h("div", { class: "field-person form-group row" },
-                                            h("label", { class: "col-12 col-lg-2 col-form-label" }, "Person"),
-                                            h("div", { class: "col-12 col-lg-10" },
-                                                h("input", { class: "form-control", type: "text", id: "person" }))),
-                                        h("div", { class: "field-year form-group row" },
-                                            h("label", { class: "col-12 col-lg-2 col-form-label" }, "Jahr"),
-                                            h("div", { class: "col-12 col-lg-10" },
-                                                h("input", { class: "form-control", type: "text", id: "year" }))),
-                                        h("div", { class: "field-keyword form-group row" },
-                                            h("label", { class: "col-12 col-lg-2 col-form-label" }, "Stichwort"),
-                                            h("div", { class: "col-12 col-lg-10" },
-                                                h("input", { class: "form-control", type: "text", id: "keyword" }))))),
-                                h("div", { class: "col-12 col-md-6 col-xl-7 mt-3 mt-md-0" },
-                                    h("div", { class: "h100 border p-3" },
+                            h("div", { class: "border p-3" },
+                                h("h4", { class: "mb-3" }, "Datensatz finden"),
+                                h("div", { class: "row align-items-end" },
+                                    h("div", { class: "field-person form-group col-12 col-md-4 col-lg-3" },
+                                        h("label", { class: "col-form-label" }, "Person"),
+                                        h("div", null,
+                                            h("input", { class: "form-control", type: "text", id: "person" }))),
+                                    h("div", { class: "field-year form-group col-12 col-md-4 col-lg-3" },
+                                        h("label", { class: "col-form-label" }, "Jahr"),
+                                        h("div", null,
+                                            h("input", { class: "form-control", type: "text", id: "year" }))),
+                                    h("div", { class: "field-keyword form-group col-12 col-md-4 col-lg-3" },
+                                        h("label", { class: "col-form-label" }, "Stichwort"),
+                                        h("div", null,
+                                            h("input", { class: "form-control", type: "text", id: "keyword" }))),
+                                    h("div", { class: "form-group submit col pt-3 pt-lg-0" },
+                                        h("button", { type: "submit", class: "btn btn-outline-primary submit-all", onClick: (e) => this.filterResults(e) }, "Suchen")))),
+                            h("div", { class: "row mt-3" },
+                                h("div", { class: "col-12 col-lg-9" },
+                                    h("div", { class: "border p-3 " },
                                         h("h4", { class: "mb-3" }, "Nach Namen filtern"),
-                                        h("ul", { class: "glossary d-flex flex-wrap justify-content-start justify-content-xl-between" }, this.glossar()))),
-                                h("div", { class: "gardener-search-submit pt-3 pt-lg-4 col-12 d-flex justify-content-end" },
-                                    h("button", { type: "button", class: "btn btn-primary btn-outline submit-selection", onClick: (e) => this.filterReset(e) }, "Zur\u00FCcksetzen"),
-                                    h("button", { type: "submit", class: "btn btn-primary submit-all", onClick: (e) => this.filterResults(e) }, "Filtern")))))),
+                                        h("ul", { class: "glossary d-flex flex-wrap justify-content-start" }, this.glossar()))),
+                                h("div", { class: "gardener-search-reset col pl-0" },
+                                    h("div", { class: "border p-3" },
+                                        h("button", { type: "button", class: "btn btn-primary btn-sm btn-outline-dark submit-selection", onClick: (e) => this.filterReset(e) }, "Zur\u00FCcksetzen"))))))),
                 !this.loading
                     ? h("gardener-results", { results: this.filteredResult })
                     : h("loading-spinner", null)));

@@ -134,6 +134,7 @@ export class MyComponent {
 
   public filterLetter(e) {
     e.preventDefault();
+    this.filterReset(e);
     this.filteredResult = this.gardb;
     var letter = e.toElement.innerText.toLowerCase();
     this.filteredResult = this.filteredResult.filter(record => this.filterByInitial(letter, record));
@@ -190,50 +191,55 @@ export class MyComponent {
           <div class="gardener-search-wrapper">
             <div class="gardener-search-container">
               <form id="form" class="gardener-search-filter">
-                <div class="row">
-                  <div class="col-12 col-md-6 col-xl-5">
-                    <div class="h100 border p-3">
-                      <h4 class="mb-3">Datensatz finden</h4>
-                      <div class="field-person form-group row">
-                        <label class="col-12 col-lg-2 col-form-label">Person</label>
-                        <div class="col-12 col-lg-10">
-                          <input class="form-control" type="text" id="person" />
-                        </div>
-                      </div>
-                      <div class="field-year form-group row">
-                        <label class="col-12 col-lg-2 col-form-label">Jahr</label>
-                        <div class="col-12 col-lg-10">
-                          <input class="form-control" type="text" id="year" /></div>
-                      </div>
-                      <div class="field-keyword form-group row">
-                        <label class="col-12 col-lg-2 col-form-label">Stichwort</label>
-                        <div class="col-12 col-lg-10">
-                          <input class="form-control" type="text" id="keyword" />
-                        </div>
+                <div class="border p-3">
+                  <h4 class="mb-3">Datensatz finden</h4>
+                  <div class="row align-items-end">
+                    <div class="field-person form-group col-12 col-md-4 col-lg-3">
+                      <label class="col-form-label">Person</label>
+                      <div>
+                        <input class="form-control" type="text" id="person" />
                       </div>
                     </div>
+                    <div class="field-year form-group col-12 col-md-4 col-lg-3">
+                      <label class="col-form-label">Jahr</label>
+                      <div>
+                        <input class="form-control" type="text" id="year" /></div>
+                    </div>
+                    <div class="field-keyword form-group col-12 col-md-4 col-lg-3">
+                      <label class="col-form-label">Stichwort</label>
+                      <div>
+                        <input class="form-control" type="text" id="keyword" />
+                      </div>
+                    </div>
+                    <div class="form-group submit col pt-3 pt-lg-0">
+                      <button type="submit" class="btn btn-outline-primary submit-all" onClick={(e) => this.filterResults(e)}>Suchen</button>
+                    </div>
                   </div>
-                  <div class="col-12 col-md-6 col-xl-7 mt-3 mt-md-0">
-                    <div class="h100 border p-3">
+                </div>
+                <div class="row mt-3">
+                  <div class="col-12 col-lg-9">
+                    <div class="border p-3 ">
                       <h4 class="mb-3">Nach Namen filtern</h4>
-                      <ul class="glossary d-flex flex-wrap justify-content-start justify-content-xl-between">
+                      <ul class="glossary d-flex flex-wrap justify-content-start">
                         {this.glossar()}
                       </ul>
                     </div>
                   </div>
-                  <div class="gardener-search-submit pt-3 pt-lg-4 col-12 d-flex justify-content-end">
-                    <button type="button" class="btn btn-primary btn-outline submit-selection" onClick={(e) => this.filterReset(e)}>Zurücksetzen</button>
-                    <button type="submit" class="btn btn-primary submit-all" onClick={(e) => this.filterResults(e)}>Filtern</button>
+                  <div class="gardener-search-reset col pl-0">
+                    <div class="border p-3">
+                      <button type="button" class="btn btn-primary btn-sm btn-outline-dark submit-selection" onClick={(e) => this.filterReset(e)}>Zurücksetzen</button>
+                    </div>
                   </div>
                 </div>
               </form>
             </div>
           </div>
-          {!this.loading
-            ? <gardener-results results={this.filteredResult}></gardener-results>
-            : <loading-spinner></loading-spinner>
+          {
+            !this.loading
+              ? <gardener-results results={this.filteredResult}></gardener-results>
+              : <loading-spinner></loading-spinner>
           }
-        </Host>
+        </Host >
       )
     }
   }
