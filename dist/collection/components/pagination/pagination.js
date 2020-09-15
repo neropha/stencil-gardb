@@ -1,8 +1,5 @@
 import { Host, h } from "@stencil/core";
 export class Pagination {
-    constructor() {
-        this.currentPage = 1;
-    }
     pageSelectedHandler(e, record) {
         e.preventDefault();
         this.pageSelected.emit(record);
@@ -90,8 +87,7 @@ export class Pagination {
                 "text": ""
             },
             "attribute": "current-page",
-            "reflect": false,
-            "defaultValue": "1"
+            "reflect": false
         },
         "pages": {
             "type": "number",

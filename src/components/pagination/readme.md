@@ -9,7 +9,7 @@
 
 | Property      | Attribute      | Description | Type     | Default     |
 | ------------- | -------------- | ----------- | -------- | ----------- |
-| `currentPage` | `current-page` |             | `number` | `1`         |
+| `currentPage` | `current-page` |             | `number` | `undefined` |
 | `pages`       | `pages`        |             | `number` | `undefined` |
 
 

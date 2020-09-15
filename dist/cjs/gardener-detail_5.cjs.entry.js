@@ -7,19 +7,29 @@ const core = require('./core-013e6d42.js');
 const Detail = class {
     constructor(hostRef) {
         core.registerInstance(this, hostRef);
+        this.cleanRecord = [];
+        this.hideColumns = ['location', 'reserve01', 'reserve02', 'sourcefile', 'created', 'updated'];
         this.closeDetail = function (e) {
             e.preventDefault();
             this.recordSelected.emit(null);
+            window.location.hash = 'results';
         };
         this.recordSelected = core.createEvent(this, "recordSelected", 7);
     }
     componentDidLoad() {
         var top = document.querySelector('main').offsetTop;
         window.scrollTo(0, top);
+        for (const [key, value] of Object.entries(this.record)) {
+            // console.log(`${key}: ${value}`);
+            if (!this.hideColumns.includes(key)) {
+                this.cleanRecord = Object.assign(Object.assign({}, this.cleanRecord), { [key]: value });
+            }
+        }
+        console.log(this.cleanRecord);
     }
     render() {
-        if (this.record) {
-            return (core.h(core.Host, { id: "detail" }, core.h("button", { type: "button", class: "close btn-sm", "aria-label": "Close", onClick: (e) => this.closeDetail(e) }, "Zur\u00FCck ", core.h("i", { class: "fa fa-times-circle fa-lg", "aria-hidden": "true" })), core.h("h4", { class: "mb-3 mb-md-4" }, this.record.Person), core.h("table", { class: "table border-bottom stacktable" }, Object.keys(this.record).map(key => (core.h("tr", null, core.h("td", { class: "label" }, core.h("strong", null, key)), core.h("td", null, this.record[key])))))));
+        if (this.cleanRecord) {
+            return (core.h(core.Host, { id: 'id' + this.record.ID }, core.h("button", { type: "button", class: "close btn-sm", "aria-label": "Close", onClick: (e) => this.closeDetail(e) }, "Zur\u00FCck ", core.h("i", { class: "fa fa-times-circle fa-lg", "aria-hidden": "true" })), core.h("h4", { class: "mb-3 mb-md-4" }, this.record.Person), core.h("table", { class: "table border-bottom stacktable" }, Object.keys(this.cleanRecord).map(key => (core.h("tr", null, core.h("td", { class: "label" }, core.h("strong", null, key)), core.h("td", null, this.cleanRecord[key])))))));
         }
     }
     static get style() { return ":root{--gs-container-max-width:1280px;--gs-container-padding:50px;--gs-color-bg:#efefef;--gs-color-primary:#71bc51;--gs-color-secondary:#2196f3;--gs-color-text:#333;--gs-color-border:#999;--gs-color-disabled:#ccc;--gs-color-background:#fff;--gs-border-radius:5px;--gs-border-radius-small:2px;--gs-font-size-base:15px;--gs-button-primary:var(--gs-color-primary);--gs-button-primary-focus-color:#c1d6b7;--gs-button-primary-border:var(--gs-color-primary);--gs-button-light:#fff}gardener-detail{display:block}gardener-detail .close{font-size:inherit}gardener-detail table{table-layout:auto}gardener-detail table .label{width:12em;text-transform:capitalize}"; }
@@ -28,7 +38,7 @@ const Detail = class {
 const Results = class {
     constructor(hostRef) {
         core.registerInstance(this, hostRef);
-        this.page = 1;
+        this.currentPage = 1;
         this.itemsPerPage = 50;
         this.recordSelected = core.createEvent(this, "recordSelected", 7);
     }
@@ -38,14 +48,14 @@ const Results = class {
     }
     watchHandler(newValue, oldValue) {
         if (newValue != oldValue) {
-            this.page = 1;
+            this.currentPage = 1;
         }
     }
     firstItemShown() {
-        return (this.itemsPerPage * this.page) - this.itemsPerPage;
+        return (this.itemsPerPage * this.currentPage) - this.itemsPerPage;
     }
     lastItemShown() {
-        let lastCount = this.itemsPerPage * this.page;
+        let lastCount = this.itemsPerPage * this.currentPage;
         let last;
         if (lastCount > this.total) {
             last = this.total;
@@ -61,11 +71,12 @@ const Results = class {
     recordSelectedHandler(e, record) {
         e.preventDefault();
         this.recordSelected.emit(record);
+        window.location.hash = 'id' + record.ID;
     }
     changePageHandler(event) {
-        console.log('Received the custom pageSelected event: ', event.detail);
+        // console.log('Received the custom pageSelected event: ', event.detail);
         this.selectedRecord = event.detail;
-        this.page = event.detail;
+        this.currentPage = event.detail;
         this.pagedResult();
     }
     resultInfo() {
@@ -74,7 +85,7 @@ const Results = class {
             : this.firstItemShown() + ' Ergebnisse'));
     }
     render() {
-        return (core.h(core.Host, null, core.h("div", { id: "results" }, this.resultInfo(), core.h("table", { class: "table stacktable border-bottom" }, core.h("thead", null, core.h("tr", null, core.h("th", { class: "person" }, "Person"), core.h("th", { class: "content" }, "Inhalt"), core.h("th", { class: "type" }, "Dokumententyp"), core.h("th", { class: "year" }, "Jahr"), core.h("th", { class: "author" }, "Autor"), core.h("th", { class: "details" }, "\u00A0"))), core.h("tbody", null, this.pagedResult().map((gardener) => core.h("tr", null, core.h("td", null, gardener.Person), core.h("td", null, gardener.Inhalt), core.h("td", null, gardener.Dokumententyp), core.h("td", null, gardener.Jahr), core.h("td", null, gardener.Autor), core.h("td", null, core.h("a", { class: "link", title: "Details", href: "#", onClick: (e) => this.recordSelectedHandler(e, gardener) }, core.h("i", { class: "fa fa-info-circle fa-lg" }))))))), core.h("results-pagination", { "current-page": this.page, pages: this.pages }))));
+        return (core.h(core.Host, null, core.h("div", { id: "results" }, this.resultInfo(), core.h("table", { class: "table stacktable border-bottom" }, core.h("thead", null, core.h("tr", null, core.h("th", { class: "person" }, "Person"), core.h("th", { class: "content" }, "Inhalt"), core.h("th", { class: "type" }, "Dokumententyp"), core.h("th", { class: "year" }, "Jahr"), core.h("th", { class: "author" }, "Autor"), core.h("th", { class: "details" }, "\u00A0"))), core.h("tbody", null, this.pagedResult().map((gardener) => core.h("tr", null, core.h("td", null, gardener.Person), core.h("td", null, gardener.Inhalt), core.h("td", null, gardener.Dokumententyp), core.h("td", null, gardener.Jahr), core.h("td", null, gardener.Autor), core.h("td", null, core.h("a", { class: "link", title: "Details", href: "#", onClick: (e) => this.recordSelectedHandler(e, gardener) }, core.h("i", { class: "fa fa-info-circle fa-lg" }))))))), core.h("results-pagination", { "current-page": this.currentPage, pages: this.pages }))));
     }
     static get watchers() { return {
         "results": ["watchHandler"]
@@ -86,6 +97,11 @@ const MyComponent = class {
     constructor(hostRef) {
         core.registerInstance(this, hostRef);
         this.errors = [];
+        this.formValues = {
+            year: '',
+            keyword: '',
+            person: ''
+        };
         this.loading = true;
     }
     async loadData() {
@@ -143,40 +159,42 @@ const MyComponent = class {
         else {
             return false;
         }
-        console.log('filteredByInitial: ', name);
+        // console.log('filteredByInitial: ', name)
         return true;
     }
-    filterResults(e) {
+    submitSearch(e) {
         e.preventDefault();
         this.inputs = this.host.querySelector('form').querySelectorAll('input');
         this.filteredResult = this.gardb;
         this.inputs.forEach((input) => {
+            // Store Form Value Properties
+            this.formValues[input.id] = input.value;
             let value = input.value.toLowerCase();
-            if (input.value.length > 0) {
-                if (input.id == "person") {
-                    this.filteredResult = this.filteredResult.filter(record => this.filterByPerson(value, record));
-                }
-                if (input.id == "year") {
-                    this.filteredResult = this.filteredResult.filter(record => this.filterByYear(value, record));
-                }
-                if (input.id == "keyword") {
-                    this.filteredResult = this.filteredResult.filter(record => this.filterByKeyword(value, record));
-                }
+            if (input.id == "person") {
+                this.filteredResult = this.filteredResult.filter(record => this.filterByPerson(value, record));
+            }
+            if (input.id == "year") {
+                this.filteredResult = this.filteredResult.filter(record => this.filterByYear(value, record));
+            }
+            if (input.id == "keyword") {
+                this.filteredResult = this.filteredResult.filter(record => this.filterByKeyword(value, record));
             }
         });
     }
-    filterReset(e) {
+    resetSearch(e) {
         e.preventDefault();
         this.filteredResult = this.gardb;
         this.selectedRecord = undefined;
         this.inputs = this.host.querySelector('form').querySelectorAll('input');
         this.inputs.forEach((input) => {
-            input.value = "";
+            // Reset Form Value Properties
+            // Will automatically empty form, because of Prop Value Variable
+            this.formValues[input.id] = "";
         });
     }
     filterLetter(e) {
         e.preventDefault();
-        this.filterReset(e);
+        this.resetSearch(e);
         this.filteredResult = this.gardb;
         var letter = e.toElement.innerText.toLowerCase();
         this.filteredResult = this.filteredResult.filter(record => this.filterByInitial(letter, record));
@@ -190,8 +208,8 @@ const MyComponent = class {
         });
         return output;
     }
-    todoCompletedHandler(event) {
-        console.log('Received the custom recordSelected event: ', event.detail);
+    recordSelectedHandler(event) {
+        // console.log('Received the custom recordSelected event: ', event.detail);
         this.selectedRecord = event.detail;
     }
     return_errors() {
@@ -208,7 +226,7 @@ const MyComponent = class {
             return this.return_record();
         }
         else if (this.api) {
-            return (core.h(core.Host, { id: "top" }, core.h("div", { class: "gardener-search-wrapper" }, core.h("div", { class: "gardener-search-container" }, core.h("form", { id: "form", class: "gardener-search-filter" }, core.h("div", { class: "border p-3" }, core.h("h4", { class: "mb-3" }, "Datensatz finden"), core.h("div", { class: "row align-items-end" }, core.h("div", { class: "field-person form-group col-12 col-md-4 col-lg-3" }, core.h("label", { class: "col-form-label" }, "Person/Autor"), core.h("div", null, core.h("input", { class: "form-control", type: "text", id: "person" }))), core.h("div", { class: "field-year form-group col-12 col-md-4 col-lg-3" }, core.h("label", { class: "col-form-label" }, "Jahr"), core.h("div", null, core.h("input", { class: "form-control", type: "text", id: "year" }))), core.h("div", { class: "field-keyword form-group col-12 col-md-4 col-lg-3" }, core.h("label", { class: "col-form-label" }, "Stichwort"), core.h("div", null, core.h("input", { class: "form-control", type: "text", id: "keyword" }))), core.h("div", { class: "form-group submit col pt-3 pt-lg-0" }, core.h("button", { type: "submit", class: "btn btn-primary submit-all", onClick: (e) => this.filterResults(e) }, "Suchen")))), core.h("div", { class: "row mt-3" }, core.h("div", { class: "col-12 col-lg-9" }, core.h("div", { class: "border p-3 " }, core.h("h4", { class: "mb-3" }, "Nach Anfangsbuchstaben filtern"), core.h("ul", { class: "glossary d-flex flex-wrap justify-content-start" }, this.glossar()))), core.h("div", { class: "gardener-search-reset col pl-0" }, core.h("div", { class: "border p-3 h100" }, core.h("button", { type: "button", class: "btn btn-outline-dark btn-sm submit-selection", onClick: (e) => this.filterReset(e) }, "Zur\u00FCcksetzen"))))))), !this.loading
+            return (core.h(core.Host, { id: "top" }, core.h("div", { class: "gardener-search-wrapper" }, core.h("div", { class: "gardener-search-container" }, core.h("form", { id: "form", class: "gardener-search-filter" }, core.h("div", { class: "border p-3" }, core.h("h4", { class: "mb-3" }, "Datensatz finden"), core.h("div", { class: "row align-items-end" }, core.h("div", { class: "field-person form-group col-12 col-md-4 col-lg-3" }, core.h("label", { class: "col-form-label" }, "Person/Autor"), core.h("div", null, core.h("input", { value: this.formValues.person, class: "form-control", type: "text", id: "person" }))), core.h("div", { class: "field-year form-group col-12 col-md-4 col-lg-3" }, core.h("label", { class: "col-form-label" }, "Jahr"), core.h("div", null, core.h("input", { value: this.formValues.year, class: "form-control", type: "text", id: "year" }))), core.h("div", { class: "field-keyword form-group col-12 col-md-4 col-lg-3" }, core.h("label", { class: "col-form-label" }, "Stichwort"), core.h("div", null, core.h("input", { value: this.formValues.keyword, class: "form-control", type: "text", id: "keyword" }))), core.h("div", { class: "form-group submit col pt-3 pt-lg-0" }, core.h("button", { type: "submit", class: "btn btn-primary submit-all", onClick: (e) => this.submitSearch(e) }, "Suchen")))), core.h("div", { class: "row mt-3" }, core.h("div", { class: "col-12 col-lg-9" }, core.h("div", { class: "border p-3 " }, core.h("h4", { class: "mb-3" }, "Nach Anfangsbuchstaben filtern"), core.h("ul", { class: "glossary d-flex flex-wrap justify-content-start" }, this.glossar()))), core.h("div", { class: "gardener-search-reset col-12 col-lg-3 mt-3 mt-lg-0 pl-lg-0" }, core.h("div", { class: "border p-3 h100" }, core.h("button", { type: "button", class: "btn btn-outline-dark btn-sm submit-selection", onClick: (e) => this.resetSearch(e) }, "Zur\u00FCcksetzen"))))))), !this.loading
                 ? core.h("gardener-results", { results: this.filteredResult })
                 : core.h("loading-spinner", null)));
         }
@@ -230,7 +248,6 @@ const Spinner = class {
 const Pagination = class {
     constructor(hostRef) {
         core.registerInstance(this, hostRef);
-        this.currentPage = 1;
         this.pageSelected = core.createEvent(this, "pageSelected", 7);
     }
     pageSelectedHandler(e, record) {

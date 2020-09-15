@@ -9,6 +9,11 @@ export class MyComponent {
   @State() filteredResult: any;
   @State() selectedRecord: true;
   @State() errors = [];
+  @State() formValues = {
+    year: '',
+    keyword: '',
+    person: ''
+  };
 
   @Element() host: HTMLElement;
 
@@ -41,7 +46,6 @@ export class MyComponent {
       this.loading = false;
     }
   }
-
   componentWillLoad() {
     // console.log(this.api);
     if (!this.api) {
@@ -62,7 +66,7 @@ export class MyComponent {
   }
   private filterByKeyword(needle, haystack) {
     // Searches in Inhalt | Dokumententyp | Zeitschrift | 
-    let indexedFields = [haystack.Inhalt,haystack.Dokumententyp, haystack.Zeitschrift].join().toLowerCase();
+    let indexedFields = [haystack.Inhalt, haystack.Dokumententyp, haystack.Zeitschrift].join().toLowerCase();
     return indexedFields.includes(needle);
   }
 
@@ -75,44 +79,45 @@ export class MyComponent {
     } else {
       return false;
     }
-    console.log('filteredByInitial: ', name)
+    // console.log('filteredByInitial: ', name)
     return true;
   }
 
-  public filterResults(e) {
+  public submitSearch(e) {
     e.preventDefault();
     this.inputs = this.host.querySelector('form').querySelectorAll('input');
     this.filteredResult = this.gardb;
-
     this.inputs.forEach((input) => {
+      // Store Form Value Properties
+      this.formValues[input.id] = input.value;
       let value = input.value.toLowerCase();
-      if (input.value.length > 0) {
-        if (input.id == "person") {
-          this.filteredResult = this.filteredResult.filter(record => this.filterByPerson(value, record));
-        }
-        if (input.id == "year") {
-          this.filteredResult = this.filteredResult.filter(record => this.filterByYear(value, record));
-        }
-        if (input.id == "keyword") {
-          this.filteredResult = this.filteredResult.filter(record => this.filterByKeyword(value, record));
-        }
+      if (input.id == "person") {
+        this.filteredResult = this.filteredResult.filter(record => this.filterByPerson(value, record));
+      }
+      if (input.id == "year") {
+        this.filteredResult = this.filteredResult.filter(record => this.filterByYear(value, record));
+      }
+      if (input.id == "keyword") {
+        this.filteredResult = this.filteredResult.filter(record => this.filterByKeyword(value, record));
       }
     });
   }
 
-  public filterReset(e) {
+  public resetSearch(e) {
     e.preventDefault();
     this.filteredResult = this.gardb;
     this.selectedRecord = undefined;
     this.inputs = this.host.querySelector('form').querySelectorAll('input');
     this.inputs.forEach((input) => {
-      input.value = "";
+      // Reset Form Value Properties
+      // Will automatically empty form, because of Prop Value Variable
+      this.formValues[input.id] = "";
     })
   }
 
   public filterLetter(e) {
     e.preventDefault();
-    this.filterReset(e);
+    this.resetSearch(e);
     this.filteredResult = this.gardb;
     var letter = e.toElement.innerText.toLowerCase();
     this.filteredResult = this.filteredResult.filter(record => this.filterByInitial(letter, record));
@@ -130,11 +135,10 @@ export class MyComponent {
   }
 
   @Listen('recordSelected')
-  todoCompletedHandler(event: CustomEvent<any>) {
-    console.log('Received the custom recordSelected event: ', event.detail);
+  recordSelectedHandler(event: CustomEvent<any>) {
+    // console.log('Received the custom recordSelected event: ', event.detail);
     this.selectedRecord = event.detail;
   }
-
 
   public return_errors() {
     return (
@@ -175,22 +179,22 @@ export class MyComponent {
                     <div class="field-person form-group col-12 col-md-4 col-lg-3">
                       <label class="col-form-label">Person/Autor</label>
                       <div>
-                        <input class="form-control" type="text" id="person" />
+                        <input value={this.formValues.person} class="form-control" type="text" id="person" />
                       </div>
                     </div>
                     <div class="field-year form-group col-12 col-md-4 col-lg-3">
                       <label class="col-form-label">Jahr</label>
                       <div>
-                        <input class="form-control" type="text" id="year" /></div>
+                        <input value={this.formValues.year} class="form-control" type="text" id="year" /></div>
                     </div>
                     <div class="field-keyword form-group col-12 col-md-4 col-lg-3">
                       <label class="col-form-label">Stichwort</label>
                       <div>
-                        <input class="form-control" type="text" id="keyword" />
+                        <input value={this.formValues.keyword} class="form-control" type="text" id="keyword" />
                       </div>
                     </div>
                     <div class="form-group submit col pt-3 pt-lg-0">
-                      <button type="submit" class="btn btn-primary submit-all" onClick={(e) => this.filterResults(e)}>Suchen</button>
+                      <button type="submit" class="btn btn-primary submit-all" onClick={(e) => this.submitSearch(e)}>Suchen</button>
                     </div>
                   </div>
                 </div>
@@ -203,9 +207,9 @@ export class MyComponent {
                       </ul>
                     </div>
                   </div>
-                  <div class="gardener-search-reset col pl-0">
+                  <div class="gardener-search-reset col-12 col-lg-3 mt-3 mt-lg-0 pl-lg-0">
                     <div class="border p-3 h100">
-                      <button type="button" class="btn btn-outline-dark btn-sm submit-selection" onClick={(e) => this.filterReset(e)}>Zurücksetzen</button>
+                      <button type="button" class="btn btn-outline-dark btn-sm submit-selection" onClick={(e) => this.resetSearch(e)}>Zurücksetzen</button>
                     </div>
                   </div>
                 </div>

@@ -1,7 +1,7 @@
 import { Host, h } from "@stencil/core";
 export class Results {
     constructor() {
-        this.page = 1;
+        this.currentPage = 1;
         this.itemsPerPage = 50;
     }
     componentWillRender() {
@@ -10,14 +10,14 @@ export class Results {
     }
     watchHandler(newValue, oldValue) {
         if (newValue != oldValue) {
-            this.page = 1;
+            this.currentPage = 1;
         }
     }
     firstItemShown() {
-        return (this.itemsPerPage * this.page) - this.itemsPerPage;
+        return (this.itemsPerPage * this.currentPage) - this.itemsPerPage;
     }
     lastItemShown() {
-        let lastCount = this.itemsPerPage * this.page;
+        let lastCount = this.itemsPerPage * this.currentPage;
         let last;
         if (lastCount > this.total) {
             last = this.total;
@@ -33,11 +33,12 @@ export class Results {
     recordSelectedHandler(e, record) {
         e.preventDefault();
         this.recordSelected.emit(record);
+        window.location.hash = 'id' + record.ID;
     }
     changePageHandler(event) {
-        console.log('Received the custom pageSelected event: ', event.detail);
+        // console.log('Received the custom pageSelected event: ', event.detail);
         this.selectedRecord = event.detail;
-        this.page = event.detail;
+        this.currentPage = event.detail;
         this.pagedResult();
     }
     resultInfo() {
@@ -69,7 +70,7 @@ export class Results {
                         h("td", null,
                             h("a", { class: "link", title: "Details", href: "#", onClick: (e) => this.recordSelectedHandler(e, gardener) },
                                 h("i", { class: "fa fa-info-circle fa-lg" }))))))),
-                h("results-pagination", { "current-page": this.page, pages: this.pages }))));
+                h("results-pagination", { "current-page": this.currentPage, pages: this.pages }))));
     }
     static get is() { return "gardener-results"; }
     static get originalStyleUrls() { return {
@@ -98,8 +99,8 @@ export class Results {
         }
     }; }
     static get states() { return {
+        "currentPage": {},
         "selectedRecord": {},
-        "page": {},
         "pages": {},
         "currentRecord": {}
     }; }

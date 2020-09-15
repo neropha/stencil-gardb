@@ -2,6 +2,11 @@ export declare class MyComponent {
     filteredResult: any;
     selectedRecord: true;
     errors: any[];
+    formValues: {
+        year: string;
+        keyword: string;
+        person: string;
+    };
     host: HTMLElement;
     api: string;
     inputs: any;
@@ -13,11 +18,11 @@ export declare class MyComponent {
     private filterByYear;
     private filterByKeyword;
     private filterByInitial;
-    filterResults(e: any): void;
-    filterReset(e: any): void;
+    submitSearch(e: any): void;
+    resetSearch(e: any): void;
     filterLetter(e: any): void;
     glossar(): any[];
-    todoCompletedHandler(event: CustomEvent<any>): void;
+    recordSelectedHandler(event: CustomEvent<any>): void;
     return_errors(): any;
     return_record(): any;
     render(): any;

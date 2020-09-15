@@ -2,6 +2,11 @@ import { Host, h } from "@stencil/core";
 export class MyComponent {
     constructor() {
         this.errors = [];
+        this.formValues = {
+            year: '',
+            keyword: '',
+            person: ''
+        };
         this.loading = true;
     }
     async loadData() {
@@ -59,40 +64,42 @@ export class MyComponent {
         else {
             return false;
         }
-        console.log('filteredByInitial: ', name);
+        // console.log('filteredByInitial: ', name)
         return true;
     }
-    filterResults(e) {
+    submitSearch(e) {
         e.preventDefault();
         this.inputs = this.host.querySelector('form').querySelectorAll('input');
         this.filteredResult = this.gardb;
         this.inputs.forEach((input) => {
+            // Store Form Value Properties
+            this.formValues[input.id] = input.value;
             let value = input.value.toLowerCase();
-            if (input.value.length > 0) {
-                if (input.id == "person") {
-                    this.filteredResult = this.filteredResult.filter(record => this.filterByPerson(value, record));
-                }
-                if (input.id == "year") {
-                    this.filteredResult = this.filteredResult.filter(record => this.filterByYear(value, record));
-                }
-                if (input.id == "keyword") {
-                    this.filteredResult = this.filteredResult.filter(record => this.filterByKeyword(value, record));
-                }
+            if (input.id == "person") {
+                this.filteredResult = this.filteredResult.filter(record => this.filterByPerson(value, record));
+            }
+            if (input.id == "year") {
+                this.filteredResult = this.filteredResult.filter(record => this.filterByYear(value, record));
+            }
+            if (input.id == "keyword") {
+                this.filteredResult = this.filteredResult.filter(record => this.filterByKeyword(value, record));
             }
         });
     }
-    filterReset(e) {
+    resetSearch(e) {
         e.preventDefault();
         this.filteredResult = this.gardb;
         this.selectedRecord = undefined;
         this.inputs = this.host.querySelector('form').querySelectorAll('input');
         this.inputs.forEach((input) => {
-            input.value = "";
+            // Reset Form Value Properties
+            // Will automatically empty form, because of Prop Value Variable
+            this.formValues[input.id] = "";
         });
     }
     filterLetter(e) {
         e.preventDefault();
-        this.filterReset(e);
+        this.resetSearch(e);
         this.filteredResult = this.gardb;
         var letter = e.toElement.innerText.toLowerCase();
         this.filteredResult = this.filteredResult.filter(record => this.filterByInitial(letter, record));
@@ -107,8 +114,8 @@ export class MyComponent {
         });
         return output;
     }
-    todoCompletedHandler(event) {
-        console.log('Received the custom recordSelected event: ', event.detail);
+    recordSelectedHandler(event) {
+        // console.log('Received the custom recordSelected event: ', event.detail);
         this.selectedRecord = event.detail;
     }
     return_errors() {
@@ -138,25 +145,25 @@ export class MyComponent {
                                     h("div", { class: "field-person form-group col-12 col-md-4 col-lg-3" },
                                         h("label", { class: "col-form-label" }, "Person/Autor"),
                                         h("div", null,
-                                            h("input", { class: "form-control", type: "text", id: "person" }))),
+                                            h("input", { value: this.formValues.person, class: "form-control", type: "text", id: "person" }))),
                                     h("div", { class: "field-year form-group col-12 col-md-4 col-lg-3" },
                                         h("label", { class: "col-form-label" }, "Jahr"),
                                         h("div", null,
-                                            h("input", { class: "form-control", type: "text", id: "year" }))),
+                                            h("input", { value: this.formValues.year, class: "form-control", type: "text", id: "year" }))),
                                     h("div", { class: "field-keyword form-group col-12 col-md-4 col-lg-3" },
                                         h("label", { class: "col-form-label" }, "Stichwort"),
                                         h("div", null,
-                                            h("input", { class: "form-control", type: "text", id: "keyword" }))),
+                                            h("input", { value: this.formValues.keyword, class: "form-control", type: "text", id: "keyword" }))),
                                     h("div", { class: "form-group submit col pt-3 pt-lg-0" },
-                                        h("button", { type: "submit", class: "btn btn-primary submit-all", onClick: (e) => this.filterResults(e) }, "Suchen")))),
+                                        h("button", { type: "submit", class: "btn btn-primary submit-all", onClick: (e) => this.submitSearch(e) }, "Suchen")))),
                             h("div", { class: "row mt-3" },
                                 h("div", { class: "col-12 col-lg-9" },
                                     h("div", { class: "border p-3 " },
                                         h("h4", { class: "mb-3" }, "Nach Anfangsbuchstaben filtern"),
                                         h("ul", { class: "glossary d-flex flex-wrap justify-content-start" }, this.glossar()))),
-                                h("div", { class: "gardener-search-reset col pl-0" },
+                                h("div", { class: "gardener-search-reset col-12 col-lg-3 mt-3 mt-lg-0 pl-lg-0" },
                                     h("div", { class: "border p-3 h100" },
-                                        h("button", { type: "button", class: "btn btn-outline-dark btn-sm submit-selection", onClick: (e) => this.filterReset(e) }, "Zur\u00FCcksetzen"))))))),
+                                        h("button", { type: "button", class: "btn btn-outline-dark btn-sm submit-selection", onClick: (e) => this.resetSearch(e) }, "Zur\u00FCcksetzen"))))))),
                 !this.loading
                     ? h("gardener-results", { results: this.filteredResult })
                     : h("loading-spinner", null)));
@@ -191,12 +198,13 @@ export class MyComponent {
     static get states() { return {
         "filteredResult": {},
         "selectedRecord": {},
-        "errors": {}
+        "errors": {},
+        "formValues": {}
     }; }
     static get elementRef() { return "host"; }
     static get listeners() { return [{
             "name": "recordSelected",
-            "method": "todoCompletedHandler",
+            "method": "recordSelectedHandler",
             "target": undefined,
             "capture": false,
             "passive": false

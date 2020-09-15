@@ -8,9 +8,9 @@ import { Event, EventEmitter } from '@stencil/core';
 })
 export class Results {
   @Prop() public results: any;
-
+  
+  @State() public currentPage: number = 1;
   @State() selectedRecord: true;
-  @State() public page: number = 1;
   @State() public pages: number;
   @State() public currentRecord: any;
 
@@ -25,16 +25,16 @@ export class Results {
   @Watch('results')
   watchHandler(newValue: boolean, oldValue: boolean) {
     if (newValue != oldValue) {
-      this.page = 1
+      this.currentPage = 1
     }
   }
 
   firstItemShown() {
-    return (this.itemsPerPage * this.page) - this.itemsPerPage
+    return (this.itemsPerPage * this.currentPage) - this.itemsPerPage
   }
 
   lastItemShown() {
-    let lastCount = this.itemsPerPage * this.page;
+    let lastCount = this.itemsPerPage * this.currentPage;
     let last: number;
 
     if (lastCount > this.total) {
@@ -52,6 +52,7 @@ export class Results {
   recordSelectedHandler(e, record) {
     e.preventDefault();
     this.recordSelected.emit(record);
+    window.location.hash='id' + record.ID;
   }
 
   @Event({
@@ -64,9 +65,9 @@ export class Results {
 
   @Listen('pageSelected')
   changePageHandler(event: CustomEvent<any>) {
-    console.log('Received the custom pageSelected event: ', event.detail);
+    // console.log('Received the custom pageSelected event: ', event.detail);
     this.selectedRecord = event.detail;
-    this.page = event.detail;
+    this.currentPage = event.detail;
     this.pagedResult();
   }
 
@@ -113,7 +114,7 @@ export class Results {
               )}
             </tbody>
           </table>
-          <results-pagination current-page={this.page} pages={this.pages}></results-pagination>
+          <results-pagination current-page={this.currentPage} pages={this.pages}></results-pagination>
         </div>
       </Host>
     )

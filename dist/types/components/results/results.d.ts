@@ -1,8 +1,8 @@
 import { EventEmitter } from '../../stencil.core';
 export declare class Results {
     results: any;
+    currentPage: number;
     selectedRecord: true;
-    page: number;
     pages: number;
     currentRecord: any;
     itemsPerPage: number;

@@ -9,7 +9,7 @@ import { Event, EventEmitter } from '@stencil/core';
 })
 export class Pagination {
 
-  @Prop() currentPage: number = 1;
+  @Prop() currentPage: number;
   @Prop() pages: number;
 
   pageSelectedHandler(e, record) {

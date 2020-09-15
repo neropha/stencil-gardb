@@ -38,20 +38,32 @@ import { r as registerInstance, c as createEvent, h, H as Host, g as getElement 
 var Detail = /** @class */ (function () {
     function Detail(hostRef) {
         registerInstance(this, hostRef);
+        this.cleanRecord = [];
+        this.hideColumns = ['location', 'reserve01', 'reserve02', 'sourcefile', 'created', 'updated'];
         this.closeDetail = function (e) {
             e.preventDefault();
             this.recordSelected.emit(null);
+            window.location.hash = 'results';
         };
         this.recordSelected = createEvent(this, "recordSelected", 7);
     }
     Detail.prototype.componentDidLoad = function () {
+        var _a;
         var top = document.querySelector('main').offsetTop;
         window.scrollTo(0, top);
+        for (var _i = 0, _b = Object.entries(this.record); _i < _b.length; _i++) {
+            var _c = _b[_i], key = _c[0], value = _c[1];
+            // console.log(`${key}: ${value}`);
+            if (!this.hideColumns.includes(key)) {
+                this.cleanRecord = Object.assign(Object.assign({}, this.cleanRecord), (_a = {}, _a[key] = value, _a));
+            }
+        }
+        console.log(this.cleanRecord);
     };
     Detail.prototype.render = function () {
         var _this = this;
-        if (this.record) {
-            return (h(Host, { id: "detail" }, h("button", { type: "button", class: "close btn-sm", "aria-label": "Close", onClick: function (e) { return _this.closeDetail(e); } }, "Zur\u00FCck ", h("i", { class: "fa fa-times-circle fa-lg", "aria-hidden": "true" })), h("h4", { class: "mb-3 mb-md-4" }, this.record.Person), h("table", { class: "table border-bottom stacktable" }, Object.keys(this.record).map(function (key) { return (h("tr", null, h("td", { class: "label" }, h("strong", null, key)), h("td", null, _this.record[key]))); }))));
+        if (this.cleanRecord) {
+            return (h(Host, { id: 'id' + this.record.ID }, h("button", { type: "button", class: "close btn-sm", "aria-label": "Close", onClick: function (e) { return _this.closeDetail(e); } }, "Zur\u00FCck ", h("i", { class: "fa fa-times-circle fa-lg", "aria-hidden": "true" })), h("h4", { class: "mb-3 mb-md-4" }, this.record.Person), h("table", { class: "table border-bottom stacktable" }, Object.keys(this.cleanRecord).map(function (key) { return (h("tr", null, h("td", { class: "label" }, h("strong", null, key)), h("td", null, _this.cleanRecord[key]))); }))));
         }
     };
     Object.defineProperty(Detail, "style", {
@@ -64,7 +76,7 @@ var Detail = /** @class */ (function () {
 var Results = /** @class */ (function () {
     function Results(hostRef) {
         registerInstance(this, hostRef);
-        this.page = 1;
+        this.currentPage = 1;
         this.itemsPerPage = 50;
         this.recordSelected = createEvent(this, "recordSelected", 7);
     }
@@ -74,14 +86,14 @@ var Results = /** @class */ (function () {
     };
     Results.prototype.watchHandler = function (newValue, oldValue) {
         if (newValue != oldValue) {
-            this.page = 1;
+            this.currentPage = 1;
         }
     };
     Results.prototype.firstItemShown = function () {
-        return (this.itemsPerPage * this.page) - this.itemsPerPage;
+        return (this.itemsPerPage * this.currentPage) - this.itemsPerPage;
     };
     Results.prototype.lastItemShown = function () {
-        var lastCount = this.itemsPerPage * this.page;
+        var lastCount = this.itemsPerPage * this.currentPage;
         var last;
         if (lastCount > this.total) {
             last = this.total;
@@ -97,11 +109,12 @@ var Results = /** @class */ (function () {
     Results.prototype.recordSelectedHandler = function (e, record) {
         e.preventDefault();
         this.recordSelected.emit(record);
+        window.location.hash = 'id' + record.ID;
     };
     Results.prototype.changePageHandler = function (event) {
-        console.log('Received the custom pageSelected event: ', event.detail);
+        // console.log('Received the custom pageSelected event: ', event.detail);
         this.selectedRecord = event.detail;
-        this.page = event.detail;
+        this.currentPage = event.detail;
         this.pagedResult();
     };
     Results.prototype.resultInfo = function () {
@@ -111,7 +124,7 @@ var Results = /** @class */ (function () {
     };
     Results.prototype.render = function () {
         var _this = this;
-        return (h(Host, null, h("div", { id: "results" }, this.resultInfo(), h("table", { class: "table stacktable border-bottom" }, h("thead", null, h("tr", null, h("th", { class: "person" }, "Person"), h("th", { class: "content" }, "Inhalt"), h("th", { class: "type" }, "Dokumententyp"), h("th", { class: "year" }, "Jahr"), h("th", { class: "author" }, "Autor"), h("th", { class: "details" }, "\u00A0"))), h("tbody", null, this.pagedResult().map(function (gardener) { return h("tr", null, h("td", null, gardener.Person), h("td", null, gardener.Inhalt), h("td", null, gardener.Dokumententyp), h("td", null, gardener.Jahr), h("td", null, gardener.Autor), h("td", null, h("a", { class: "link", title: "Details", href: "#", onClick: function (e) { return _this.recordSelectedHandler(e, gardener); } }, h("i", { class: "fa fa-info-circle fa-lg" })))); }))), h("results-pagination", { "current-page": this.page, pages: this.pages }))));
+        return (h(Host, null, h("div", { id: "results" }, this.resultInfo(), h("table", { class: "table stacktable border-bottom" }, h("thead", null, h("tr", null, h("th", { class: "person" }, "Person"), h("th", { class: "content" }, "Inhalt"), h("th", { class: "type" }, "Dokumententyp"), h("th", { class: "year" }, "Jahr"), h("th", { class: "author" }, "Autor"), h("th", { class: "details" }, "\u00A0"))), h("tbody", null, this.pagedResult().map(function (gardener) { return h("tr", null, h("td", null, gardener.Person), h("td", null, gardener.Inhalt), h("td", null, gardener.Dokumententyp), h("td", null, gardener.Jahr), h("td", null, gardener.Autor), h("td", null, h("a", { class: "link", title: "Details", href: "#", onClick: function (e) { return _this.recordSelectedHandler(e, gardener); } }, h("i", { class: "fa fa-info-circle fa-lg" })))); }))), h("results-pagination", { "current-page": this.currentPage, pages: this.pages }))));
     };
     Object.defineProperty(Results, "watchers", {
         get: function () {
@@ -133,6 +146,11 @@ var MyComponent = /** @class */ (function () {
     function class_1(hostRef) {
         registerInstance(this, hostRef);
         this.errors = [];
+        this.formValues = {
+            year: '',
+            keyword: '',
+            person: ''
+        };
         this.loading = true;
     }
     class_1.prototype.loadData = function () {
@@ -206,42 +224,45 @@ var MyComponent = /** @class */ (function () {
         else {
             return false;
         }
-        console.log('filteredByInitial: ', name);
+        // console.log('filteredByInitial: ', name)
         return true;
     };
-    class_1.prototype.filterResults = function (e) {
+    class_1.prototype.submitSearch = function (e) {
         var _this = this;
         e.preventDefault();
         this.inputs = this.host.querySelector('form').querySelectorAll('input');
         this.filteredResult = this.gardb;
         this.inputs.forEach(function (input) {
+            // Store Form Value Properties
+            _this.formValues[input.id] = input.value;
             var value = input.value.toLowerCase();
-            if (input.value.length > 0) {
-                if (input.id == "person") {
-                    _this.filteredResult = _this.filteredResult.filter(function (record) { return _this.filterByPerson(value, record); });
-                }
-                if (input.id == "year") {
-                    _this.filteredResult = _this.filteredResult.filter(function (record) { return _this.filterByYear(value, record); });
-                }
-                if (input.id == "keyword") {
-                    _this.filteredResult = _this.filteredResult.filter(function (record) { return _this.filterByKeyword(value, record); });
-                }
+            if (input.id == "person") {
+                _this.filteredResult = _this.filteredResult.filter(function (record) { return _this.filterByPerson(value, record); });
+            }
+            if (input.id == "year") {
+                _this.filteredResult = _this.filteredResult.filter(function (record) { return _this.filterByYear(value, record); });
+            }
+            if (input.id == "keyword") {
+                _this.filteredResult = _this.filteredResult.filter(function (record) { return _this.filterByKeyword(value, record); });
             }
         });
     };
-    class_1.prototype.filterReset = function (e) {
+    class_1.prototype.resetSearch = function (e) {
+        var _this = this;
         e.preventDefault();
         this.filteredResult = this.gardb;
         this.selectedRecord = undefined;
         this.inputs = this.host.querySelector('form').querySelectorAll('input');
         this.inputs.forEach(function (input) {
-            input.value = "";
+            // Reset Form Value Properties
+            // Will automatically empty form, because of Prop Value Variable
+            _this.formValues[input.id] = "";
         });
     };
     class_1.prototype.filterLetter = function (e) {
         var _this = this;
         e.preventDefault();
-        this.filterReset(e);
+        this.resetSearch(e);
         this.filteredResult = this.gardb;
         var letter = e.toElement.innerText.toLowerCase();
         this.filteredResult = this.filteredResult.filter(function (record) { return _this.filterByInitial(letter, record); });
@@ -256,8 +277,8 @@ var MyComponent = /** @class */ (function () {
         });
         return output;
     };
-    class_1.prototype.todoCompletedHandler = function (event) {
-        console.log('Received the custom recordSelected event: ', event.detail);
+    class_1.prototype.recordSelectedHandler = function (event) {
+        // console.log('Received the custom recordSelected event: ', event.detail);
         this.selectedRecord = event.detail;
     };
     class_1.prototype.return_errors = function () {
@@ -275,7 +296,7 @@ var MyComponent = /** @class */ (function () {
             return this.return_record();
         }
         else if (this.api) {
-            return (h(Host, { id: "top" }, h("div", { class: "gardener-search-wrapper" }, h("div", { class: "gardener-search-container" }, h("form", { id: "form", class: "gardener-search-filter" }, h("div", { class: "border p-3" }, h("h4", { class: "mb-3" }, "Datensatz finden"), h("div", { class: "row align-items-end" }, h("div", { class: "field-person form-group col-12 col-md-4 col-lg-3" }, h("label", { class: "col-form-label" }, "Person/Autor"), h("div", null, h("input", { class: "form-control", type: "text", id: "person" }))), h("div", { class: "field-year form-group col-12 col-md-4 col-lg-3" }, h("label", { class: "col-form-label" }, "Jahr"), h("div", null, h("input", { class: "form-control", type: "text", id: "year" }))), h("div", { class: "field-keyword form-group col-12 col-md-4 col-lg-3" }, h("label", { class: "col-form-label" }, "Stichwort"), h("div", null, h("input", { class: "form-control", type: "text", id: "keyword" }))), h("div", { class: "form-group submit col pt-3 pt-lg-0" }, h("button", { type: "submit", class: "btn btn-primary submit-all", onClick: function (e) { return _this.filterResults(e); } }, "Suchen")))), h("div", { class: "row mt-3" }, h("div", { class: "col-12 col-lg-9" }, h("div", { class: "border p-3 " }, h("h4", { class: "mb-3" }, "Nach Anfangsbuchstaben filtern"), h("ul", { class: "glossary d-flex flex-wrap justify-content-start" }, this.glossar()))), h("div", { class: "gardener-search-reset col pl-0" }, h("div", { class: "border p-3 h100" }, h("button", { type: "button", class: "btn btn-outline-dark btn-sm submit-selection", onClick: function (e) { return _this.filterReset(e); } }, "Zur\u00FCcksetzen"))))))), !this.loading
+            return (h(Host, { id: "top" }, h("div", { class: "gardener-search-wrapper" }, h("div", { class: "gardener-search-container" }, h("form", { id: "form", class: "gardener-search-filter" }, h("div", { class: "border p-3" }, h("h4", { class: "mb-3" }, "Datensatz finden"), h("div", { class: "row align-items-end" }, h("div", { class: "field-person form-group col-12 col-md-4 col-lg-3" }, h("label", { class: "col-form-label" }, "Person/Autor"), h("div", null, h("input", { value: this.formValues.person, class: "form-control", type: "text", id: "person" }))), h("div", { class: "field-year form-group col-12 col-md-4 col-lg-3" }, h("label", { class: "col-form-label" }, "Jahr"), h("div", null, h("input", { value: this.formValues.year, class: "form-control", type: "text", id: "year" }))), h("div", { class: "field-keyword form-group col-12 col-md-4 col-lg-3" }, h("label", { class: "col-form-label" }, "Stichwort"), h("div", null, h("input", { value: this.formValues.keyword, class: "form-control", type: "text", id: "keyword" }))), h("div", { class: "form-group submit col pt-3 pt-lg-0" }, h("button", { type: "submit", class: "btn btn-primary submit-all", onClick: function (e) { return _this.submitSearch(e); } }, "Suchen")))), h("div", { class: "row mt-3" }, h("div", { class: "col-12 col-lg-9" }, h("div", { class: "border p-3 " }, h("h4", { class: "mb-3" }, "Nach Anfangsbuchstaben filtern"), h("ul", { class: "glossary d-flex flex-wrap justify-content-start" }, this.glossar()))), h("div", { class: "gardener-search-reset col-12 col-lg-3 mt-3 mt-lg-0 pl-lg-0" }, h("div", { class: "border p-3 h100" }, h("button", { type: "button", class: "btn btn-outline-dark btn-sm submit-selection", onClick: function (e) { return _this.resetSearch(e); } }, "Zur\u00FCcksetzen"))))))), !this.loading
                 ? h("gardener-results", { results: this.filteredResult })
                 : h("loading-spinner", null)));
         }
@@ -309,7 +330,6 @@ var Spinner = /** @class */ (function () {
 var Pagination = /** @class */ (function () {
     function Pagination(hostRef) {
         registerInstance(this, hostRef);
-        this.currentPage = 1;
         this.pageSelected = createEvent(this, "pageSelected", 7);
     }
     Pagination.prototype.pageSelectedHandler = function (e, record) {
