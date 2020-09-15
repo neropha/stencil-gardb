@@ -36,43 +36,18 @@ export class MyComponent {
         }
     }
     filterByPerson(needle, haystack) {
-        if (haystack.Person && haystack.Person.length > 0) {
-            var person = haystack.Person.toLowerCase();
-            if (!person.includes(needle)) {
-                return false;
-            }
-        }
-        else {
-            return false;
-        }
-        console.log('filteredByPerson: ', person);
-        return true;
+        // Searches in Person and Autor
+        let indexedFields = [haystack.Person, haystack.Autor].join().toLowerCase();
+        return indexedFields.includes(needle);
     }
     filterByYear(needle, haystack) {
-        if (haystack.Jahr && haystack.Jahr.length > 0) {
-            var year = haystack.Jahr.toLowerCase();
-            if (!year.includes(needle)) {
-                return false;
-            }
-        }
-        else {
-            return false;
-        }
-        console.log('filteredByYear: ', year);
-        return true;
+        let indexedFields = haystack.Jahr;
+        return indexedFields.includes(needle);
     }
     filterByKeyword(needle, haystack) {
-        if (haystack.Inhalt && haystack.Inhalt.length > 0) {
-            var keyword = haystack.Inhalt.toLowerCase();
-            if (!keyword.includes(needle)) {
-                return false;
-            }
-        }
-        else {
-            return false;
-        }
-        console.log('filteredByKeyword: ', keyword);
-        return true;
+        // Searches in Inhalt | Dokumententyp | Zeitschrift | 
+        let indexedFields = [haystack.Inhalt, haystack.Dokumententyp, haystack.Zeitschrift].join().toLowerCase();
+        return indexedFields.includes(needle);
     }
     filterByInitial(needle, haystack) {
         if (haystack.Person && haystack.Person.length > 0) {
@@ -161,7 +136,7 @@ export class MyComponent {
                                 h("h4", { class: "mb-3" }, "Datensatz finden"),
                                 h("div", { class: "row align-items-end" },
                                     h("div", { class: "field-person form-group col-12 col-md-4 col-lg-3" },
-                                        h("label", { class: "col-form-label" }, "Person"),
+                                        h("label", { class: "col-form-label" }, "Person/Autor"),
                                         h("div", null,
                                             h("input", { class: "form-control", type: "text", id: "person" }))),
                                     h("div", { class: "field-year form-group col-12 col-md-4 col-lg-3" },
@@ -173,15 +148,15 @@ export class MyComponent {
                                         h("div", null,
                                             h("input", { class: "form-control", type: "text", id: "keyword" }))),
                                     h("div", { class: "form-group submit col pt-3 pt-lg-0" },
-                                        h("button", { type: "submit", class: "btn btn-outline-primary submit-all", onClick: (e) => this.filterResults(e) }, "Suchen")))),
+                                        h("button", { type: "submit", class: "btn btn-primary submit-all", onClick: (e) => this.filterResults(e) }, "Suchen")))),
                             h("div", { class: "row mt-3" },
                                 h("div", { class: "col-12 col-lg-9" },
                                     h("div", { class: "border p-3 " },
-                                        h("h4", { class: "mb-3" }, "Nach Namen filtern"),
+                                        h("h4", { class: "mb-3" }, "Nach Anfangsbuchstaben filtern"),
                                         h("ul", { class: "glossary d-flex flex-wrap justify-content-start" }, this.glossar()))),
                                 h("div", { class: "gardener-search-reset col pl-0" },
-                                    h("div", { class: "border p-3" },
-                                        h("button", { type: "button", class: "btn btn-primary btn-sm btn-outline-dark submit-selection", onClick: (e) => this.filterReset(e) }, "Zur\u00FCcksetzen"))))))),
+                                    h("div", { class: "border p-3 h100" },
+                                        h("button", { type: "button", class: "btn btn-outline-dark btn-sm submit-selection", onClick: (e) => this.filterReset(e) }, "Zur\u00FCcksetzen"))))))),
                 !this.loading
                     ? h("gardener-results", { results: this.filteredResult })
                     : h("loading-spinner", null)));

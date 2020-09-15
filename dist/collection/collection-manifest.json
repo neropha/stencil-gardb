@@ -1,10 +1,10 @@
 {
   "entries": [
-    "components/gardener-search/gardener-search.js",
-    "components/spinner/spinner.js",
     "components/detail/detail.js",
     "components/pagination/pagination.js",
-    "components/results/results.js"
+    "components/gardener-search/gardener-search.js",
+    "components/results/results.js",
+    "components/spinner/spinner.js"
   ],
   "compiler": {
     "name": "@stencil/core",

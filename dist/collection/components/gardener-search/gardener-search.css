@@ -54,26 +54,6 @@ gardener-search h4 {
 gardener-search p + h4 {
   margin-top: 1.5em;
 }
-gardener-search button {
-  margin: 10px 0 0;
-  white-space: nowrap;
-  -webkit-appearance: none;
-  padding-right: 25px;
-  padding-left: 25px;
-  display: block;
-  flex: 1;
-}
-gardener-search button + button {
-  margin-left: 10px;
-}
-@media (min-width: 480px) {
-  gardener-search button {
-    margin: 0;
-    display: inline-block;
-    min-width: 200px;
-    flex: none;
-  }
-}
 gardener-search .gardener-search-wrapper .gardener-search-content {
   overflow: auto;
 }
@@ -89,14 +69,11 @@ gardener-search .gardener-search-wrapper .gardener-search-options {
     align-items: center;
   }
 }
-gardener-search .h100 {
-  height: 100%;
-}
-gardener-search .glossary {
+gardener-search .gardener-search-wrapper .glossary {
   list-style: none;
   padding: 0;
 }
-gardener-search .glossary li {
+gardener-search .gardener-search-wrapper .glossary li {
   text-transform: uppercase;
   font-weight: bold;
   min-width: 25px;
@@ -105,36 +82,45 @@ gardener-search .glossary li {
   line-height: 20px;
   font-size: 18px;
 }
-gardener-search .glossary li a {
+gardener-search .gardener-search-wrapper .glossary li a {
   display: block;
   height: 100%;
   text-decoration: none;
   transition: 0.2s all cubic-bezier(0.075, 0.82, 0.165, 1);
 }
-gardener-search .glossary li a:hover {
+gardener-search .gardener-search-wrapper .glossary li a:hover {
   transform: scale(1.5);
 }
-gardener-search button {
-  text-transform: uppercase;
-  background-color: var(--gs-color-primary);
-  color: white;
+gardener-search .gardener-search-wrapper button {
+  -webkit-appearance: none;
+  -webkit-appearance: none;
+  display: block;
+  display: block;
+  flex: 1;
+  margin: 10px 0 0;
+  padding-left: 25px;
+  padding-right: 25px;
   text-align: center;
   text-decoration: none;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+gardener-search .gardener-search-wrapper button + button {
+  margin-left: 10px;
+}
+@media (min-width: 480px) {
+  gardener-search .gardener-search-wrapper button {
+    margin: 0;
+    display: inline-block;
+    min-width: 200px;
+    flex: none;
+  }
 }
 @media (min-width: 1024px) {
-  gardener-search button {
+  gardener-search .gardener-search-wrapper button {
     width: 100%;
   }
 }
-gardener-search button:focus {
-  outline: none;
-}
-gardener-search button.submit-selection {
-  background-color: transparent;
-}
-gardener-search button.submit-selection:focus {
-  box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 0 0.2rem rgba(0, 0, 0, 0.05);
-}
-gardener-search button.submit-all:focus {
-  box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 0 0.2rem var(--gs-button-primary-focus-color);
+gardener-search .h100 {
+  height: 100%;
 }

@@ -7,10 +7,12 @@ export class Detail {
         };
     }
     componentDidLoad() {
+        var top = document.querySelector('main').offsetTop;
+        window.scrollTo(0, top);
     }
     render() {
         if (this.record) {
-            return (h(Host, null,
+            return (h(Host, { id: "detail" },
                 h("button", { type: "button", class: "close btn-sm", "aria-label": "Close", onClick: (e) => this.closeDetail(e) },
                     "Zur\u00FCck ",
                     h("i", { class: "fa fa-times-circle fa-lg", "aria-hidden": "true" })),

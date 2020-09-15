@@ -11,6 +11,8 @@ export class Detail {
   @Prop() public record: any;
 
   componentDidLoad() {
+    var top = document.querySelector('main').offsetTop; 
+    window.scrollTo(0, top);  
   }
 
   @Event({
@@ -29,7 +31,7 @@ export class Detail {
   render() {
     if (this.record) {
       return (
-        <Host>
+        <Host id="detail">
           <button type="button" class="close btn-sm" aria-label="Close" onClick={(e) => this.closeDetail(e)}>Zurück <i class="fa fa-times-circle fa-lg" aria-hidden="true"></i></button>
           <h4 class="mb-3 mb-md-4">{this.record.Person}</h4>
           <table class="table border-bottom stacktable">

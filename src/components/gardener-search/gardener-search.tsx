@@ -52,40 +52,18 @@ export class MyComponent {
   }
 
   private filterByPerson(needle, haystack) {
-    if (haystack.Person && haystack.Person.length > 0) {
-      var person = haystack.Person.toLowerCase();
-      if (!person.includes(needle)) {
-        return false;
-      }
-    } else {
-      return false;
-    }
-    console.log('filteredByPerson: ', person)
-    return true;
+    // Searches in Person and Autor
+    let indexedFields = [haystack.Person, haystack.Autor].join().toLowerCase();
+    return indexedFields.includes(needle);
   }
   private filterByYear(needle, haystack) {
-    if (haystack.Jahr && haystack.Jahr.length > 0) {
-      var year = haystack.Jahr.toLowerCase();
-      if (!year.includes(needle)) {
-        return false;
-      }
-    } else {
-      return false;
-    }
-    console.log('filteredByYear: ', year)
-    return true;
+    let indexedFields = haystack.Jahr;
+    return indexedFields.includes(needle);
   }
   private filterByKeyword(needle, haystack) {
-    if (haystack.Inhalt && haystack.Inhalt.length > 0) {
-      var keyword = haystack.Inhalt.toLowerCase();
-      if (!keyword.includes(needle)) {
-        return false;
-      }
-    } else {
-      return false;
-    }
-    console.log('filteredByKeyword: ', keyword)
-    return true;
+    // Searches in Inhalt | Dokumententyp | Zeitschrift | 
+    let indexedFields = [haystack.Inhalt,haystack.Dokumententyp, haystack.Zeitschrift].join().toLowerCase();
+    return indexedFields.includes(needle);
   }
 
   private filterByInitial(needle, haystack) {
@@ -195,7 +173,7 @@ export class MyComponent {
                   <h4 class="mb-3">Datensatz finden</h4>
                   <div class="row align-items-end">
                     <div class="field-person form-group col-12 col-md-4 col-lg-3">
-                      <label class="col-form-label">Person</label>
+                      <label class="col-form-label">Person/Autor</label>
                       <div>
                         <input class="form-control" type="text" id="person" />
                       </div>
@@ -212,22 +190,22 @@ export class MyComponent {
                       </div>
                     </div>
                     <div class="form-group submit col pt-3 pt-lg-0">
-                      <button type="submit" class="btn btn-outline-primary submit-all" onClick={(e) => this.filterResults(e)}>Suchen</button>
+                      <button type="submit" class="btn btn-primary submit-all" onClick={(e) => this.filterResults(e)}>Suchen</button>
                     </div>
                   </div>
                 </div>
                 <div class="row mt-3">
                   <div class="col-12 col-lg-9">
                     <div class="border p-3 ">
-                      <h4 class="mb-3">Nach Namen filtern</h4>
+                      <h4 class="mb-3">Nach Anfangsbuchstaben filtern</h4>
                       <ul class="glossary d-flex flex-wrap justify-content-start">
                         {this.glossar()}
                       </ul>
                     </div>
                   </div>
                   <div class="gardener-search-reset col pl-0">
-                    <div class="border p-3">
-                      <button type="button" class="btn btn-primary btn-sm btn-outline-dark submit-selection" onClick={(e) => this.filterReset(e)}>Zurücksetzen</button>
+                    <div class="border p-3 h100">
+                      <button type="button" class="btn btn-outline-dark btn-sm submit-selection" onClick={(e) => this.filterReset(e)}>Zurücksetzen</button>
                     </div>
                   </div>
                 </div>
