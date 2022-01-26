@@ -13,7 +13,7 @@ export class Detail {
 
   @Listen("hashchange", { target: "window" })
   handleScroll(ev) {
-    console.log(window.location.hash, ev);
+    // console.log(window.location.hash, ev);
     if(window.location.hash == '#results') {
     this.closeDetail(ev);
     }

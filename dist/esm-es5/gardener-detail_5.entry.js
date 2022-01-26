@@ -56,7 +56,7 @@ var Detail = /** @class */ (function () {
         };
     }
     Detail.prototype.handleScroll = function (ev) {
-        console.log(window.location.hash, ev);
+        // console.log(window.location.hash, ev);
         if (window.location.hash == '#results') {
             this.closeDetail(ev);
         }
