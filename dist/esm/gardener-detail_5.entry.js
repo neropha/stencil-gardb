@@ -213,7 +213,6 @@ const MyComponent = class {
         e.preventDefault();
         this.resetSearch(e);
         this.filteredResult = this.gardb;
-        console.log(e);
         var letter = e.target.innerText.toLowerCase();
         this.filteredResult = this.filteredResult.filter(record => this.filterByInitial(letter, record));
     }

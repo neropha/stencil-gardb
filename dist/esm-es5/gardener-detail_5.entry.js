@@ -274,7 +274,6 @@ var MyComponent = /** @class */ (function () {
         e.preventDefault();
         this.resetSearch(e);
         this.filteredResult = this.gardb;
-        console.log(e);
         var letter = e.target.innerText.toLowerCase();
         this.filteredResult = this.filteredResult.filter(function (record) { return _this.filterByInitial(letter, record); });
     };
