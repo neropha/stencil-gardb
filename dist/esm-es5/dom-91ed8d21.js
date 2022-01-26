@@ -1,3 +1,6 @@
+/*
+ Stencil Client Patch v1.17.4 | MIT Licensed | https://stenciljs.com
+ */
 (function () {
     var aa = new Set("annotation-xml color-profile font-face font-face-src font-face-uri font-face-format font-face-name missing-glyph".split(" "));
     function g(a) { var b = aa.has(a); a = /^[a-z][.0-9_a-z]*-[\-.0-9_a-z]*$/.test(a); return !b && a; }
@@ -377,8 +380,7 @@
                 b.c[e](a);
         } return this.__CE_shadowRoot = a; });
         O && O.get ? a(Element.prototype, O) : W && W.get ? a(HTMLElement.prototype, W) : da(c, function (b) {
-            a(b, { enumerable: !0, configurable: !0, get: function () { return H.call(this, !0).innerHTML; },
-                set: function (a) { var b = "template" === this.localName, c = b ? this.content : this, e = G.call(document, this.namespaceURI, this.localName); for (e.innerHTML = a; 0 < c.childNodes.length;)
+            a(b, { enumerable: !0, configurable: !0, get: function () { return H.call(this, !0).innerHTML; }, set: function (a) { var b = "template" === this.localName, c = b ? this.content : this, e = G.call(document, this.namespaceURI, this.localName); for (e.innerHTML = a; 0 < c.childNodes.length;)
                     K.call(c, c.childNodes[0]); for (a = b ? e.content : e; 0 < a.childNodes.length;)
                     I.call(c, a.childNodes[0]); } });
         });
@@ -415,47 +417,13 @@
     }
 }).call(self);
 // Polyfill document.baseURI
-if (typeof document.baseURI !== 'string') {
-    Object.defineProperty(Document.prototype, 'baseURI', {
-        enumerable: true,
-        configurable: true,
-        get: function () {
-            var base = document.querySelector('base');
-            if (base && base.href) {
-                return base.href;
-            }
-            return document.URL;
-        }
-    });
-}
+"string" !== typeof document.baseURI && Object.defineProperty(Document.prototype, "baseURI", { enumerable: !0, configurable: !0, get: function () { var a = document.querySelector("base"); return a && a.href ? a.href : document.URL; } });
 // Polyfill CustomEvent
-if (typeof window.CustomEvent !== 'function') {
-    window.CustomEvent = function CustomEvent(event, params) {
-        params = params || { bubbles: false, cancelable: false, detail: undefined };
-        var evt = document.createEvent('CustomEvent');
-        evt.initCustomEvent(event, params.bubbles, params.cancelable, params.detail);
-        return evt;
-    };
-    window.CustomEvent.prototype = window.Event.prototype;
-}
+"function" !== typeof window.CustomEvent && (window.CustomEvent = function (c, a) { a = a || { bubbles: !1, cancelable: !1, detail: void 0 }; var b = document.createEvent("CustomEvent"); b.initCustomEvent(c, a.bubbles, a.cancelable, a.detail); return b; }, window.CustomEvent.prototype = window.Event.prototype);
 // Event.composedPath
-(function (E, d, w) {
-    if (!E.composedPath) {
-        E.composedPath = function () {
-            if (this.path) {
-                return this.path;
-            }
-            var target = this.target;
-            this.path = [];
-            while (target.parentNode !== null) {
-                this.path.push(target);
-                target = target.parentNode;
-            }
-            this.path.push(d, w);
-            return this.path;
-        };
-    }
-})(Event.prototype, document, window);
+(function (b, c, d) { b.composedPath || (b.composedPath = function () { if (this.path)
+    return this.path; var a = this.target; for (this.path = []; null !== a.parentNode;)
+    this.path.push(a), a = a.parentNode; this.path.push(c, d); return this.path; }); })(Event.prototype, document, window);
 /*!
 Element.closest and Element.matches
 https://github.com/jonathantneal/closest
@@ -474,18 +442,7 @@ Element.getRootNode()
 /*!
 Element.isConnected()
 */
-(function (prototype) {
-    if (!("isConnected" in prototype)) {
-        Object.defineProperty(prototype, 'isConnected', {
-            configurable: true,
-            enumerable: true,
-            get: function () {
-                var root = this.getRootNode({ composed: true });
-                return root && root.nodeType === 9;
-            }
-        });
-    }
-})(Element.prototype);
+(function (a) { "isConnected" in a || Object.defineProperty(a, "isConnected", { configurable: !0, enumerable: !0, get: function () { var a = this.getRootNode({ composed: !0 }); return a && 9 === a.nodeType; } }); })(Element.prototype);
 /*!
 Element.remove()
 */
@@ -499,22 +456,13 @@ Element.classList
 /*!
 DOMTokenList
 */
-(function (prototype) {
-    try {
-        document.body.classList.add();
-    }
-    catch (e) {
-        var originalAdd = prototype.add;
-        var originalRemove = prototype.remove;
-        prototype.add = function () {
-            for (var i = 0; i < arguments.length; i++) {
-                originalAdd.call(this, arguments[i]);
-            }
-        };
-        prototype.remove = function () {
-            for (var i = 0; i < arguments.length; i++) {
-                originalRemove.call(this, arguments[i]);
-            }
-        };
-    }
-}(DOMTokenList.prototype));
+(function (b) { try {
+    document.body.classList.add();
+}
+catch (e) {
+    var c = b.add, d = b.remove;
+    b.add = function () { for (var a = 0; a < arguments.length; a++)
+        c.call(this, arguments[a]); };
+    b.remove = function () { for (var a = 0; a < arguments.length; a++)
+        d.call(this, arguments[a]); };
+} })(DOMTokenList.prototype);

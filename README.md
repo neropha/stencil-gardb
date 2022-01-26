@@ -40,7 +40,7 @@ Zur Anpassung an bestehende Webseite können die Farben und Abstände mit CSS Va
   --gs-color-border: #999;
   --gs-color-disabled: #ccc;
   --gs-color-background: #fff;
-  
+
   --gs-border-radius: 5px;
   --gs-border-radius-small: 2px;
 
@@ -54,9 +54,9 @@ Zur Anpassung an bestehende Webseite können die Farben und Abstände mit CSS Va
 }
 ```
 
-## Implementierung 
+## Implementierung
 
-Copy `dist` folder to desired project
+Copy `dist` folder to desired project or checkout from Repo
 
 #### Load Script
 

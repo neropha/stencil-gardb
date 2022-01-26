@@ -1,284 +1,72 @@
-'use strict';
-
-function _interopNamespace(e) {
-  if (e && e.__esModule) { return e; } else {
-    var n = {};
-    if (e) {
-      Object.keys(e).forEach(function (k) {
-        var d = Object.getOwnPropertyDescriptor(e, k);
-        Object.defineProperty(n, k, d.get ? d : {
-          enumerable: true,
-          get: function () {
-            return e[k];
-          }
-        });
-      });
-    }
-    n['default'] = e;
-    return n;
-  }
-}
-
 const NAMESPACE = 'gardener-search';
 
+let isSvgMode = false;
 let queueCongestion = 0;
 let queuePending = false;
-let isSvgMode = false;
 const win = typeof window !== 'undefined' ? window : {};
+const CSS =  win.CSS ;
 const doc = win.document || { head: {} };
 const plt = {
     $flags$: 0,
     $resourcesUrl$: '',
-    jmp: (h) => h(),
-    raf: (h) => requestAnimationFrame(h),
+    jmp: h => h(),
+    raf: h => requestAnimationFrame(h),
     ael: (el, eventName, listener, opts) => el.addEventListener(eventName, listener, opts),
     rel: (el, eventName, listener, opts) => el.removeEventListener(eventName, listener, opts),
+    ce: (eventName, opts) => new CustomEvent(eventName, opts),
 };
+const promiseResolve = (v) => Promise.resolve(v);
 const supportsConstructibleStylesheets =  /*@__PURE__*/ (() => {
-    try {
-        new CSSStyleSheet();
-        return true;
-    }
-    catch (e) { }
-    return false;
-})() ;
-const hostRefs = new WeakMap();
-const getHostRef = (ref) => hostRefs.get(ref);
-const registerInstance = (lazyInstance, hostRef) => hostRefs.set(hostRef.$lazyInstance$ = lazyInstance, hostRef);
-const registerHost = (elm) => {
-    const hostRef = {
-        $flags$: 0,
-        $hostElement$: elm,
-        $instanceValues$: new Map()
-    };
-    {
-        hostRef.$onReadyPromise$ = new Promise(r => hostRef.$onReadyResolve$ = r);
-        elm['s-p'] = [];
-        elm['s-rc'] = [];
-    }
-    return hostRefs.set(elm, hostRef);
-};
-const isMemberInElement = (elm, memberName) => memberName in elm;
-const consoleError = (e) => console.error(e);
-const moduleCache = /*@__PURE__*/ new Map();
-const loadModule = (cmpMeta, hostRef, hmrVersionId) => {
-    // loadModuleImport
-    const exportName = cmpMeta.$tagName$.replace(/-/g, '_');
-    const bundleId = ( cmpMeta.$lazyBundleIds$);
-    const module =  moduleCache.get(bundleId) ;
-    if (module) {
-        return module[exportName];
-    }
-    return new Promise(function (resolve) { resolve(_interopNamespace(require(
-    /* webpackInclude: /\.entry\.js$/ */
-    /* webpackExclude: /\.system\.entry\.js$/ */
-    /* webpackMode: "lazy" */
-    `./${bundleId}.entry.js${ ''}`))); }).then(importedModule => {
-        {
-            moduleCache.set(bundleId, importedModule);
-        }
-        return importedModule[exportName];
-    }, consoleError);
-};
-const styles = new Map();
-const queueDomReads = [];
-const queueDomWrites = [];
-const queueDomWritesLow = [];
-const queueTask = (queue, write) => (cb) => {
-    queue.push(cb);
-    if (!queuePending) {
-        queuePending = true;
-        if (write && plt.$flags$ & 4 /* queueSync */) {
-            nextTick(flush);
-        }
-        else {
-            plt.raf(flush);
-        }
-    }
-};
-const consume = (queue) => {
-    for (let i = 0; i < queue.length; i++) {
         try {
-            queue[i](performance.now());
+            new CSSStyleSheet();
+            return true;
         }
-        catch (e) {
-            consoleError(e);
-        }
-    }
-    queue.length = 0;
-};
-const consumeTimeout = (queue, timeout) => {
-    let i = 0;
-    let ts = 0;
-    while (i < queue.length && (ts = performance.now()) < timeout) {
-        try {
-            queue[i++](ts);
-        }
-        catch (e) {
-            consoleError(e);
-        }
-    }
-    if (i === queue.length) {
-        queue.length = 0;
-    }
-    else if (i !== 0) {
-        queue.splice(0, i);
-    }
-};
-const flush = () => {
-    queueCongestion++;
-    // always force a bunch of medium callbacks to run, but still have
-    // a throttle on how many can run in a certain time
-    // DOM READS!!!
-    consume(queueDomReads);
-    const timeout = (plt.$flags$ & 6 /* queueMask */) === 2 /* appLoaded */
-        ? performance.now() + (10 * Math.ceil(queueCongestion * (1.0 / 22.0)))
-        : Infinity;
-    // DOM WRITES!!!
-    consumeTimeout(queueDomWrites, timeout);
-    consumeTimeout(queueDomWritesLow, timeout);
-    if (queueDomWrites.length > 0) {
-        queueDomWritesLow.push(...queueDomWrites);
-        queueDomWrites.length = 0;
-    }
-    if (queuePending = ((queueDomReads.length + queueDomWrites.length + queueDomWritesLow.length) > 0)) {
-        // still more to do yet, but we've run out of time
-        // let's let this thing cool off and try again in the next tick
-        plt.raf(flush);
-    }
-    else {
-        queueCongestion = 0;
-    }
-};
-const nextTick = /*@__PURE__*/ (cb) => Promise.resolve().then(cb);
-const writeTask = /*@__PURE__*/ queueTask(queueDomWrites, true);
-/**
- * Default style mode id
- */
-/**
- * Reusable empty obj/array
- * Don't add values to these!!
- */
-const EMPTY_OBJ = {};
-const isComplexType = (o) => {
-    // https://jsperf.com/typeof-fn-object/5
-    o = typeof o;
-    return o === 'object' || o === 'function';
-};
-const getDynamicImportFunction = (namespace) => {
-    return `__sc_import_${namespace.replace(/\s|-/g, '_')}`;
-};
-const patchEsm = () => {
-    // @ts-ignore
-    if ( !(win.CSS && win.CSS.supports && win.CSS.supports('color', 'var(--c)'))) {
-        // @ts-ignore
-        return new Promise(function (resolve) { resolve(require('./css-shim-6aaf713d-bfe06088.js')); }).then(() => {
-            plt.$cssShim$ = win.__stencil_cssshim;
-            if (plt.$cssShim$) {
-                return plt.$cssShim$.initShim();
-            }
+        catch (e) { }
+        return false;
+    })()
+    ;
+const addHostEventListeners = (elm, hostRef, listeners, attachParentListeners) => {
+    if ( listeners) {
+        listeners.map(([flags, name, method]) => {
+            const target =  getHostListenerTarget(elm, flags) ;
+            const handler = hostListenerProxy(hostRef, method);
+            const opts = hostListenerOpts(flags);
+            plt.ael(target, name, handler, opts);
+            (hostRef.$rmListeners$ = hostRef.$rmListeners$ || []).push(() => plt.rel(target, name, handler, opts));
         });
     }
-    return Promise.resolve();
 };
-const patchBrowser = () => {
+const hostListenerProxy = (hostRef, methodName) => (ev) => {
     {
-        // shim css vars
-        plt.$cssShim$ = win.__stencil_cssshim;
-    }
-    // @ts-ignore
-    const scriptElm = Array.from(doc.querySelectorAll('script')).find(s => (new RegExp(`\/${NAMESPACE}(\\.esm)?\\.js($|\\?|#)`).test(s.src) ||
-        s.getAttribute('data-stencil-namespace') === NAMESPACE));
-    const opts = scriptElm['data-opts'] || {};
-    const importMeta = (typeof document === 'undefined' ? new (require('u' + 'rl').URL)('file:' + __filename).href : (document.currentScript && document.currentScript.src || new URL('core-013e6d42.js', document.baseURI).href));
-    if ('onbeforeload' in scriptElm && !history.scrollRestoration /* IS_ESM_BUILD */) {
-        // Safari < v11 support: This IF is true if it's Safari below v11.
-        // This fn cannot use async/await since Safari didn't support it until v11,
-        // however, Safari 10 did support modules. Safari 10 also didn't support "nomodule",
-        // so both the ESM file and nomodule file would get downloaded. Only Safari
-        // has 'onbeforeload' in the script, and "history.scrollRestoration" was added
-        // to Safari in v11. Return a noop then() so the async/await ESM code doesn't continue.
-        // IS_ESM_BUILD is replaced at build time so this check doesn't happen in systemjs builds.
-        return { then() { } };
-    }
-    if (importMeta !== '') {
-        opts.resourcesUrl = new URL('.', importMeta).href;
-    }
-    else {
-        opts.resourcesUrl = new URL('.', new URL(scriptElm.getAttribute('data-resources-url') || scriptElm.src, win.location.href)).href;
-        patchDynamicImport(opts.resourcesUrl, scriptElm);
-        if (!window.customElements) {
-            // module support, but no custom elements support (Old Edge)
-            // @ts-ignore
-            return new Promise(function (resolve) { resolve(require('./dom-76cc7c7d-769a0dda.js')); }).then(() => opts);
+        if (hostRef.$flags$ & 256 /* isListenReady */) {
+            // instance is ready, let's call it's member method for this event
+            hostRef.$lazyInstance$[methodName](ev);
+        }
+        else {
+            (hostRef.$queuedListeners$ = hostRef.$queuedListeners$ || []).push([methodName, ev]);
         }
     }
-    return Promise.resolve(opts);
 };
-const patchDynamicImport = (base, orgScriptElm) => {
-    const importFunctionName = getDynamicImportFunction(NAMESPACE);
-    try {
-        // test if this browser supports dynamic imports
-        // There is a caching issue in V8, that breaks using import() in Function
-        // By generating a random string, we can workaround it
-        // Check https://bugs.chromium.org/p/v8/issues/detail?id=9558 for more info
-        win[importFunctionName] = new Function('w', `return import(w);//${Math.random()}`);
-    }
-    catch (e) {
-        // this shim is specifically for browsers that do support "esm" imports
-        // however, they do NOT support "dynamic" imports
-        // basically this code is for old Edge, v18 and below
-        const moduleMap = new Map();
-        win[importFunctionName] = (src) => {
-            const url = new URL(src, base).href;
-            let mod = moduleMap.get(url);
-            if (!mod) {
-                const script = doc.createElement('script');
-                script.type = 'module';
-                script.crossOrigin = orgScriptElm.crossOrigin;
-                script.src = URL.createObjectURL(new Blob([`import * as m from '${url}'; window.${importFunctionName}.m = m;`], { type: 'application/javascript' }));
-                mod = new Promise(resolve => {
-                    script.onload = () => {
-                        resolve(win[importFunctionName].m);
-                        script.remove();
-                    };
-                });
-                moduleMap.set(url, mod);
-                doc.head.appendChild(script);
-            }
-            return mod;
-        };
-    }
+const getHostListenerTarget = (elm, flags) => {
+    if ( flags & 8 /* TargetWindow */)
+        return win;
+    return elm;
 };
-const parsePropertyValue = (propValue, propType) => {
-    // ensure this value is of the correct prop type
-    if (propValue != null && !isComplexType(propValue)) {
-        if ( propType & 2 /* Number */) {
-            // force it to be a number
-            return parseFloat(propValue);
-        }
-        if ( propType & 1 /* String */) {
-            // could have been passed as a number or boolean
-            // but we still want it as a string
-            return String(propValue);
-        }
-        // redundant return here for better minification
-        return propValue;
-    }
-    // not sure exactly what type we want
-    // so no need to change to a different type
-    return propValue;
-};
-const HYDRATED_CLASS = 'hydrated';
-const HYDRATED_STYLE_ID = 'sty-id';
+// prettier-ignore
+const hostListenerOpts = (flags) =>  (flags & 2 /* Capture */) !== 0;
+const HYDRATED_CSS = '{visibility:hidden}.hydrated{visibility:inherit}';
 const createTime = (fnName, tagName = '') => {
     {
-        return () => { return; };
+        return () => {
+            return;
+        };
     }
 };
 const uniqueTime = (key, measureText) => {
     {
-        return () => { return; };
+        return () => {
+            return;
+        };
     }
 };
 const rootAppliedStyles = new WeakMap();
@@ -294,18 +82,18 @@ const registerStyle = (scopeId, cssText, allowCS) => {
     styles.set(scopeId, style);
 };
 const addStyle = (styleContainerNode, cmpMeta, mode, hostElm) => {
-    let scopeId =  getScopeId(cmpMeta.$tagName$);
+    let scopeId = getScopeId(cmpMeta);
     let style = styles.get(scopeId);
     // if an element is NOT connected then getRootNode() will return the wrong root node
     // so the fallback is to always use the document for the root node in those cases
-    styleContainerNode = (styleContainerNode.nodeType === 11 /* DocumentFragment */ ? styleContainerNode : doc);
+    styleContainerNode = styleContainerNode.nodeType === 11 /* DocumentFragment */ ? styleContainerNode : doc;
     if (style) {
         if (typeof style === 'string') {
             styleContainerNode = styleContainerNode.head || styleContainerNode;
             let appliedStyles = rootAppliedStyles.get(styleContainerNode);
             let styleElm;
             if (!appliedStyles) {
-                rootAppliedStyles.set(styleContainerNode, appliedStyles = new Set());
+                rootAppliedStyles.set(styleContainerNode, (appliedStyles = new Set()));
             }
             if (!appliedStyles.has(scopeId)) {
                 {
@@ -337,12 +125,40 @@ const addStyle = (styleContainerNode, cmpMeta, mode, hostElm) => {
     }
     return scopeId;
 };
-const attachStyles = (elm, cmpMeta, mode) => {
+const attachStyles = (hostRef) => {
+    const cmpMeta = hostRef.$cmpMeta$;
+    const elm = hostRef.$hostElement$;
     const endAttachStyles = createTime('attachStyles', cmpMeta.$tagName$);
-    const scopeId = addStyle( elm.getRootNode(), cmpMeta, mode, elm);
+    const scopeId = addStyle( elm.getRootNode(), cmpMeta, hostRef.$modeName$, elm);
     endAttachStyles();
 };
-const getScopeId = (tagName, mode) => 'sc-' + ( tagName);
+const getScopeId = (cmp, mode) => 'sc-' + ( cmp.$tagName$);
+/**
+ * Default style mode id
+ */
+/**
+ * Reusable empty obj/array
+ * Don't add values to these!!
+ */
+const EMPTY_OBJ = {};
+const noop = () => {
+    /* noop*/
+};
+const isComplexType = (o) => {
+    // https://jsperf.com/typeof-fn-object/5
+    o = typeof o;
+    return o === 'object' || o === 'function';
+};
+const IS_DENO_ENV = typeof Deno !== 'undefined';
+const IS_NODE_ENV = !IS_DENO_ENV &&
+    typeof global !== 'undefined' &&
+    typeof require === 'function' &&
+    !!global.process &&
+    typeof __filename === 'string' &&
+    (!global.origin || typeof global.origin !== 'string');
+const IS_DENO_WINDOWS_ENV = IS_DENO_ENV && Deno.build.os === 'windows';
+const getCurrentDirectory = IS_NODE_ENV ? process.cwd : IS_DENO_ENV ? Deno.cwd : () => '/';
+const exit = IS_NODE_ENV ? process.exit : IS_DENO_ENV ? Deno.exit : noop;
 /**
  * Production h() function based on Preact by
  * Jason Miller (@developit)
@@ -366,7 +182,7 @@ const h = (nodeName, vnodeData, ...children) => {
                 walk(child);
             }
             else if (child != null && typeof child !== 'boolean') {
-                if (simple = typeof nodeName !== 'function' && !isComplexType(child)) {
+                if ((simple = typeof nodeName !== 'function' && !isComplexType(child))) {
                     child = String(child);
                 }
                 if (simple && lastSimple) {
@@ -386,11 +202,12 @@ const h = (nodeName, vnodeData, ...children) => {
         {
             const classData = vnodeData.className || vnodeData.class;
             if (classData) {
-                vnodeData.class = typeof classData !== 'object'
-                    ? classData
-                    : Object.keys(classData)
-                        .filter(k => classData[k])
-                        .join(' ');
+                vnodeData.class =
+                    typeof classData !== 'object'
+                        ? classData
+                        : Object.keys(classData)
+                            .filter(k => classData[k])
+                            .join(' ');
             }
         }
     }
@@ -407,7 +224,7 @@ const newVNode = (tag, text) => {
         $tag$: tag,
         $text$: text,
         $elm$: null,
-        $children$: null
+        $children$: null,
     };
     {
         vnode.$attrs$ = null;
@@ -425,97 +242,98 @@ const isHost = (node) => node && node.$tag$ === Host;
  * Modified for Stencil's compiler and vdom
  */
 const setAccessor = (elm, memberName, oldValue, newValue, isSvg, flags) => {
-    if (oldValue === newValue) {
-        return;
-    }
-    let isProp = isMemberInElement(elm, memberName);
-    let ln = memberName.toLowerCase();
-    if ( memberName === 'class') {
-        const classList = elm.classList;
-        const oldClasses = parseClassList(oldValue);
-        const newClasses = parseClassList(newValue);
-        classList.remove(...oldClasses.filter(c => c && !newClasses.includes(c)));
-        classList.add(...newClasses.filter(c => c && !oldClasses.includes(c)));
-    }
-    else if ( !isProp && memberName[0] === 'o' && memberName[1] === 'n') {
-        // Event Handlers
-        // so if the member name starts with "on" and the 3rd characters is
-        // a capital letter, and it's not already a member on the element,
-        // then we're assuming it's an event listener
-        if (memberName[2] === '-') {
-            // on- prefixed events
-            // allows to be explicit about the dom event to listen without any magic
-            // under the hood:
-            // <my-cmp on-click> // listens for "click"
-            // <my-cmp on-Click> // listens for "Click"
-            // <my-cmp on-ionChange> // listens for "ionChange"
-            // <my-cmp on-EVENTS> // listens for "EVENTS"
-            memberName = memberName.slice(3);
+    if (oldValue !== newValue) {
+        let isProp = isMemberInElement(elm, memberName);
+        let ln = memberName.toLowerCase();
+        if ( memberName === 'class') {
+            const classList = elm.classList;
+            const oldClasses = parseClassList(oldValue);
+            const newClasses = parseClassList(newValue);
+            classList.remove(...oldClasses.filter(c => c && !newClasses.includes(c)));
+            classList.add(...newClasses.filter(c => c && !oldClasses.includes(c)));
         }
-        else if (isMemberInElement(win, ln)) {
-            // standard event
-            // the JSX attribute could have been "onMouseOver" and the
-            // member name "onmouseover" is on the window's prototype
-            // so let's add the listener "mouseover", which is all lowercased
-            memberName = ln.slice(2);
+        else if ( ( !isProp ) && memberName[0] === 'o' && memberName[1] === 'n') {
+            // Event Handlers
+            // so if the member name starts with "on" and the 3rd characters is
+            // a capital letter, and it's not already a member on the element,
+            // then we're assuming it's an event listener
+            if (memberName[2] === '-') {
+                // on- prefixed events
+                // allows to be explicit about the dom event to listen without any magic
+                // under the hood:
+                // <my-cmp on-click> // listens for "click"
+                // <my-cmp on-Click> // listens for "Click"
+                // <my-cmp on-ionChange> // listens for "ionChange"
+                // <my-cmp on-EVENTS> // listens for "EVENTS"
+                memberName = memberName.slice(3);
+            }
+            else if (isMemberInElement(win, ln)) {
+                // standard event
+                // the JSX attribute could have been "onMouseOver" and the
+                // member name "onmouseover" is on the window's prototype
+                // so let's add the listener "mouseover", which is all lowercased
+                memberName = ln.slice(2);
+            }
+            else {
+                // custom event
+                // the JSX attribute could have been "onMyCustomEvent"
+                // so let's trim off the "on" prefix and lowercase the first character
+                // and add the listener "myCustomEvent"
+                // except for the first character, we keep the event name case
+                memberName = ln[2] + memberName.slice(3);
+            }
+            if (oldValue) {
+                plt.rel(elm, memberName, oldValue, false);
+            }
+            if (newValue) {
+                plt.ael(elm, memberName, newValue, false);
+            }
         }
         else {
-            // custom event
-            // the JSX attribute could have been "onMyCustomEvent"
-            // so let's trim off the "on" prefix and lowercase the first character
-            // and add the listener "myCustomEvent"
-            // except for the first character, we keep the event name case
-            memberName = ln[2] + memberName.slice(3);
-        }
-        if (oldValue) {
-            plt.rel(elm, memberName, oldValue, false);
-        }
-        if (newValue) {
-            plt.ael(elm, memberName, newValue, false);
-        }
-    }
-    else {
-        // Set property if it exists and it's not a SVG
-        const isComplex = isComplexType(newValue);
-        if ((isProp || (isComplex && newValue !== null)) && !isSvg) {
-            try {
-                if (!elm.tagName.includes('-')) {
-                    let n = newValue == null ? '' : newValue;
-                    // Workaround for Safari, moving the <input> caret when re-assigning the same valued
-                    if (memberName === 'list') {
-                        isProp = false;
-                        // tslint:disable-next-line: triple-equals
+            // Set property if it exists and it's not a SVG
+            const isComplex = isComplexType(newValue);
+            if ((isProp || (isComplex && newValue !== null)) && !isSvg) {
+                try {
+                    if (!elm.tagName.includes('-')) {
+                        let n = newValue == null ? '' : newValue;
+                        // Workaround for Safari, moving the <input> caret when re-assigning the same valued
+                        if (memberName === 'list') {
+                            isProp = false;
+                            // tslint:disable-next-line: triple-equals
+                        }
+                        else if (oldValue == null || elm[memberName] != n) {
+                            elm[memberName] = n;
+                        }
                     }
-                    else if (oldValue == null || elm[memberName] != n) {
-                        elm[memberName] = n;
+                    else {
+                        elm[memberName] = newValue;
                     }
                 }
-                else {
-                    elm[memberName] = newValue;
+                catch (e) { }
+            }
+            if (newValue == null || newValue === false) {
+                if (newValue !== false || elm.getAttribute(memberName) === '') {
+                    {
+                        elm.removeAttribute(memberName);
+                    }
                 }
             }
-            catch (e) { }
-        }
-        if (newValue == null || newValue === false) {
-            {
-                elm.removeAttribute(memberName);
-            }
-        }
-        else if ((!isProp || (flags & 4 /* isHost */) || isSvg) && !isComplex) {
-            newValue = newValue === true ? '' : newValue;
-            {
-                elm.setAttribute(memberName, newValue);
+            else if ((!isProp || flags & 4 /* isHost */ || isSvg) && !isComplex) {
+                newValue = newValue === true ? '' : newValue;
+                {
+                    elm.setAttribute(memberName, newValue);
+                }
             }
         }
     }
 };
 const parseClassListRegex = /\s/;
-const parseClassList = (value) => (!value) ? [] : value.split(parseClassListRegex);
+const parseClassList = (value) => (!value ? [] : value.split(parseClassListRegex));
 const updateElement = (oldVnode, newVnode, isSvgMode, memberName) => {
     // if the element passed in is a shadow root, which is a document fragment
     // then we want to be adding attrs/props to the shadow root's "host" element
     // if it's not a shadow root, then we add attrs/props to the same element
-    const elm = (newVnode.$elm$.nodeType === 11 /* DocumentFragment */ && newVnode.$elm$.host) ? newVnode.$elm$.host : newVnode.$elm$;
+    const elm = newVnode.$elm$.nodeType === 11 /* DocumentFragment */ && newVnode.$elm$.host ? newVnode.$elm$.host : newVnode.$elm$;
     const oldVnodeAttrs = (oldVnode && oldVnode.$attrs$) || EMPTY_OBJ;
     const newVnodeAttrs = newVnode.$attrs$ || EMPTY_OBJ;
     {
@@ -577,7 +395,7 @@ const addVnodes = (parentElm, before, parentVNode, vnodes, startIdx, endIdx) => 
 };
 const removeVnodes = (vnodes, startIdx, endIdx, vnode, elm) => {
     for (; startIdx <= endIdx; ++startIdx) {
-        if (vnode = vnodes[startIdx]) {
+        if ((vnode = vnodes[startIdx])) {
             elm = vnode.$elm$;
             // remove the vnode's element from the dom
             elm.remove();
@@ -644,7 +462,7 @@ const updateChildren = (parentElm, oldCh, newVNode, newCh) => {
         }
     }
     if (oldStartIdx > oldEndIdx) {
-        addVnodes(parentElm, (newCh[newEndIdx + 1] == null ? null : newCh[newEndIdx + 1].$elm$), newVNode, newCh, newStartIdx, newEndIdx);
+        addVnodes(parentElm, newCh[newEndIdx + 1] == null ? null : newCh[newEndIdx + 1].$elm$, newVNode, newCh, newStartIdx, newEndIdx);
     }
     else if ( newStartIdx > newEndIdx) {
         removeVnodes(oldCh, oldStartIdx, oldEndIdx);
@@ -659,7 +477,7 @@ const isSameVnode = (vnode1, vnode2) => {
     return false;
 };
 const patch = (oldVNode, newVNode) => {
-    const elm = newVNode.$elm$ = oldVNode.$elm$;
+    const elm = (newVNode.$elm$ = oldVNode.$elm$);
     const oldChildren = oldVNode.$children$;
     const newChildren = newVNode.$children$;
     const text = newVNode.$text$;
@@ -697,11 +515,10 @@ const patch = (oldVNode, newVNode) => {
         elm.data = text;
     }
 };
-const renderVdom = (hostElm, hostRef, cmpMeta, renderFnResults) => {
+const renderVdom = (hostRef, renderFnResults) => {
+    const hostElm = hostRef.$hostElement$;
     const oldVNode = hostRef.$vnode$ || newVNode(null, null);
-    const rootVnode = isHost(renderFnResults)
-        ? renderFnResults
-        : h(null, null, renderFnResults);
+    const rootVnode = isHost(renderFnResults) ? renderFnResults : h(null, null, renderFnResults);
     rootVnode.$tag$ = null;
     rootVnode.$flags$ |= 4 /* isHost */;
     hostRef.$vnode$ = rootVnode;
@@ -709,12 +526,31 @@ const renderVdom = (hostElm, hostRef, cmpMeta, renderFnResults) => {
     // synchronous patch
     patch(oldVNode, rootVnode);
 };
+const getElement = (ref) => ( getHostRef(ref).$hostElement$ );
+const createEvent = (ref, name, flags) => {
+    const elm = getElement(ref);
+    return {
+        emit: (detail) => {
+            return emitEvent(elm, name, {
+                bubbles: !!(flags & 4 /* Bubbles */),
+                composed: !!(flags & 2 /* Composed */),
+                cancelable: !!(flags & 1 /* Cancellable */),
+                detail,
+            });
+        },
+    };
+};
+const emitEvent = (elm, name, opts) => {
+    const ev = plt.ce(name, opts);
+    elm.dispatchEvent(ev);
+    return ev;
+};
 const attachToAncestor = (hostRef, ancestorComponent) => {
-    if ( ancestorComponent && !hostRef.$onRenderResolve$) {
-        ancestorComponent['s-p'].push(new Promise(r => hostRef.$onRenderResolve$ = r));
+    if ( ancestorComponent && !hostRef.$onRenderResolve$ && ancestorComponent['s-p']) {
+        ancestorComponent['s-p'].push(new Promise(r => (hostRef.$onRenderResolve$ = r)));
     }
 };
-const scheduleUpdate = (elm, hostRef, cmpMeta, isInitialLoad) => {
+const scheduleUpdate = (hostRef, isInitialLoad) => {
     {
         hostRef.$flags$ |= 16 /* isQueuedForUpdate */;
     }
@@ -722,17 +558,22 @@ const scheduleUpdate = (elm, hostRef, cmpMeta, isInitialLoad) => {
         hostRef.$flags$ |= 512 /* needsRerender */;
         return;
     }
-    const endSchedule = createTime('scheduleUpdate', cmpMeta.$tagName$);
-    const ancestorComponent = hostRef.$ancestorComponent$;
+    attachToAncestor(hostRef, hostRef.$ancestorComponent$);
+    // there is no ancestorc omponent or the ancestor component
+    // has already fired off its lifecycle update then
+    // fire off the initial update
+    const dispatch = () => dispatchHooks(hostRef, isInitialLoad);
+    return  writeTask(dispatch) ;
+};
+const dispatchHooks = (hostRef, isInitialLoad) => {
+    const endSchedule = createTime('scheduleUpdate', hostRef.$cmpMeta$.$tagName$);
     const instance =  hostRef.$lazyInstance$ ;
-    const update = () => updateComponent(elm, hostRef, cmpMeta, instance, isInitialLoad);
-    attachToAncestor(hostRef, ancestorComponent);
     let promise;
     if (isInitialLoad) {
         {
             hostRef.$flags$ |= 256 /* isListenReady */;
             if (hostRef.$queuedListeners$) {
-                hostRef.$queuedListeners$.forEach(([methodName, event]) => safeCall(instance, methodName, event));
+                hostRef.$queuedListeners$.map(([methodName, event]) => safeCall(instance, methodName, event));
                 hostRef.$queuedListeners$ = null;
             }
         }
@@ -744,50 +585,41 @@ const scheduleUpdate = (elm, hostRef, cmpMeta, isInitialLoad) => {
         promise = then(promise, () => safeCall(instance, 'componentWillRender'));
     }
     endSchedule();
-    // there is no ancestorc omponent or the ancestor component
-    // has already fired off its lifecycle update then
-    // fire off the initial update
-    return then(promise,  () => writeTask(update)
-        );
+    return then(promise, () => updateComponent(hostRef, instance, isInitialLoad));
 };
-const updateComponent = (elm, hostRef, cmpMeta, instance, isInitialLoad) => {
+const updateComponent = (hostRef, instance, isInitialLoad) => {
     // updateComponent
-    const endUpdate = createTime('update', cmpMeta.$tagName$);
+    const elm = hostRef.$hostElement$;
+    const endUpdate = createTime('update', hostRef.$cmpMeta$.$tagName$);
     const rc = elm['s-rc'];
     if ( isInitialLoad) {
         // DOM WRITE!
-        attachStyles(elm, cmpMeta, hostRef.$modeName$);
+        attachStyles(hostRef);
     }
-    const endRender = createTime('render', cmpMeta.$tagName$);
+    const endRender = createTime('render', hostRef.$cmpMeta$.$tagName$);
     {
         {
             // looks like we've got child nodes to render into this host element
             // or we need to update the css class/attrs on the host element
             // DOM WRITE!
-            renderVdom(elm, hostRef, cmpMeta, callRender(instance));
+            renderVdom(hostRef, callRender(hostRef, instance));
         }
     }
     if ( plt.$cssShim$) {
         plt.$cssShim$.updateHost(elm);
     }
-    {
-        hostRef.$flags$ &= ~16 /* isQueuedForUpdate */;
-    }
-    {
-        hostRef.$flags$ |= 2 /* hasRendered */;
-    }
     if ( rc) {
         // ok, so turns out there are some child host elements
         // waiting on this parent element to load
         // let's fire off all update callbacks waiting
-        rc.forEach(cb => cb());
+        rc.map(cb => cb());
         elm['s-rc'] = undefined;
     }
     endRender();
     endUpdate();
     {
         const childrenPromises = elm['s-p'];
-        const postUpdate = () => postUpdateComponent(elm, hostRef, cmpMeta);
+        const postUpdate = () => postUpdateComponent(hostRef);
         if (childrenPromises.length === 0) {
             postUpdate();
         }
@@ -798,25 +630,32 @@ const updateComponent = (elm, hostRef, cmpMeta, instance, isInitialLoad) => {
         }
     }
 };
-const callRender = (instance, elm) => {
+const callRender = (hostRef, instance) => {
     try {
         instance =  instance.render() ;
+        {
+            hostRef.$flags$ &= ~16 /* isQueuedForUpdate */;
+        }
+        {
+            hostRef.$flags$ |= 2 /* hasRendered */;
+        }
     }
     catch (e) {
         consoleError(e);
     }
     return instance;
 };
-const postUpdateComponent = (elm, hostRef, cmpMeta) => {
-    const endPostUpdate = createTime('postUpdate', cmpMeta.$tagName$);
+const postUpdateComponent = (hostRef) => {
+    const tagName = hostRef.$cmpMeta$.$tagName$;
+    const elm = hostRef.$hostElement$;
+    const endPostUpdate = createTime('postUpdate', tagName);
     const instance =  hostRef.$lazyInstance$ ;
     const ancestorComponent = hostRef.$ancestorComponent$;
     if (!(hostRef.$flags$ & 64 /* hasLoadedComponent */)) {
         hostRef.$flags$ |= 64 /* hasLoadedComponent */;
         {
             // DOM WRITE!
-            // add the css class that this element has officially hydrated
-            elm.classList.add(HYDRATED_CLASS);
+            addHydratedFlag(elm);
         }
         {
             safeCall(instance, 'componentDidLoad');
@@ -840,7 +679,7 @@ const postUpdateComponent = (elm, hostRef, cmpMeta) => {
             hostRef.$onRenderResolve$ = undefined;
         }
         if (hostRef.$flags$ & 512 /* needsRerender */) {
-            nextTick(() => scheduleUpdate(elm, hostRef, cmpMeta, false));
+            nextTick(() => scheduleUpdate(hostRef, false));
         }
         hostRef.$flags$ &= ~(4 /* isWaitingForChildren */ | 512 /* needsRerender */);
     }
@@ -848,12 +687,12 @@ const postUpdateComponent = (elm, hostRef, cmpMeta) => {
     // ( •_•)>⌐■-■
     // (⌐■_■)
 };
-const forceUpdate = (elm, cmpMeta) => {
+const forceUpdate = (ref) => {
     {
-        const hostRef = getHostRef(elm);
+        const hostRef = getHostRef(ref);
         const isConnected = hostRef.$hostElement$.isConnected;
         if (isConnected && (hostRef.$flags$ & (2 /* hasRendered */ | 16 /* isQueuedForUpdate */)) === 2 /* hasRendered */) {
-            scheduleUpdate(elm, hostRef, cmpMeta, false);
+            scheduleUpdate(hostRef, false);
         }
         // Returns "true" when the forced update was successfully scheduled
         return isConnected;
@@ -863,11 +702,12 @@ const appDidLoad = (who) => {
     // on appload
     // we have finish the first big initial render
     {
-        doc.documentElement.classList.add(HYDRATED_CLASS);
+        addHydratedFlag(doc.documentElement);
     }
     {
         plt.$flags$ |= 2 /* appLoaded */;
     }
+    nextTick(() => emitEvent(win, 'appload', { detail: { namespace: NAMESPACE } }));
 };
 const safeCall = (instance, method, arg) => {
     if (instance && instance[method]) {
@@ -883,16 +723,35 @@ const safeCall = (instance, method, arg) => {
 const then = (promise, thenFn) => {
     return promise && promise.then ? promise.then(thenFn) : thenFn();
 };
+const addHydratedFlag = (elm) => ( elm.classList.add('hydrated') );
+const parsePropertyValue = (propValue, propType) => {
+    // ensure this value is of the correct prop type
+    if (propValue != null && !isComplexType(propValue)) {
+        if ( propType & 2 /* Number */) {
+            // force it to be a number
+            return parseFloat(propValue);
+        }
+        if ( propType & 1 /* String */) {
+            // could have been passed as a number or boolean
+            // but we still want it as a string
+            return String(propValue);
+        }
+        // redundant return here for better minification
+        return propValue;
+    }
+    // not sure exactly what type we want
+    // so no need to change to a different type
+    return propValue;
+};
 const getValue = (ref, propName) => getHostRef(ref).$instanceValues$.get(propName);
 const setValue = (ref, propName, newVal, cmpMeta) => {
     // check our new property value against our internal value
     const hostRef = getHostRef(ref);
-    const elm =  hostRef.$hostElement$ ;
     const oldVal = hostRef.$instanceValues$.get(propName);
     const flags = hostRef.$flags$;
     const instance =  hostRef.$lazyInstance$ ;
     newVal = parsePropertyValue(newVal, cmpMeta.$members$[propName][0]);
-    if (newVal !== oldVal && ( !(flags & 8 /* isConstructingInstance */) || oldVal === undefined)) {
+    if (( !(flags & 8 /* isConstructingInstance */) || oldVal === undefined) && newVal !== oldVal) {
         // gadzooks! the property's value has changed!!
         // set our new value!
         hostRef.$instanceValues$.set(propName, newVal);
@@ -902,7 +761,7 @@ const setValue = (ref, propName, newVal, cmpMeta) => {
                 const watchMethods = cmpMeta.$watchers$[propName];
                 if (watchMethods) {
                     // this instance is watching for when this property changed
-                    watchMethods.forEach(watchMethodName => {
+                    watchMethods.map(watchMethodName => {
                         try {
                             // fire off each of the watch methods that are watching this property
                             instance[watchMethodName](newVal, oldVal, propName);
@@ -918,7 +777,7 @@ const setValue = (ref, propName, newVal, cmpMeta) => {
                 // but only if we've already rendered, otherwise just chill out
                 // queue that we need to do an update, but don't worry about queuing
                 // up millions cuz this function ensures it only runs once
-                scheduleUpdate(elm, hostRef, cmpMeta, false);
+                scheduleUpdate(hostRef, false);
             }
         }
     }
@@ -931,10 +790,8 @@ const proxyComponent = (Cstr, cmpMeta, flags) => {
         // It's better to have a const than two Object.entries()
         const members = Object.entries(cmpMeta.$members$);
         const prototype = Cstr.prototype;
-        members.forEach(([memberName, [memberFlags]]) => {
-            if ( ((memberFlags & 31 /* Prop */) ||
-                (( flags & 2 /* proxyState */) &&
-                    (memberFlags & 32 /* State */)))) {
+        members.map(([memberName, [memberFlags]]) => {
+            if ( (memberFlags & 31 /* Prop */ || (( flags & 2 /* proxyState */) && memberFlags & 32 /* State */))) {
                 // proxyComponent - prop
                 Object.defineProperty(prototype, memberName, {
                     get() {
@@ -946,7 +803,7 @@ const proxyComponent = (Cstr, cmpMeta, flags) => {
                         setValue(this, memberName, newValue, cmpMeta);
                     },
                     configurable: true,
-                    enumerable: true
+                    enumerable: true,
                 });
             }
         });
@@ -955,9 +812,7 @@ const proxyComponent = (Cstr, cmpMeta, flags) => {
             prototype.attributeChangedCallback = function (attrName, _oldValue, newValue) {
                 plt.jmp(() => {
                     const propName = attrNameToPropName.get(attrName);
-                    this[propName] = newValue === null && typeof this[propName] === 'boolean'
-                        ? false
-                        : newValue;
+                    this[propName] = newValue === null && typeof this[propName] === 'boolean' ? false : newValue;
                 });
             };
             // create an array of attributes to observe
@@ -973,37 +828,12 @@ const proxyComponent = (Cstr, cmpMeta, flags) => {
     }
     return Cstr;
 };
-const addEventListeners = (elm, hostRef, listeners) => {
-    hostRef.$queuedListeners$ = hostRef.$queuedListeners$ || [];
-    const removeFns = listeners.map(([flags, name, method]) => {
-        const target = ( elm);
-        const handler = hostListenerProxy(hostRef, method);
-        const opts = hostListenerOpts(flags);
-        plt.ael(target, name, handler, opts);
-        return () => plt.rel(target, name, handler, opts);
-    });
-    return () => removeFns.forEach(fn => fn());
-};
-const hostListenerProxy = (hostRef, methodName) => {
-    return (ev) => {
-        {
-            if (hostRef.$flags$ & 256 /* isListenReady */) {
-                // instance is ready, let's call it's member method for this event
-                hostRef.$lazyInstance$[methodName](ev);
-            }
-            else {
-                hostRef.$queuedListeners$.push([methodName, ev]);
-            }
-        }
-    };
-};
-const hostListenerOpts = (flags) =>  (flags & 2 /* Capture */) !== 0;
 const initializeComponent = async (elm, hostRef, cmpMeta, hmrVersionId, Cstr) => {
     // initializeComponent
     if ( (hostRef.$flags$ & 32 /* hasInitializedComponent */) === 0) {
-        // we haven't initialized this element yet
-        hostRef.$flags$ |= 32 /* hasInitializedComponent */;
         {
+            // we haven't initialized this element yet
+            hostRef.$flags$ |= 32 /* hasInitializedComponent */;
             // lazy loaded components
             // request the component's implementation to be
             // wired up with the host element
@@ -1049,18 +879,20 @@ const initializeComponent = async (elm, hostRef, cmpMeta, hmrVersionId, Cstr) =>
             }
             endNewInstance();
         }
-        const scopeId =  getScopeId(cmpMeta.$tagName$);
-        if ( !styles.has(scopeId) && Cstr.style) {
-            const endRegisterStyles = createTime('registerStyles', cmpMeta.$tagName$);
+        if ( Cstr.style) {
             // this component has styles but we haven't registered them yet
             let style = Cstr.style;
-            registerStyle(scopeId, style, !!(cmpMeta.$flags$ & 1 /* shadowDomEncapsulation */));
-            endRegisterStyles();
+            const scopeId = getScopeId(cmpMeta);
+            if (!styles.has(scopeId)) {
+                const endRegisterStyles = createTime('registerStyles', cmpMeta.$tagName$);
+                registerStyle(scopeId, style, !!(cmpMeta.$flags$ & 1 /* shadowDomEncapsulation */));
+                endRegisterStyles();
+            }
         }
     }
     // we've successfully created a lazy instance
     const ancestorComponent = hostRef.$ancestorComponent$;
-    const schedule = () => scheduleUpdate(elm, hostRef, cmpMeta, true);
+    const schedule = () => scheduleUpdate(hostRef, true);
     if ( ancestorComponent && ancestorComponent['s-rc']) {
         // this is the intial load and this component it has an ancestor component
         // but the ancestor component has NOT fired its will update lifecycle yet
@@ -1074,17 +906,11 @@ const initializeComponent = async (elm, hostRef, cmpMeta, hmrVersionId, Cstr) =>
         schedule();
     }
 };
-const connectedCallback = (elm, cmpMeta) => {
+const connectedCallback = (elm) => {
     if ((plt.$flags$ & 1 /* isTmpDisconnected */) === 0) {
-        const endConnected = createTime('connectedCallback', cmpMeta.$tagName$);
-        // connectedCallback
         const hostRef = getHostRef(elm);
-        if ( cmpMeta.$listeners$) {
-            // initialize our event listeners on the host element
-            // we do this now so that we can listening to events that may
-            // have fired even before the instance is ready
-            hostRef.$rmListeners$ = addEventListeners(elm, hostRef, cmpMeta.$listeners$);
-        }
+        const cmpMeta = hostRef.$cmpMeta$;
+        const endConnected = createTime('connectedCallback', cmpMeta.$tagName$);
         if (!(hostRef.$flags$ & 1 /* hasConnected */)) {
             // first time this component has connected
             hostRef.$flags$ |= 1 /* hasConnected */;
@@ -1092,11 +918,11 @@ const connectedCallback = (elm, cmpMeta) => {
                 // find the first ancestor component (if there is one) and register
                 // this component as one of the actively loading child components for its ancestor
                 let ancestorComponent = elm;
-                while ((ancestorComponent = (ancestorComponent.parentNode || ancestorComponent.host))) {
+                while ((ancestorComponent = ancestorComponent.parentNode || ancestorComponent.host)) {
                     // climb up the ancestors looking for the first
                     // component that hasn't finished its lifecycle update yet
                     if (
-                        (ancestorComponent['s-p'])) {
+                        ancestorComponent['s-p']) {
                         // we found this components first ancestor component
                         // keep a reference to this component's ancestor component
                         attachToAncestor(hostRef, (hostRef.$ancestorComponent$ = ancestorComponent));
@@ -1107,7 +933,7 @@ const connectedCallback = (elm, cmpMeta) => {
             // Lazy properties
             // https://developers.google.com/web/fundamentals/web-components/best-practices#lazy-properties
             if ( cmpMeta.$members$) {
-                Object.entries(cmpMeta.$members$).forEach(([memberName, [memberFlags]]) => {
+                Object.entries(cmpMeta.$members$).map(([memberName, [memberFlags]]) => {
                     if (memberFlags & 31 /* Prop */ && elm.hasOwnProperty(memberName)) {
                         const value = elm[memberName];
                         delete elm[memberName];
@@ -1123,6 +949,12 @@ const connectedCallback = (elm, cmpMeta) => {
                 nextTick(() => initializeComponent(elm, hostRef, cmpMeta));
             }
         }
+        else {
+            // not the first time this has connected
+            // reattach any event listeners to the host
+            // since they would have been removed when disconnected
+            addHostEventListeners(elm, hostRef, cmpMeta.$listeners$);
+        }
         endConnected();
     }
 };
@@ -1131,7 +963,7 @@ const disconnectedCallback = (elm) => {
         const hostRef = getHostRef(elm);
         {
             if (hostRef.$rmListeners$) {
-                hostRef.$rmListeners$();
+                hostRef.$rmListeners$.map(rmListener => rmListener());
                 hostRef.$rmListeners$ = undefined;
             }
         }
@@ -1145,20 +977,21 @@ const bootstrapLazy = (lazyBundles, options = {}) => {
     const endBootstrap = createTime();
     const cmpTags = [];
     const exclude = options.exclude || [];
-    const head = doc.head;
     const customElements = win.customElements;
-    const y = /*@__PURE__*/ head.querySelector('meta[charset]');
+    const head = doc.head;
+    const metaCharset = /*@__PURE__*/ head.querySelector('meta[charset]');
     const visibilityStyle = /*@__PURE__*/ doc.createElement('style');
     const deferredConnectedCallbacks = [];
-    const styles = doc.querySelectorAll(`[${HYDRATED_STYLE_ID}]`);
     let appLoadFallback;
     let isBootstrapping = true;
     Object.assign(plt, options);
     plt.$resourcesUrl$ = new URL(options.resourcesUrl || './', doc.baseURI).href;
-    if (options.syncQueue) {
-        plt.$flags$ |= 4 /* queueSync */;
+    {
+        if (options.syncQueue) {
+            plt.$flags$ |= 4 /* queueSync */;
+        }
     }
-    lazyBundles.forEach(lazyBundle => lazyBundle[1].forEach(compactMeta => {
+    lazyBundles.map(lazyBundle => lazyBundle[1].map(compactMeta => {
         const cmpMeta = {
             $flags$: compactMeta[0],
             $tagName$: compactMeta[1],
@@ -1174,14 +1007,14 @@ const bootstrapLazy = (lazyBundles, options = {}) => {
         {
             cmpMeta.$watchers$ = {};
         }
-        const tagName = cmpMeta.$tagName$;
+        const tagName =  cmpMeta.$tagName$;
         const HostElement = class extends HTMLElement {
             // StencilLazyHost
             constructor(self) {
                 // @ts-ignore
                 super(self);
                 self = this;
-                registerHost(self);
+                registerHost(self, cmpMeta);
             }
             connectedCallback() {
                 if (appLoadFallback) {
@@ -1193,62 +1026,156 @@ const bootstrapLazy = (lazyBundles, options = {}) => {
                     deferredConnectedCallbacks.push(this);
                 }
                 else {
-                    plt.jmp(() => connectedCallback(this, cmpMeta));
+                    plt.jmp(() => connectedCallback(this));
                 }
             }
             disconnectedCallback() {
                 plt.jmp(() => disconnectedCallback(this));
             }
             forceUpdate() {
-                forceUpdate(this, cmpMeta);
+                forceUpdate(this);
             }
             componentOnReady() {
                 return getHostRef(this).$onReadyPromise$;
             }
         };
-        cmpMeta.$lazyBundleIds$ = lazyBundle[0];
+        cmpMeta.$lazyBundleId$ = lazyBundle[0];
         if (!exclude.includes(tagName) && !customElements.get(tagName)) {
             cmpTags.push(tagName);
             customElements.define(tagName, proxyComponent(HostElement, cmpMeta, 1 /* isElementConstructor */));
         }
     }));
-    // visibilityStyle.innerHTML = cmpTags.map(t => `${t}:not(.hydrated)`) + '{display:none}';
-    visibilityStyle.innerHTML = cmpTags + '{visibility:hidden}.hydrated{visibility:inherit}';
-    visibilityStyle.setAttribute('data-styles', '');
-    head.insertBefore(visibilityStyle, y ? y.nextSibling : head.firstChild);
+    {
+        visibilityStyle.innerHTML = cmpTags + HYDRATED_CSS;
+        visibilityStyle.setAttribute('data-styles', '');
+        head.insertBefore(visibilityStyle, metaCharset ? metaCharset.nextSibling : head.firstChild);
+    }
     // Process deferred connectedCallbacks now all components have been registered
     isBootstrapping = false;
-    if (deferredConnectedCallbacks.length > 0) {
-        deferredConnectedCallbacks.forEach(host => host.connectedCallback());
+    if (deferredConnectedCallbacks.length) {
+        deferredConnectedCallbacks.map(host => host.connectedCallback());
     }
     else {
-        plt.jmp(() => appLoadFallback = setTimeout(appDidLoad, 30, 'timeout'));
+        {
+            plt.jmp(() => (appLoadFallback = setTimeout(appDidLoad, 30)));
+        }
     }
     // Fallback appLoad event
     endBootstrap();
 };
-const createEvent = (ref, name, flags) => {
-    const elm = getElement(ref);
-    return {
-        emit: (detail) => {
-            const ev = new ( CustomEvent)(name, {
-                bubbles: !!(flags & 4 /* Bubbles */),
-                composed: !!(flags & 2 /* Composed */),
-                cancelable: !!(flags & 1 /* Cancellable */),
-                detail
-            });
-            elm.dispatchEvent(ev);
-            return ev;
-        }
+const hostRefs = new WeakMap();
+const getHostRef = (ref) => hostRefs.get(ref);
+const registerInstance = (lazyInstance, hostRef) => hostRefs.set((hostRef.$lazyInstance$ = lazyInstance), hostRef);
+const registerHost = (elm, cmpMeta) => {
+    const hostRef = {
+        $flags$: 0,
+        $hostElement$: elm,
+        $cmpMeta$: cmpMeta,
+        $instanceValues$: new Map(),
     };
+    {
+        hostRef.$onReadyPromise$ = new Promise(r => (hostRef.$onReadyResolve$ = r));
+        elm['s-p'] = [];
+        elm['s-rc'] = [];
+    }
+    addHostEventListeners(elm, hostRef, cmpMeta.$listeners$);
+    return hostRefs.set(elm, hostRef);
 };
-const getElement = (ref) =>  getHostRef(ref).$hostElement$ ;
+const isMemberInElement = (elm, memberName) => memberName in elm;
+const consoleError = (e) => console.error(e);
+const cmpModules = /*@__PURE__*/ new Map();
+const loadModule = (cmpMeta, hostRef, hmrVersionId) => {
+    // loadModuleImport
+    const exportName = cmpMeta.$tagName$.replace(/-/g, '_');
+    const bundleId = cmpMeta.$lazyBundleId$;
+    const module =  cmpModules.get(bundleId) ;
+    if (module) {
+        return module[exportName];
+    }
+    return import(
+    /* webpackInclude: /\.entry\.js$/ */
+    /* webpackExclude: /\.system\.entry\.js$/ */
+    /* webpackMode: "lazy" */
+    `./${bundleId}.entry.js${ ''}`).then(importedModule => {
+        {
+            cmpModules.set(bundleId, importedModule);
+        }
+        return importedModule[exportName];
+    }, consoleError);
+};
+const styles = new Map();
+const queueDomReads = [];
+const queueDomWrites = [];
+const queueDomWritesLow = [];
+const queueTask = (queue, write) => (cb) => {
+    queue.push(cb);
+    if (!queuePending) {
+        queuePending = true;
+        if (write && plt.$flags$ & 4 /* queueSync */) {
+            nextTick(flush);
+        }
+        else {
+            plt.raf(flush);
+        }
+    }
+};
+const consume = (queue) => {
+    for (let i = 0; i < queue.length; i++) {
+        try {
+            queue[i](performance.now());
+        }
+        catch (e) {
+            consoleError(e);
+        }
+    }
+    queue.length = 0;
+};
+const consumeTimeout = (queue, timeout) => {
+    let i = 0;
+    let ts = 0;
+    while (i < queue.length && (ts = performance.now()) < timeout) {
+        try {
+            queue[i++](ts);
+        }
+        catch (e) {
+            consoleError(e);
+        }
+    }
+    if (i === queue.length) {
+        queue.length = 0;
+    }
+    else if (i !== 0) {
+        queue.splice(0, i);
+    }
+};
+const flush = () => {
+    {
+        queueCongestion++;
+    }
+    // always force a bunch of medium callbacks to run, but still have
+    // a throttle on how many can run in a certain time
+    // DOM READS!!!
+    consume(queueDomReads);
+    // DOM WRITES!!!
+    {
+        const timeout = (plt.$flags$ & 6 /* queueMask */) === 2 /* appLoaded */ ? performance.now() + 14 * Math.ceil(queueCongestion * (1.0 / 10.0)) : Infinity;
+        consumeTimeout(queueDomWrites, timeout);
+        consumeTimeout(queueDomWritesLow, timeout);
+        if (queueDomWrites.length > 0) {
+            queueDomWritesLow.push(...queueDomWrites);
+            queueDomWrites.length = 0;
+        }
+        if ((queuePending = queueDomReads.length + queueDomWrites.length + queueDomWritesLow.length > 0)) {
+            // still more to do yet, but we've run out of time
+            // let's let this thing cool off and try again in the next tick
+            plt.raf(flush);
+        }
+        else {
+            queueCongestion = 0;
+        }
+    }
+};
+const nextTick = /*@__PURE__*/ (cb) => promiseResolve().then(cb);
+const writeTask = /*@__PURE__*/ queueTask(queueDomWrites, true);
 
-exports.Host = Host;
-exports.bootstrapLazy = bootstrapLazy;
-exports.createEvent = createEvent;
-exports.getElement = getElement;
-exports.h = h;
-exports.patchBrowser = patchBrowser;
-exports.patchEsm = patchEsm;
-exports.registerInstance = registerInstance;
+export { CSS as C, Host as H, NAMESPACE as N, promiseResolve as a, bootstrapLazy as b, createEvent as c, doc as d, getElement as g, h, plt as p, registerInstance as r, win as w };

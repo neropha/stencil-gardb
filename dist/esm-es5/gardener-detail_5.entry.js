@@ -34,23 +34,35 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
-import { r as registerInstance, c as createEvent, h, H as Host, g as getElement } from './core-6bb5faa5.js';
+import { r as registerInstance, c as createEvent, h, H as Host, g as getElement } from './index-1ede1968.js';
+var detailCss = ":root{--gs-container-max-width:1280px;--gs-container-padding:50px;--gs-color-bg:#efefef;--gs-color-primary:#71BC51;--gs-color-secondary:#2196F3;--gs-color-text:#333;--gs-color-border:#999;--gs-color-disabled:#ccc;--gs-color-background:#fff;--gs-border-radius:5px;--gs-border-radius-small:2px;--gs-font-size-base:15px;--gs-button-primary:var(--gs-color-primary);--gs-button-primary-focus-color:#c1d6b7;--gs-button-primary-border:var(--gs-color-primary);--gs-button-light:#FFF}gardener-detail{display:block}gardener-detail .close{font-size:inherit}gardener-detail table{table-layout:auto}gardener-detail table .label{width:12em;text-transform:capitalize}";
 var Detail = /** @class */ (function () {
     function Detail(hostRef) {
         registerInstance(this, hostRef);
+        this.recordSelected = createEvent(this, "recordSelected", 7);
         this.cleanRecord = [];
-        this.hideColumns = ['location', 'reserve01', 'reserve02', 'sourcefile', 'created', 'updated'];
+        this.hideColumns = [
+            "location",
+            "reserve01",
+            "reserve02",
+            "sourcefile",
+            "created",
+            "updated",
+        ];
         this.closeDetail = function (e) {
             e.preventDefault();
             this.recordSelected.emit(null);
-            window.location.hash = 'results';
+            window.location.hash = "results";
         };
-        this.recordSelected = createEvent(this, "recordSelected", 7);
     }
-    Detail.prototype.componentDidLoad = function () {
+    Detail.prototype.handleScroll = function (ev) {
+        console.log(window.location.hash, ev);
+        if (window.location.hash == '#results') {
+            this.closeDetail(ev);
+        }
+    };
+    Detail.prototype.componentWillLoad = function () {
         var _a;
-        var top = document.querySelector('main').offsetTop;
-        window.scrollTo(0, top);
         for (var _i = 0, _b = Object.entries(this.record); _i < _b.length; _i++) {
             var _c = _b[_i], key = _c[0], value = _c[1];
             // console.log(`${key}: ${value}`);
@@ -58,27 +70,28 @@ var Detail = /** @class */ (function () {
                 this.cleanRecord = Object.assign(Object.assign({}, this.cleanRecord), (_a = {}, _a[key] = value, _a));
             }
         }
-        console.log(this.cleanRecord);
+        // console.log(this.cleanRecord);
+    };
+    Detail.prototype.componentDidLoad = function () {
+        var top = document.querySelector("main").offsetTop;
+        window.scrollTo(0, top);
     };
     Detail.prototype.render = function () {
         var _this = this;
         if (this.cleanRecord) {
-            return (h(Host, { id: 'id' + this.record.ID }, h("button", { type: "button", class: "close btn-sm", "aria-label": "Close", onClick: function (e) { return _this.closeDetail(e); } }, "Zur\u00FCck ", h("i", { class: "fa fa-times-circle fa-lg", "aria-hidden": "true" })), h("h4", { class: "mb-3 mb-md-4" }, this.record.Person), h("table", { class: "table border-bottom stacktable" }, Object.keys(this.cleanRecord).map(function (key) { return (h("tr", null, h("td", { class: "label" }, h("strong", null, key)), h("td", null, _this.cleanRecord[key]))); }))));
+            return (h(Host, { id: "id" + this.record.ID }, h("button", { type: "button", class: "close btn-sm", "aria-label": "Close", onClick: function (e) { return _this.closeDetail(e); } }, "Zur\u00FCck ", h("i", { class: "fa fa-times-circle fa-lg", "aria-hidden": "true" })), h("h4", { class: "mb-3 mb-md-4" }, this.record.Person), h("table", { class: "table border-bottom stacktable" }, Object.keys(this.cleanRecord).map(function (key) { return (h("tr", null, h("td", { class: "label" }, h("strong", null, key)), h("td", null, _this.cleanRecord[key]))); }))));
         }
     };
-    Object.defineProperty(Detail, "style", {
-        get: function () { return ":root{--gs-container-max-width:1280px;--gs-container-padding:50px;--gs-color-bg:#efefef;--gs-color-primary:#71bc51;--gs-color-secondary:#2196f3;--gs-color-text:#333;--gs-color-border:#999;--gs-color-disabled:#ccc;--gs-color-background:#fff;--gs-border-radius:5px;--gs-border-radius-small:2px;--gs-font-size-base:15px;--gs-button-primary:var(--gs-color-primary);--gs-button-primary-focus-color:#c1d6b7;--gs-button-primary-border:var(--gs-color-primary);--gs-button-light:#fff}gardener-detail{display:block}gardener-detail .close{font-size:inherit}gardener-detail table{table-layout:auto}gardener-detail table .label{width:12em;text-transform:capitalize}"; },
-        enumerable: true,
-        configurable: true
-    });
     return Detail;
 }());
+Detail.style = detailCss;
+var resultsCss = ":root{--gs-container-max-width:1280px;--gs-container-padding:50px;--gs-color-bg:#efefef;--gs-color-primary:#71BC51;--gs-color-secondary:#2196F3;--gs-color-text:#333;--gs-color-border:#999;--gs-color-disabled:#ccc;--gs-color-background:#fff;--gs-border-radius:5px;--gs-border-radius-small:2px;--gs-font-size-base:15px;--gs-button-primary:var(--gs-color-primary);--gs-button-primary-focus-color:#c1d6b7;--gs-button-primary-border:var(--gs-color-primary);--gs-button-light:#FFF}gardener-results{display:block;overflow:hidden}gardener-results #results{width:100%;overflow:hidden}gardener-results table{table-layout:auto;width:100%}gardener-results table .person{width:20em}gardener-results table .id{width:4em;overflow:hidden;white-space:nowrap}gardener-results table .year{width:4em;overflow:hidden;white-space:nowrap}gardener-results table .details{width:1em;overflow:hidden;white-space:nowrap}gardener-results table .author{min-width:12em}gardener-results table a.link{padding:0.25em;display:block;display:-ms-flexbox;display:flex;-ms-flex-pack:center;justify-content:center;-ms-flex-align:center;align-items:center;text-decoration:none}gardener-results table td{overflow:hidden}";
 var Results = /** @class */ (function () {
     function Results(hostRef) {
         registerInstance(this, hostRef);
+        this.recordSelected = createEvent(this, "recordSelected", 7);
         this.currentPage = 1;
         this.itemsPerPage = 50;
-        this.recordSelected = createEvent(this, "recordSelected", 7);
     }
     Results.prototype.componentWillRender = function () {
         this.total = this.results.length;
@@ -132,16 +145,13 @@ var Results = /** @class */ (function () {
                 "results": ["watchHandler"]
             };
         },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(Results, "style", {
-        get: function () { return ":root{--gs-container-max-width:1280px;--gs-container-padding:50px;--gs-color-bg:#efefef;--gs-color-primary:#71bc51;--gs-color-secondary:#2196f3;--gs-color-text:#333;--gs-color-border:#999;--gs-color-disabled:#ccc;--gs-color-background:#fff;--gs-border-radius:5px;--gs-border-radius-small:2px;--gs-font-size-base:15px;--gs-button-primary:var(--gs-color-primary);--gs-button-primary-focus-color:#c1d6b7;--gs-button-primary-border:var(--gs-color-primary);--gs-button-light:#fff}gardener-results{display:block;overflow:hidden}gardener-results #results{width:100%;overflow:hidden}gardener-results table{table-layout:auto;width:100%}gardener-results table .person{width:20em}gardener-results table .id,gardener-results table .year{width:4em;overflow:hidden;white-space:nowrap}gardener-results table .details{width:1em;overflow:hidden;white-space:nowrap}gardener-results table .author{min-width:12em}gardener-results table a.link{padding:.25em;display:block;display:-ms-flexbox;display:flex;-ms-flex-pack:center;justify-content:center;-ms-flex-align:center;align-items:center;text-decoration:none}gardener-results table td{overflow:hidden}"; },
-        enumerable: true,
+        enumerable: false,
         configurable: true
     });
     return Results;
 }());
+Results.style = resultsCss;
+var gardenerSearchCss = ":root{--gs-container-max-width:1280px;--gs-container-padding:50px;--gs-color-bg:#efefef;--gs-color-primary:#71BC51;--gs-color-secondary:#2196F3;--gs-color-text:#333;--gs-color-border:#999;--gs-color-disabled:#ccc;--gs-color-background:#fff;--gs-border-radius:5px;--gs-border-radius-small:2px;--gs-font-size-base:15px;--gs-button-primary:var(--gs-color-primary);--gs-button-primary-focus-color:#c1d6b7;--gs-button-primary-border:var(--gs-color-primary);--gs-button-light:#FFF}gardener-search{font-weight:400;font-family:inherit;font-size:var(--gs-font-size-base);-webkit-font-smoothing:antialiased;display:block;background:var(--gs-color-bg);color:var(--gs-color-text);line-height:1.4;padding:15px;max-height:100%}@media (min-width: 768px){gardener-search{padding:25px}}gardener-search *{-webkit-box-sizing:border-box;box-sizing:border-box}gardener-search *:before,gardener-search *:after{-webkit-box-sizing:border-box;box-sizing:border-box}gardener-search p{margin:0 0 1em 0}gardener-search h2,gardener-search h3,gardener-search h4{margin-top:0;text-transform:uppercase;font-family:inherit}gardener-search p+h4{margin-top:1.5em}gardener-search .gardener-search-wrapper .gardener-search-content{overflow:auto}gardener-search .gardener-search-wrapper .gardener-search-options{padding:0;margin:0;background:0 none}@media (min-width: 1024px){gardener-search .gardener-search-wrapper .gardener-search-options{display:-ms-flexbox;display:flex;-ms-flex-pack:justify;justify-content:space-between;-ms-flex-align:center;align-items:center}}gardener-search .gardener-search-wrapper .glossary{list-style:none;padding:0}gardener-search .gardener-search-wrapper .glossary li{text-transform:uppercase;font-weight:bold;min-width:25px;min-height:25px;text-align:center;line-height:20px;font-size:18px}gardener-search .gardener-search-wrapper .glossary li a{display:block;height:100%;text-decoration:none;-webkit-transition:0.2s all cubic-bezier(0.075, 0.82, 0.165, 1);transition:0.2s all cubic-bezier(0.075, 0.82, 0.165, 1)}gardener-search .gardener-search-wrapper .glossary li a:hover{-webkit-transform:scale(1.5);transform:scale(1.5)}gardener-search .gardener-search-wrapper button{-webkit-appearance:none;-webkit-appearance:none;display:block;display:block;-ms-flex:1;flex:1;margin:10px 0 0;padding-left:25px;padding-right:25px;text-align:center;text-decoration:none;text-transform:uppercase;white-space:nowrap}gardener-search .gardener-search-wrapper button+button{margin-left:10px}@media (min-width: 480px){gardener-search .gardener-search-wrapper button{margin:0;display:inline-block;min-width:200px;-ms-flex:none;flex:none}}@media (min-width: 1024px){gardener-search .gardener-search-wrapper button{width:100%}}gardener-search .h100{height:100%}";
 var MyComponent = /** @class */ (function () {
     function class_1(hostRef) {
         registerInstance(this, hostRef);
@@ -210,7 +220,7 @@ var MyComponent = /** @class */ (function () {
         return indexedFields.includes(needle);
     };
     class_1.prototype.filterByKeyword = function (needle, haystack) {
-        // Searches in Inhalt | Dokumententyp | Zeitschrift | 
+        // Searches in Inhalt | Dokumententyp | Zeitschrift |
         var indexedFields = [haystack.Inhalt, haystack.Dokumententyp, haystack.Zeitschrift].join().toLowerCase();
         return indexedFields.includes(needle);
     };
@@ -264,7 +274,8 @@ var MyComponent = /** @class */ (function () {
         e.preventDefault();
         this.resetSearch(e);
         this.filteredResult = this.gardb;
-        var letter = e.toElement.innerText.toLowerCase();
+        console.log(e);
+        var letter = e.target.innerText.toLowerCase();
         this.filteredResult = this.filteredResult.filter(function (record) { return _this.filterByInitial(letter, record); });
     };
     class_1.prototype.glossar = function () {
@@ -296,23 +307,20 @@ var MyComponent = /** @class */ (function () {
             return this.return_record();
         }
         else if (this.api) {
-            return (h(Host, { id: "top" }, h("div", { class: "gardener-search-wrapper" }, h("div", { class: "gardener-search-container" }, h("form", { id: "form", class: "gardener-search-filter" }, h("div", { class: "border p-3" }, h("h4", { class: "mb-3" }, "Datensatz finden"), h("div", { class: "row align-items-end" }, h("div", { class: "field-person form-group col-12 col-md-4 col-lg-3" }, h("label", { class: "col-form-label" }, "Person/Autor"), h("div", null, h("input", { value: this.formValues.person, class: "form-control", type: "text", id: "person" }))), h("div", { class: "field-year form-group col-12 col-md-4 col-lg-3" }, h("label", { class: "col-form-label" }, "Jahr"), h("div", null, h("input", { value: this.formValues.year, class: "form-control", type: "text", id: "year" }))), h("div", { class: "field-keyword form-group col-12 col-md-4 col-lg-3" }, h("label", { class: "col-form-label" }, "Stichwort"), h("div", null, h("input", { value: this.formValues.keyword, class: "form-control", type: "text", id: "keyword" }))), h("div", { class: "form-group submit col pt-3 pt-lg-0" }, h("button", { type: "submit", class: "btn btn-primary submit-all", onClick: function (e) { return _this.submitSearch(e); } }, "Suchen")))), h("div", { class: "row mt-3" }, h("div", { class: "col-12 col-lg-9" }, h("div", { class: "border p-3 " }, h("h4", { class: "mb-3" }, "Nach Anfangsbuchstaben filtern"), h("ul", { class: "glossary d-flex flex-wrap justify-content-start" }, this.glossar()))), h("div", { class: "gardener-search-reset col-12 col-lg-3 mt-3 mt-lg-0 pl-lg-0" }, h("div", { class: "border p-3 h100" }, h("button", { type: "button", class: "btn btn-outline-dark btn-sm submit-selection", onClick: function (e) { return _this.resetSearch(e); } }, "Zur\u00FCcksetzen"))))))), !this.loading
+            return (h(Host, { id: "top" }, h("div", { class: "gardener-search-wrapper" }, h("div", { class: "gardener-search-container" }, h("form", { id: "form", class: "gardener-search-filter" }, h("div", { class: "border p-3" }, h("h4", { class: "mb-3" }, "Datensatz finden"), h("div", { class: "row align-items-end" }, h("div", { class: "field-person form-group col-12 col-md-4 col-lg-3" }, h("label", { class: "col-form-label" }, "Person/Autor"), h("div", null, h("input", { class: "form-control", type: "text", id: "person", value: this.formValues.person }))), h("div", { class: "field-year form-group col-12 col-md-4 col-lg-3" }, h("label", { class: "col-form-label" }, "Jahr"), h("div", null, h("input", { class: "form-control", type: "text", id: "year", value: this.formValues.year }))), h("div", { class: "field-keyword form-group col-12 col-md-4 col-lg-3" }, h("label", { class: "col-form-label" }, "Stichwort"), h("div", null, h("input", { class: "form-control", type: "text", id: "keyword", value: this.formValues.keyword }))), h("div", { class: "form-group submit col pt-3 pt-lg-0" }, h("button", { type: "submit", class: "btn btn-primary submit-all", onClick: function (e) { return _this.submitSearch(e); } }, "Suchen")))), h("div", { class: "row mt-3" }, h("div", { class: "col-12 col-lg-9" }, h("div", { class: "border p-3 " }, h("h4", { class: "mb-3" }, "Nach Anfangsbuchstaben filtern"), h("ul", { class: "glossary d-flex flex-wrap justify-content-start" }, this.glossar()))), h("div", { class: "gardener-search-reset col-12 col-lg-3 mt-3 mt-lg-0 pl-lg-0" }, h("div", { class: "border p-3 h100" }, h("button", { type: "button", class: "btn btn-outline-dark btn-sm submit-selection", onClick: function (e) { return _this.resetSearch(e); } }, "Zur\u00FCcksetzen"))))))), !this.loading
                 ? h("gardener-results", { results: this.filteredResult })
                 : h("loading-spinner", null)));
         }
     };
     Object.defineProperty(class_1.prototype, "host", {
         get: function () { return getElement(this); },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(class_1, "style", {
-        get: function () { return ":root{--gs-container-max-width:1280px;--gs-container-padding:50px;--gs-color-bg:#efefef;--gs-color-primary:#71bc51;--gs-color-secondary:#2196f3;--gs-color-text:#333;--gs-color-border:#999;--gs-color-disabled:#ccc;--gs-color-background:#fff;--gs-border-radius:5px;--gs-border-radius-small:2px;--gs-font-size-base:15px;--gs-button-primary:var(--gs-color-primary);--gs-button-primary-focus-color:#c1d6b7;--gs-button-primary-border:var(--gs-color-primary);--gs-button-light:#fff}gardener-search{font-weight:400;font-family:inherit;font-size:var(--gs-font-size-base);-webkit-font-smoothing:antialiased;display:block;background:var(--gs-color-bg);color:var(--gs-color-text);line-height:1.4;padding:15px;max-height:100%}\@media (min-width:768px){gardener-search{padding:25px}}gardener-search *,gardener-search :after,gardener-search :before{-webkit-box-sizing:border-box;box-sizing:border-box}gardener-search p{margin:0 0 1em 0}gardener-search h2,gardener-search h3,gardener-search h4{margin-top:0;text-transform:uppercase;font-family:inherit}gardener-search p+h4{margin-top:1.5em}gardener-search .gardener-search-wrapper .gardener-search-content{overflow:auto}gardener-search .gardener-search-wrapper .gardener-search-options{padding:0;margin:0;background:0 none}\@media (min-width:1024px){gardener-search .gardener-search-wrapper .gardener-search-options{display:-ms-flexbox;display:flex;-ms-flex-pack:justify;justify-content:space-between;-ms-flex-align:center;align-items:center}}gardener-search .gardener-search-wrapper .glossary{list-style:none;padding:0}gardener-search .gardener-search-wrapper .glossary li{text-transform:uppercase;font-weight:700;min-width:25px;min-height:25px;text-align:center;line-height:20px;font-size:18px}gardener-search .gardener-search-wrapper .glossary li a{display:block;height:100%;text-decoration:none;-webkit-transition:all .2s cubic-bezier(.075,.82,.165,1);transition:all .2s cubic-bezier(.075,.82,.165,1)}gardener-search .gardener-search-wrapper .glossary li a:hover{-webkit-transform:scale(1.5);transform:scale(1.5)}gardener-search .gardener-search-wrapper button{-webkit-appearance:none;display:block;-ms-flex:1;flex:1;margin:10px 0 0;padding-left:25px;padding-right:25px;text-align:center;text-decoration:none;text-transform:uppercase;white-space:nowrap}gardener-search .gardener-search-wrapper button+button{margin-left:10px}\@media (min-width:480px){gardener-search .gardener-search-wrapper button{margin:0;display:inline-block;min-width:200px;-ms-flex:none;flex:none}}\@media (min-width:1024px){gardener-search .gardener-search-wrapper button{width:100%}}gardener-search .h100{height:100%}"; },
-        enumerable: true,
+        enumerable: false,
         configurable: true
     });
     return class_1;
 }());
+MyComponent.style = gardenerSearchCss;
+var spinnerCss = ":root{--gs-container-max-width:1280px;--gs-container-padding:50px;--gs-color-bg:#efefef;--gs-color-primary:#71BC51;--gs-color-secondary:#2196F3;--gs-color-text:#333;--gs-color-border:#999;--gs-color-disabled:#ccc;--gs-color-background:#fff;--gs-border-radius:5px;--gs-border-radius-small:2px;--gs-font-size-base:15px;--gs-button-primary:var(--gs-color-primary);--gs-button-primary-focus-color:#c1d6b7;--gs-button-primary-border:var(--gs-color-primary);--gs-button-light:#FFF}:host{display:block}";
 var Spinner = /** @class */ (function () {
     function Spinner(hostRef) {
         registerInstance(this, hostRef);
@@ -320,13 +328,10 @@ var Spinner = /** @class */ (function () {
     Spinner.prototype.render = function () {
         return (h(Host, null, h("div", { class: "d-flex justify-content-lg-center py-3" }, h("i", { class: "fa fa-circle-o-notch fa-pulse fa-2x" }), h("span", { class: "sr-only" }, "Loading..."))));
     };
-    Object.defineProperty(Spinner, "style", {
-        get: function () { return ":root{--gs-container-max-width:1280px;--gs-container-padding:50px;--gs-color-bg:#efefef;--gs-color-primary:#71bc51;--gs-color-secondary:#2196f3;--gs-color-text:#333;--gs-color-border:#999;--gs-color-disabled:#ccc;--gs-color-background:#fff;--gs-border-radius:5px;--gs-border-radius-small:2px;--gs-font-size-base:15px;--gs-button-primary:var(--gs-color-primary);--gs-button-primary-focus-color:#c1d6b7;--gs-button-primary-border:var(--gs-color-primary);--gs-button-light:#fff}:host{display:block}"; },
-        enumerable: true,
-        configurable: true
-    });
     return Spinner;
 }());
+Spinner.style = spinnerCss;
+var paginationCss = ":root{--gs-container-max-width:1280px;--gs-container-padding:50px;--gs-color-bg:#efefef;--gs-color-primary:#71BC51;--gs-color-secondary:#2196F3;--gs-color-text:#333;--gs-color-border:#999;--gs-color-disabled:#ccc;--gs-color-background:#fff;--gs-border-radius:5px;--gs-border-radius-small:2px;--gs-font-size-base:15px;--gs-button-primary:var(--gs-color-primary);--gs-button-primary-focus-color:#c1d6b7;--gs-button-primary-border:var(--gs-color-primary);--gs-button-light:#FFF}results-pagination{display:block}";
 var Pagination = /** @class */ (function () {
     function Pagination(hostRef) {
         registerInstance(this, hostRef);
@@ -391,11 +396,7 @@ var Pagination = /** @class */ (function () {
     Pagination.prototype.render = function () {
         return (h(Host, null, h("nav", { "aria-label": "Navigate results" }, h("ul", { class: "pagination justify-content-center" }, this.pagination()))));
     };
-    Object.defineProperty(Pagination, "style", {
-        get: function () { return ":root{--gs-container-max-width:1280px;--gs-container-padding:50px;--gs-color-bg:#efefef;--gs-color-primary:#71bc51;--gs-color-secondary:#2196f3;--gs-color-text:#333;--gs-color-border:#999;--gs-color-disabled:#ccc;--gs-color-background:#fff;--gs-border-radius:5px;--gs-border-radius-small:2px;--gs-font-size-base:15px;--gs-button-primary:var(--gs-color-primary);--gs-button-primary-focus-color:#c1d6b7;--gs-button-primary-border:var(--gs-color-primary);--gs-button-light:#fff}results-pagination{display:block}"; },
-        enumerable: true,
-        configurable: true
-    });
     return Pagination;
 }());
+Pagination.style = paginationCss;
 export { Detail as gardener_detail, Results as gardener_results, MyComponent as gardener_search, Spinner as loading_spinner, Pagination as results_pagination };

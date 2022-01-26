@@ -1,15 +1,15 @@
 {
   "entries": [
-    "components/detail/detail.js",
-    "components/spinner/spinner.js",
-    "components/pagination/pagination.js",
-    "components/results/results.js",
-    "components/gardener-search/gardener-search.js"
+    "./components/detail/detail.js",
+    "./components/gardener-search/gardener-search.js",
+    "./components/pagination/pagination.js",
+    "./components/results/results.js",
+    "./components/spinner/spinner.js"
   ],
   "compiler": {
     "name": "@stencil/core",
-    "version": "1.8.8",
-    "typescriptVersion": "3.7.5"
+    "version": "1.17.4",
+    "typescriptVersion": "3.9.7"
   },
   "collections": [],
   "bundles": []

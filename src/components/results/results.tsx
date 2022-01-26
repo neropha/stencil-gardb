@@ -8,7 +8,7 @@ import { Event, EventEmitter } from '@stencil/core';
 })
 export class Results {
   @Prop() public results: any;
-  
+
   @State() public currentPage: number = 1;
   @State() selectedRecord: true;
   @State() public pages: number;

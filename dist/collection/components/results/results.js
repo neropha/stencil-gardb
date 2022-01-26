@@ -1,4 +1,5 @@
-import { Host, h } from "@stencil/core";
+import { Component, Host, h, Prop, State, Watch, Listen } from '@stencil/core';
+import { Event } from '@stencil/core';
 export class Results {
     constructor() {
         this.currentPage = 1;

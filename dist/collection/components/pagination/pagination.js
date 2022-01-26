@@ -1,4 +1,5 @@
-import { Host, h } from "@stencil/core";
+import { Component, Host, h, Prop } from '@stencil/core';
+import { Event } from '@stencil/core';
 export class Pagination {
     pageSelectedHandler(e, record) {
         e.preventDefault();

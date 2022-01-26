@@ -17,13 +17,14 @@
   scriptElm.setAttribute('data-stencil-namespace', 'gardener-search');
   doc.head.appendChild(scriptElm);
 
+  
   scriptElm = doc.createElement('script');
   scriptElm.setAttribute('nomodule', '');
   scriptElm.src = url + '/gardener-search.js';
   warn.push(scriptElm.outerHTML);
   scriptElm.setAttribute('data-stencil-namespace', 'gardener-search');
-  doc.head.appendChild(scriptElm);
-
+  doc.head.appendChild(scriptElm)
+  
   console.warn(warn.join('\n'));
 
 })(document);

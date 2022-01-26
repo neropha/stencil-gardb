@@ -1,4 +1,4 @@
-import { Host, h } from "@stencil/core";
+import { Component, Element, Host, State, h, Prop, Listen } from '@stencil/core';
 export class MyComponent {
     constructor() {
         this.errors = [];
@@ -50,7 +50,7 @@ export class MyComponent {
         return indexedFields.includes(needle);
     }
     filterByKeyword(needle, haystack) {
-        // Searches in Inhalt | Dokumententyp | Zeitschrift | 
+        // Searches in Inhalt | Dokumententyp | Zeitschrift |
         let indexedFields = [haystack.Inhalt, haystack.Dokumententyp, haystack.Zeitschrift].join().toLowerCase();
         return indexedFields.includes(needle);
     }
@@ -101,7 +101,8 @@ export class MyComponent {
         e.preventDefault();
         this.resetSearch(e);
         this.filteredResult = this.gardb;
-        var letter = e.toElement.innerText.toLowerCase();
+        console.log(e);
+        var letter = e.target.innerText.toLowerCase();
         this.filteredResult = this.filteredResult.filter(record => this.filterByInitial(letter, record));
     }
     glossar() {
@@ -145,15 +146,15 @@ export class MyComponent {
                                     h("div", { class: "field-person form-group col-12 col-md-4 col-lg-3" },
                                         h("label", { class: "col-form-label" }, "Person/Autor"),
                                         h("div", null,
-                                            h("input", { value: this.formValues.person, class: "form-control", type: "text", id: "person" }))),
+                                            h("input", { class: "form-control", type: "text", id: "person", value: this.formValues.person }))),
                                     h("div", { class: "field-year form-group col-12 col-md-4 col-lg-3" },
                                         h("label", { class: "col-form-label" }, "Jahr"),
                                         h("div", null,
-                                            h("input", { value: this.formValues.year, class: "form-control", type: "text", id: "year" }))),
+                                            h("input", { class: "form-control", type: "text", id: "year", value: this.formValues.year }))),
                                     h("div", { class: "field-keyword form-group col-12 col-md-4 col-lg-3" },
                                         h("label", { class: "col-form-label" }, "Stichwort"),
                                         h("div", null,
-                                            h("input", { value: this.formValues.keyword, class: "form-control", type: "text", id: "keyword" }))),
+                                            h("input", { class: "form-control", type: "text", id: "keyword", value: this.formValues.keyword }))),
                                     h("div", { class: "form-group submit col pt-3 pt-lg-0" },
                                         h("button", { type: "submit", class: "btn btn-primary submit-all", onClick: (e) => this.submitSearch(e) }, "Suchen")))),
                             h("div", { class: "row mt-3" },
