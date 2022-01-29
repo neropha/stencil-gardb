@@ -14,9 +14,9 @@
 
 ## Events
 
-| Event            | Description | Type               |
-| ---------------- | ----------- | ------------------ |
-| `recordSelected` |             | `CustomEvent<any>` |
+| Event            | Description | Type                            |
+| ---------------- | ----------- | ------------------------------- |
+| `recordSelected` |             | `CustomEvent<CustomEvent<any>>` |
 
 
 ## Dependencies

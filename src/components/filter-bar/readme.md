@@ -1,4 +1,4 @@
-# gardener-detail
+# filter-bar
 
 
 
@@ -7,15 +7,16 @@
 
 ## Properties
 
-| Property | Attribute | Description | Type  | Default     |
-| -------- | --------- | ----------- | ----- | ----------- |
-| `record` | `record`  |             | `any` | `undefined` |
+| Property  | Attribute | Description | Type  | Default     |
+| --------- | --------- | ----------- | ----- | ----------- |
+| `results` | `results` |             | `any` | `undefined` |
 
 
 ## Events
 
 | Event            | Description | Type                            |
 | ---------------- | ----------- | ------------------------------- |
+| `filterEvent`    |             | `CustomEvent<any>`              |
 | `recordSelected` |             | `CustomEvent<CustomEvent<any>>` |
 
 
@@ -28,8 +29,8 @@
 ### Graph
 ```mermaid
 graph TD;
-  gardener-search --> gardener-detail
-  style gardener-detail fill:#f9f,stroke:#333,stroke-width:4px
+  gardener-search --> filter-bar
+  style filter-bar fill:#f9f,stroke:#333,stroke-width:4px
 ```
 
 ----------------------------------------------

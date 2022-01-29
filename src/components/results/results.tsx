@@ -1,6 +1,5 @@
 import { Component, Host, h, Prop, State, Watch, Listen } from "@stencil/core";
 import { Event, EventEmitter } from "@stencil/core";
-import { Detail } from '../detail/detail';
 
 @Component({
   tag: "gardener-results",
@@ -95,7 +94,7 @@ export class Results {
                 <td>{gardener.Jahr}</td>
                 <td>{gardener.Autor}</td>
                 <td>
-                  <a class="link" title="Details" href={'#id' + gardener['ID']} onClick={e => this.recordSelectedHandler(gardener.ID)}>
+                  <a class="link" title="Details" href={'#id' + gardener['ID']} onClick={() => this.recordSelectedHandler(gardener.ID)}>
                     <i class="fa fa-info-circle fa-lg"></i>
                   </a>
                 </td>

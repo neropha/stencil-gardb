@@ -1,4 +1,4 @@
-import { B as BUILD, C as CSS, p as plt, w as win, a as promiseResolve, c as consoleDevInfo, H, d as doc, N as NAMESPACE } from './index-e1351b7d.js';
+import { C as CSS, p as plt, w as win, a as promiseResolve, d as doc, N as NAMESPACE } from './index-1ede1968.js';
 
 /*
  Stencil Client Patch v1.17.4 | MIT Licensed | https://stenciljs.com
@@ -20,9 +20,9 @@ const getDynamicImportFunction = (namespace) => `__sc_import_${namespace.replace
 const patchEsm = () => {
     // NOTE!! This fn cannot use async/await!
     // @ts-ignore
-    if (BUILD.cssVarShim && !(CSS && CSS.supports && CSS.supports('color', 'var(--c)'))) {
+    if ( !(CSS && CSS.supports && CSS.supports('color', 'var(--c)'))) {
         // @ts-ignore
-        return __sc_import_gardener_search(/* webpackChunkName: "polyfills-css-shim" */ './css-shim-5ce2b5c4.js').then(() => {
+        return import(/* webpackChunkName: "polyfills-css-shim" */ './css-shim-5ce2b5c4.js').then(() => {
             if ((plt.$cssShim$ = win.__cssshim)) {
                 return plt.$cssShim$.i();
             }
@@ -35,32 +35,15 @@ const patchEsm = () => {
     return promiseResolve();
 };
 const patchBrowser = () => {
-    // NOTE!! This fn cannot use async/await!
-    if (BUILD.isDev && !BUILD.isTesting) {
-        consoleDevInfo('Running in development mode.');
-    }
-    if (BUILD.cssVarShim) {
+    {
         // shim css vars
         plt.$cssShim$ = win.__cssshim;
     }
-    if (BUILD.cloneNodeFix) {
-        // opted-in to polyfill cloneNode() for slot polyfilled components
-        patchCloneNodeFix(H.prototype);
-    }
-    if (BUILD.profile && !performance.mark) {
-        // not all browsers support performance.mark/measure (Safari 10)
-        performance.mark = performance.measure = () => {
-            /*noop*/
-        };
-        performance.getEntriesByName = () => [];
-    }
     // @ts-ignore
-    const scriptElm = BUILD.scriptDataOpts || BUILD.safari10 || BUILD.dynamicImportShim
-        ? Array.from(doc.querySelectorAll('script')).find(s => new RegExp(`\/${NAMESPACE}(\\.esm)?\\.js($|\\?|#)`).test(s.src) || s.getAttribute('data-stencil-namespace') === NAMESPACE)
-        : null;
-    const importMeta = "";
-    const opts = BUILD.scriptDataOpts ? scriptElm['data-opts'] || {} : {};
-    if (BUILD.safari10 && 'onbeforeload' in scriptElm && !history.scrollRestoration /* IS_ESM_BUILD */) {
+    const scriptElm =  Array.from(doc.querySelectorAll('script')).find(s => new RegExp(`\/${NAMESPACE}(\\.esm)?\\.js($|\\?|#)`).test(s.src) || s.getAttribute('data-stencil-namespace') === NAMESPACE)
+        ;
+    const opts =  scriptElm['data-opts'] || {} ;
+    if ( 'onbeforeload' in scriptElm && !history.scrollRestoration /* IS_ESM_BUILD */) {
         // Safari < v11 support: This IF is true if it's Safari below v11.
         // This fn cannot use async/await since Safari didn't support it until v11,
         // however, Safari 10 did support modules. Safari 10 also didn't support "nomodule",
@@ -74,18 +57,15 @@ const patchBrowser = () => {
             },
         };
     }
-    if (!BUILD.safari10 && importMeta !== '') {
-        opts.resourcesUrl = new URL('.', importMeta).href;
-    }
-    else if (BUILD.dynamicImportShim || BUILD.safari10) {
+    {
         opts.resourcesUrl = new URL('.', new URL(scriptElm.getAttribute('data-resources-url') || scriptElm.src, win.location.href)).href;
-        if (BUILD.dynamicImportShim) {
+        {
             patchDynamicImport(opts.resourcesUrl, scriptElm);
         }
-        if (BUILD.dynamicImportShim && !win.customElements) {
+        if ( !win.customElements) {
             // module support, but no custom elements support (Old Edge)
             // @ts-ignore
-            return __sc_import_gardener_search(/* webpackChunkName: "polyfills-dom" */ './dom-91ed8d21.js').then(() => opts);
+            return import(/* webpackChunkName: "polyfills-dom" */ './dom-91ed8d21.js').then(() => opts);
         }
     }
     return promiseResolve(opts);
@@ -125,26 +105,5 @@ const patchDynamicImport = (base, orgScriptElm) => {
         };
     }
 };
-const patchCloneNodeFix = (HTMLElementPrototype) => {
-    const nativeCloneNodeFn = HTMLElementPrototype.cloneNode;
-    HTMLElementPrototype.cloneNode = function (deep) {
-        if (this.nodeName === 'TEMPLATE') {
-            return nativeCloneNodeFn.call(this, deep);
-        }
-        const clonedNode = nativeCloneNodeFn.call(this, false);
-        const srcChildNodes = this.childNodes;
-        if (deep) {
-            for (let i = 0; i < srcChildNodes.length; i++) {
-                // Node.ATTRIBUTE_NODE === 2, and checking because IE11
-                if (srcChildNodes[i].nodeType !== 2) {
-                    clonedNode.appendChild(srcChildNodes[i].cloneNode(true));
-                }
-            }
-        }
-        return clonedNode;
-    };
-};
 
-const globalScripts = () => {};
-
-export { patchEsm as a, globalScripts as g, patchBrowser as p };
+export { patchEsm as a, patchBrowser as p };
