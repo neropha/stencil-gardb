@@ -1,0 +1,90 @@
+filter-bar {
+  display: block;
+
+  .glossary {
+    list-style: none;
+    padding: 0;
+
+    li {
+      text-transform: uppercase;
+      font-weight: bold;
+      min-width: 25px;
+      min-height: 25px;
+      text-align: center;
+      line-height: 20px;
+      font-size: 18px;
+
+      a {
+        display: block;
+        height: 100%;
+        text-decoration: none;
+        transition: 0.2s all cubic-bezier(0.075, 0.82, 0.165, 1);
+
+        &:hover {
+          transform: scale(1.5);
+        }
+      }
+    }
+  }
+
+  button {
+    -webkit-appearance: none;
+    -webkit-appearance: none;
+    display: block;
+    display: block;
+    flex: 1;
+    margin: 10px 0 0;
+    padding-left: 25px;
+    padding-right: 25px;
+    text-align: center;
+    text-decoration: none;
+    text-transform: uppercase;
+    white-space: nowrap;
+
+    &:after {
+      content: "";
+      display: block;
+      position: absolute;
+      border-radius: 4em;
+      left: 0;
+      top:0;
+      width: 100%;
+      height: 100%;
+      opacity: 0;
+      transition: all 0.5s;
+      box-shadow: 0 0 10px 40px white;
+    }
+
+    &:active:after {
+      box-shadow: 0 0 0 0 white;
+      position: absolute;
+      border-radius: 4em;
+      left: 0;
+      top:0;
+      opacity: 1;
+      transition: 0s;
+    }
+
+    &:active {
+      top: 1px;
+    }
+
+    &+button {
+      margin-left: 10px;
+    }
+
+    @include media-breakpoint-up(sm) {
+      margin: 0;
+      display: inline-block;
+      min-width: 200px;
+      flex: none
+    }
+
+    @include media-breakpoint-up(lg) {
+      width: 100%;
+    }
+
+    &.submit-all {}
+  }
+
+}

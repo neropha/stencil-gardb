@@ -1,12 +1,11 @@
-import { Component, Host, h } from '@stencil/core';
+import { Component, Host, h, Prop } from "@stencil/core";
 
 @Component({
-  tag: 'loading-spinner',
-  styleUrl: 'spinner.scss',
-  shadow: false
+  tag: "loading-spinner",
+  styleUrl: "spinner.scss",
+  shadow: false,
 })
 export class Spinner {
-
   render() {
     return (
       <Host>
@@ -17,5 +16,4 @@ export class Spinner {
       </Host>
     );
   }
-
 }

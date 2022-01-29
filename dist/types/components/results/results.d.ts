@@ -1,8 +1,8 @@
-import { EventEmitter } from '../../stencil-public-runtime';
+import { EventEmitter } from "../../stencil-public-runtime";
 export declare class Results {
     results: any;
     currentPage: number;
-    selectedRecord: true;
+    selectedRecord: null;
     pages: number;
     currentRecord: any;
     itemsPerPage: number;
@@ -12,8 +12,8 @@ export declare class Results {
     firstItemShown(): number;
     lastItemShown(): number;
     pagedResult(): any;
-    recordSelectedHandler(e: any, record: any): void;
-    recordSelected: EventEmitter<any>;
+    recordSelected: EventEmitter<CustomEvent>;
+    recordSelectedHandler(record: CustomEvent<number>): void;
     changePageHandler(event: CustomEvent<any>): void;
     resultInfo(): any;
     render(): any;

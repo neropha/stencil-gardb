@@ -31,92 +31,11 @@ gardener-search {
   h3,
   h4 {
     margin-top: 0;
-    text-transform: uppercase;
     font-family: inherit;
   }
 
   p+h4 {
     margin-top: 1.5em;
-  }
-
-  .gardener-search-wrapper {
-
-    .gardener-search {
-      &-content {
-        overflow: auto;
-      }
-
-      &-options {
-        padding: 0;
-        margin: 0;
-        background: 0 none;
-
-        @include media-breakpoint-up(lg) {
-          display: flex;
-          justify-content: space-between;
-          align-items: center;
-        }
-
-      }
-    }
-
-    .glossary {
-      list-style: none;
-      padding: 0;
-
-      li {
-        text-transform: uppercase;
-        font-weight: bold;
-        min-width: 25px;
-        min-height: 25px;
-        text-align: center;
-        line-height: 20px;
-        font-size: 18px;
-
-        a {
-          display: block;
-          height: 100%;
-          text-decoration: none;
-          transition: 0.2s all cubic-bezier(0.075, 0.82, 0.165, 1);
-
-          &:hover {
-            transform: scale(1.5);
-          }
-        }
-      }
-    }
-
-    button {
-      -webkit-appearance: none;
-      -webkit-appearance: none;
-      display: block;
-      display: block;
-      flex: 1;
-      margin: 10px 0 0;
-      padding-left: 25px;
-      padding-right: 25px;
-      text-align: center;
-      text-decoration: none;
-      text-transform: uppercase;
-      white-space: nowrap;
-
-      &+button {
-        margin-left: 10px;
-      }
-
-      @include media-breakpoint-up(sm) {
-        margin: 0;
-        display: inline-block;
-        min-width: 200px;
-        flex: none
-      }
-
-      @include media-breakpoint-up(lg) {
-        width: 100%;
-      }
-
-      &.submit-all {}
-    }
   }
 
   .h100 {
