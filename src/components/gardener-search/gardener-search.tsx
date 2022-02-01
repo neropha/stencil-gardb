@@ -23,18 +23,15 @@ export class MyComponent {
         referrerPolicy: 'no-referrer', // no-referrer, *no-referrer-when-downgrade, origin, origin-when-cross-origin, same-origin, strict-origin, strict-origin-when-cross-origin, unsafe-url
       });
       if (!response.ok) {
-        console.log('!response.ok');
         // Prepare for catch(err)
         throw new Error(response.status + ": " + response.statusText);
       }
       this.results = this.filteredResults = await response.json();
     } catch (err) {
-      console.log('err');
       this.errors.push(err.message);
       this.errors.push("Datenbank konnte nicht geladen werden.");
     } finally {
       this.loading = false;
-      console.log('finaly');
     }
   }
   componentWillLoad() {

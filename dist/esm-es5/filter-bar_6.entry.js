@@ -291,7 +291,6 @@ var MyComponent = /** @class */ (function () {
                     case 1:
                         response = _c.sent();
                         if (!response.ok) {
-                            console.log('!response.ok');
                             // Prepare for catch(err)
                             throw new Error(response.status + ": " + response.statusText);
                         }
@@ -303,13 +302,11 @@ var MyComponent = /** @class */ (function () {
                         return [3 /*break*/, 5];
                     case 3:
                         err_1 = _c.sent();
-                        console.log('err');
                         this.errors.push(err_1.message);
                         this.errors.push("Datenbank konnte nicht geladen werden.");
                         return [3 /*break*/, 5];
                     case 4:
                         this.loading = false;
-                        console.log('finaly');
                         return [7 /*endfinally*/];
                     case 5: return [2 /*return*/];
                 }
