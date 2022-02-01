@@ -20,9 +20,7 @@ export class MyComponent {
       let response = await fetch(this.api, {
         method: "GET",
         mode: "cors",
-        headers: {
-          "Content-Type": "application/json",
-        },
+        referrerPolicy: 'no-referrer', // no-referrer, *no-referrer-when-downgrade, origin, origin-when-cross-origin, same-origin, strict-origin, strict-origin-when-cross-origin, unsafe-url
       });
       if (!response.ok) {
         // Prepare for catch(err)
