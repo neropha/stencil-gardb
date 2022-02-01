@@ -287,7 +287,7 @@ const Spinner = class {
         index.registerInstance(this, hostRef);
     }
     render() {
-        return (index.h(index.Host, null, index.h("div", { class: "d-flex justify-content-lg-center py-3" }, index.h("i", { class: "fa fa-circle-o-notch fa-pulse fa-2x" }), index.h("span", null, "Lade Datenbank..."))));
+        return (index.h(index.Host, null, index.h("div", { class: "d-flex justify-content-lg-center py-3" }, index.h("i", { class: "fa fa-circle-o-notch fa-pulse fa-2x" }), index.h("span", { class: "pr-3" }, "Loading..."))));
     }
 };
 Spinner.style = spinnerCss;
