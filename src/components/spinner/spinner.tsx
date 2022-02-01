@@ -11,7 +11,7 @@ export class Spinner {
       <Host>
         <div class="d-flex justify-content-lg-center py-3">
           <i class="fa fa-circle-o-notch fa-pulse fa-2x"></i>
-          <span class="sr-only">Loading...</span>
+          <span>Lade Datenbank...</span>
         </div>
       </Host>
     );

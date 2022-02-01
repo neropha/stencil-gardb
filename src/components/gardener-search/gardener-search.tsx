@@ -13,7 +13,7 @@ export class MyComponent {
 
   @Prop() public api: string;
 
-  public loading = true;
+  @State() public loading = true;
 
   async loadData() {
     try {
@@ -23,15 +23,18 @@ export class MyComponent {
         referrerPolicy: 'no-referrer', // no-referrer, *no-referrer-when-downgrade, origin, origin-when-cross-origin, same-origin, strict-origin, strict-origin-when-cross-origin, unsafe-url
       });
       if (!response.ok) {
+        console.log('!response.ok');
         // Prepare for catch(err)
         throw new Error(response.status + ": " + response.statusText);
       }
       this.results = this.filteredResults = await response.json();
     } catch (err) {
+      console.log('err');
       this.errors.push(err.message);
       this.errors.push("Datenbank konnte nicht geladen werden.");
     } finally {
       this.loading = false;
+      console.log('finaly');
     }
   }
   componentWillLoad() {
@@ -53,7 +56,7 @@ export class MyComponent {
       this.selectedRecord = this.filteredResults.filter(element => (element.ID == record.detail)).shift();
       window.location.hash = "id" + record.detail;
     } else {
-      // window.location.hash = "results";
+      window.location.hash = "results";
       this.selectedRecord = null;
     }
   }
