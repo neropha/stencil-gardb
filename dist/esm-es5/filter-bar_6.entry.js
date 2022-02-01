@@ -363,7 +363,7 @@ var Spinner = /** @class */ (function () {
         registerInstance(this, hostRef);
     }
     Spinner.prototype.render = function () {
-        return (h(Host, null, h("div", { class: "d-flex justify-content-lg-center py-3" }, h("i", { class: "fa fa-circle-o-notch fa-pulse fa-2x" }), h("span", { class: "pr-3" }, "Loading..."))));
+        return (h(Host, null, h("div", { class: "d-flex justify-content-lg-center py-3" }, h("i", { class: "fa fa-circle-o-notch fa-pulse fa-2x" }), h("span", { class: "px-3" }, "Loading..."))));
     };
     return Spinner;
 }());
