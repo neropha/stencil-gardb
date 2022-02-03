@@ -6,129 +6,114 @@
  */
 import { HTMLStencilElement, JSXBase } from "@stencil/core/internal";
 export namespace Components {
-    interface FilterBar {
-        "results": any;
-    }
-    interface GardenerDetail {
+    interface GardbDetail {
         "record": any;
     }
-    interface GardenerResults {
+    interface GardbFilters {
         "results": any;
     }
-    interface GardenerSearch {
-        "api": string;
+    interface GardbLoading {
     }
-    interface LoadingSpinner {
-    }
-    interface PrintErrors {
-        "errors": any;
-    }
-    interface ResultsPagination {
+    interface GardbPagination {
         "currentPage": number;
         "pages": number;
     }
+    interface GardbResults {
+        "results": any;
+    }
+    interface GardbSearch {
+        "api": string;
+    }
 }
 declare global {
-    interface HTMLFilterBarElement extends Components.FilterBar, HTMLStencilElement {
+    interface HTMLGardbDetailElement extends Components.GardbDetail, HTMLStencilElement {
     }
-    var HTMLFilterBarElement: {
-        prototype: HTMLFilterBarElement;
-        new (): HTMLFilterBarElement;
+    var HTMLGardbDetailElement: {
+        prototype: HTMLGardbDetailElement;
+        new (): HTMLGardbDetailElement;
     };
-    interface HTMLGardenerDetailElement extends Components.GardenerDetail, HTMLStencilElement {
+    interface HTMLGardbFiltersElement extends Components.GardbFilters, HTMLStencilElement {
     }
-    var HTMLGardenerDetailElement: {
-        prototype: HTMLGardenerDetailElement;
-        new (): HTMLGardenerDetailElement;
+    var HTMLGardbFiltersElement: {
+        prototype: HTMLGardbFiltersElement;
+        new (): HTMLGardbFiltersElement;
     };
-    interface HTMLGardenerResultsElement extends Components.GardenerResults, HTMLStencilElement {
+    interface HTMLGardbLoadingElement extends Components.GardbLoading, HTMLStencilElement {
     }
-    var HTMLGardenerResultsElement: {
-        prototype: HTMLGardenerResultsElement;
-        new (): HTMLGardenerResultsElement;
+    var HTMLGardbLoadingElement: {
+        prototype: HTMLGardbLoadingElement;
+        new (): HTMLGardbLoadingElement;
     };
-    interface HTMLGardenerSearchElement extends Components.GardenerSearch, HTMLStencilElement {
+    interface HTMLGardbPaginationElement extends Components.GardbPagination, HTMLStencilElement {
     }
-    var HTMLGardenerSearchElement: {
-        prototype: HTMLGardenerSearchElement;
-        new (): HTMLGardenerSearchElement;
+    var HTMLGardbPaginationElement: {
+        prototype: HTMLGardbPaginationElement;
+        new (): HTMLGardbPaginationElement;
     };
-    interface HTMLLoadingSpinnerElement extends Components.LoadingSpinner, HTMLStencilElement {
+    interface HTMLGardbResultsElement extends Components.GardbResults, HTMLStencilElement {
     }
-    var HTMLLoadingSpinnerElement: {
-        prototype: HTMLLoadingSpinnerElement;
-        new (): HTMLLoadingSpinnerElement;
+    var HTMLGardbResultsElement: {
+        prototype: HTMLGardbResultsElement;
+        new (): HTMLGardbResultsElement;
     };
-    interface HTMLPrintErrorsElement extends Components.PrintErrors, HTMLStencilElement {
+    interface HTMLGardbSearchElement extends Components.GardbSearch, HTMLStencilElement {
     }
-    var HTMLPrintErrorsElement: {
-        prototype: HTMLPrintErrorsElement;
-        new (): HTMLPrintErrorsElement;
-    };
-    interface HTMLResultsPaginationElement extends Components.ResultsPagination, HTMLStencilElement {
-    }
-    var HTMLResultsPaginationElement: {
-        prototype: HTMLResultsPaginationElement;
-        new (): HTMLResultsPaginationElement;
+    var HTMLGardbSearchElement: {
+        prototype: HTMLGardbSearchElement;
+        new (): HTMLGardbSearchElement;
     };
     interface HTMLElementTagNameMap {
-        "filter-bar": HTMLFilterBarElement;
-        "gardener-detail": HTMLGardenerDetailElement;
-        "gardener-results": HTMLGardenerResultsElement;
-        "gardener-search": HTMLGardenerSearchElement;
-        "loading-spinner": HTMLLoadingSpinnerElement;
-        "print-errors": HTMLPrintErrorsElement;
-        "results-pagination": HTMLResultsPaginationElement;
+        "gardb-detail": HTMLGardbDetailElement;
+        "gardb-filters": HTMLGardbFiltersElement;
+        "gardb-loading": HTMLGardbLoadingElement;
+        "gardb-pagination": HTMLGardbPaginationElement;
+        "gardb-results": HTMLGardbResultsElement;
+        "gardb-search": HTMLGardbSearchElement;
     }
 }
 declare namespace LocalJSX {
-    interface FilterBar {
+    interface GardbDetail {
+        "onRecordSelected"?: (event: CustomEvent<CustomEvent>) => void;
+        "record"?: any;
+    }
+    interface GardbFilters {
         "onFilterEvent"?: (event: CustomEvent<any>) => void;
         "onRecordSelected"?: (event: CustomEvent<CustomEvent>) => void;
         "results"?: any;
     }
-    interface GardenerDetail {
-        "onRecordSelected"?: (event: CustomEvent<CustomEvent>) => void;
-        "record"?: any;
+    interface GardbLoading {
     }
-    interface GardenerResults {
-        "onRecordSelected"?: (event: CustomEvent<CustomEvent>) => void;
-        "results"?: any;
-    }
-    interface GardenerSearch {
-        "api"?: string;
-    }
-    interface LoadingSpinner {
-    }
-    interface PrintErrors {
-        "errors"?: any;
-    }
-    interface ResultsPagination {
+    interface GardbPagination {
         "currentPage"?: number;
         "onPageSelected"?: (event: CustomEvent<any>) => void;
         "pages"?: number;
     }
+    interface GardbResults {
+        "onRecordSelected"?: (event: CustomEvent<CustomEvent>) => void;
+        "results"?: any;
+    }
+    interface GardbSearch {
+        "api"?: string;
+    }
     interface IntrinsicElements {
-        "filter-bar": FilterBar;
-        "gardener-detail": GardenerDetail;
-        "gardener-results": GardenerResults;
-        "gardener-search": GardenerSearch;
-        "loading-spinner": LoadingSpinner;
-        "print-errors": PrintErrors;
-        "results-pagination": ResultsPagination;
+        "gardb-detail": GardbDetail;
+        "gardb-filters": GardbFilters;
+        "gardb-loading": GardbLoading;
+        "gardb-pagination": GardbPagination;
+        "gardb-results": GardbResults;
+        "gardb-search": GardbSearch;
     }
 }
 export { LocalJSX as JSX };
 declare module "@stencil/core" {
     export namespace JSX {
         interface IntrinsicElements {
-            "filter-bar": LocalJSX.FilterBar & JSXBase.HTMLAttributes<HTMLFilterBarElement>;
-            "gardener-detail": LocalJSX.GardenerDetail & JSXBase.HTMLAttributes<HTMLGardenerDetailElement>;
-            "gardener-results": LocalJSX.GardenerResults & JSXBase.HTMLAttributes<HTMLGardenerResultsElement>;
-            "gardener-search": LocalJSX.GardenerSearch & JSXBase.HTMLAttributes<HTMLGardenerSearchElement>;
-            "loading-spinner": LocalJSX.LoadingSpinner & JSXBase.HTMLAttributes<HTMLLoadingSpinnerElement>;
-            "print-errors": LocalJSX.PrintErrors & JSXBase.HTMLAttributes<HTMLPrintErrorsElement>;
-            "results-pagination": LocalJSX.ResultsPagination & JSXBase.HTMLAttributes<HTMLResultsPaginationElement>;
+            "gardb-detail": LocalJSX.GardbDetail & JSXBase.HTMLAttributes<HTMLGardbDetailElement>;
+            "gardb-filters": LocalJSX.GardbFilters & JSXBase.HTMLAttributes<HTMLGardbFiltersElement>;
+            "gardb-loading": LocalJSX.GardbLoading & JSXBase.HTMLAttributes<HTMLGardbLoadingElement>;
+            "gardb-pagination": LocalJSX.GardbPagination & JSXBase.HTMLAttributes<HTMLGardbPaginationElement>;
+            "gardb-results": LocalJSX.GardbResults & JSXBase.HTMLAttributes<HTMLGardbResultsElement>;
+            "gardb-search": LocalJSX.GardbSearch & JSXBase.HTMLAttributes<HTMLGardbSearchElement>;
         }
     }
 }

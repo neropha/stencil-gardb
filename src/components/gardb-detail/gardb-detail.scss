@@ -1,0 +1,24 @@
+gardb-detail {
+  display: block;
+  position: relative;
+
+  .close {
+    font-size: inherit;
+    outline: none;
+    border: 0 none;
+    transition: 0.5s cubic-bezier(0.075, 0.82, 0.165, 1);
+
+    &:focus, &:hover {
+      outline: none;
+      transform: translateX(-5%);
+    }
+  }
+  table {
+    table-layout: auto;
+
+    .label {
+      width: 12em;
+      text-transform: capitalize;
+    }
+  }
+}

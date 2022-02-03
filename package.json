@@ -1,15 +1,15 @@
 {
-  "name": "gardener-search",
+  "name": "gardb",
   "version": "0.0.1",
   "description": "Stencil Component Starter",
-  "main": "dist/index.js",
-  "module": "dist/index.mjs",
+  "main": "dist/index.cjs.js",
+  "module": "dist/index.js",
   "es2015": "dist/esm/index.mjs",
   "es2017": "dist/esm/index.mjs",
   "types": "dist/types/index.d.ts",
   "collection": "dist/collection/collection-manifest.json",
   "collection:main": "dist/collection/index.js",
-  "unpkg": "dist/gardener-search.js",
+  "unpkg": "dist/gardb-search/index.esm.js",
   "files": [
     "dist/",
     "loader/"
@@ -21,9 +21,15 @@
     "test.watch": "stencil test --spec --e2e --watchAll",
     "generate": "stencil generate"
   },
-  "devDependencies": {
-    "@stencil/core": "^1.17.4",
+  "dependencies": {
+    "@stencil/core": "^2.13.0",
     "@stencil/sass": "^1.5.2"
+  },
+  "devDependencies": {
+    "@types/jest": "^27.0.3",
+    "jest": "^27.4.5",
+    "jest-cli": "^27.4.5",
+    "puppeteer": "^10.0.0"
   },
   "license": "MIT"
 }

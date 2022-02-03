@@ -1,0 +1,50 @@
+gardb-results {
+  display: block;
+  overflow: hidden;
+  width: 100%;
+  overflow: hidden;
+
+  table {
+    table-layout: auto;
+    width: 100%;
+
+    .person {
+      width: 20em;
+    }
+
+    .id {
+      width: 4em;
+      overflow: hidden;
+      white-space: nowrap;
+    }
+
+    .year {
+      width: 4em;
+      overflow: hidden;
+      white-space: nowrap;
+    }
+
+    .details {
+      width: 1em;
+      overflow: hidden;
+      white-space: nowrap;
+    }
+
+    .author {
+      min-width: 12em;
+    }
+
+    a.link {
+      padding: 0.25em;
+      display: block;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      text-decoration: none;
+    }
+
+    td {
+      overflow: hidden;
+    }
+  }
+}

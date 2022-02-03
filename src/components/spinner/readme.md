@@ -1,4 +1,4 @@
-# loading-spinner
+# gardb-loading
 
 
 
@@ -9,13 +9,13 @@
 
 ### Used by
 
- - [gardener-search](../gardener-search)
+ - [gardb-search](../gardb-search)
 
 ### Graph
 ```mermaid
 graph TD;
-  gardener-search --> loading-spinner
-  style loading-spinner fill:#f9f,stroke:#333,stroke-width:4px
+  gardb-search --> gardb-loading
+  style gardb-loading fill:#f9f,stroke:#333,stroke-width:4px
 ```
 
 ----------------------------------------------
