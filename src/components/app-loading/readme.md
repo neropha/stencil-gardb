@@ -1,4 +1,4 @@
-# gardb-loading
+# app-loading
 
 
 
@@ -14,8 +14,8 @@
 ### Graph
 ```mermaid
 graph TD;
-  gardb-search --> gardb-loading
-  style gardb-loading fill:#f9f,stroke:#333,stroke-width:4px
+  gardb-search --> app-loading
+  style app-loading fill:#f9f,stroke:#333,stroke-width:4px
 ```
 
 ----------------------------------------------

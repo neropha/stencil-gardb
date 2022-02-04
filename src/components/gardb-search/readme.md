@@ -16,7 +16,7 @@
 
 ### Depends on
 
-- [gardb-loading](../spinner)
+- [app-loading](../spinner)
 - [gardb-filters](../gardb-filters)
 - [gardb-detail](../gardb-detail)
 - [gardb-results](../gardb-results)
@@ -24,7 +24,7 @@
 ### Graph
 ```mermaid
 graph TD;
-  gardb-search --> gardb-loading
+  gardb-search --> app-loading
   gardb-search --> gardb-filters
   gardb-search --> gardb-detail
   gardb-search --> gardb-results

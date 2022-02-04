@@ -1,6 +1,13 @@
 gardb-detail {
   display: block;
   position: relative;
+  transition: opacity 0.5s, visibility 0s 0.5s;
+
+  &.is-open {
+    opacity: 1;
+    -webkit-transition: opacity 0.5s;
+    transition: opacity 0.5s;
+  }
 
   .close {
     font-size: inherit;

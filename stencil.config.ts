@@ -1,5 +1,6 @@
 import { Config } from '@stencil/core';
 import { sass } from '@stencil/sass';
+import { inlineSvg } from 'stencil-inline-svg';
 
 export const config: Config = {
   namespace: 'gardb',
@@ -11,7 +12,8 @@ export const config: Config = {
         'src/theme/variables.scss',
         'src/theme/theme-default.scss',
       ]
-    })
+    }),
+    inlineSvg()
   ],
   outputTargets: [
     {
@@ -25,5 +27,5 @@ export const config: Config = {
       type: 'www',
       serviceWorker: null // disable service workers
     }
-  ]
+  ],
 };

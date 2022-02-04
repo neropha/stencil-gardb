@@ -1,5 +1,7 @@
-import { Component, Host, h, Prop, State, Element } from "@stencil/core";
-import { Event, EventEmitter, Listen } from "@stencil/core";
+import { Component, Host, h, State, Element, Method, Prop, Event, EventEmitter } from "@stencil/core";
+// import { GardbService } from "../../services/gardb.service";
+import { Gardener } from "../../utils/interfaces";
+
 
 @Component({
   tag: "gardb-detail",
@@ -7,62 +9,55 @@ import { Event, EventEmitter, Listen } from "@stencil/core";
   shadow: false,
 })
 export class Detail {
-  @Prop() public record: any;
-  @State() cleanRecord: Array<object> = [];
+  @Prop() record: Gardener;
+  @State() cleanedRecord: Gardener = null;
   @Element() private element: HTMLElement;
+  @Event() recordSelected: EventEmitter<Gardener>;
 
-  @Listen("hashchange", { target: "window" })
-  handleScroll(ev) {
-    if (window.location.hash == "#results") {
-      this.closeDetail(ev);
-    }
+  @Method()
+  async close() {
+    this.element.classList.remove("is-open");
+    // GardbService.setSelectedRecord(null);
+    this.recordSelected.emit(null);
   }
-
-  @Event() recordSelected: EventEmitter<CustomEvent>;
-  recordSelectedHandler(record: CustomEvent<number>) {
-    this.recordSelected.emit(record);
-  }
-
-  public hideColumns = ["location", "reserve01", "reserve02", "sourcefile", "created", "updated"];
 
   componentWillLoad() {
+    let hideColumns = ["location", "reserve01", "reserve02", "sourcefile", "created", "updated"];
     for (const [key, value] of Object.entries(this.record)) {
-      if (!this.hideColumns.includes(key)) {
-        this.cleanRecord = { ...this.cleanRecord, [key]: value };
+      if (!hideColumns.includes(key)) {
+        this.cleanedRecord = { ...this.cleanedRecord, [key]: value };
       }
     }
   }
   componentDidLoad() {
-    this.element.scrollIntoView({behavior: "smooth", block: "end", inline: "nearest"});
+    this.element.classList.add("is-open");
+    this.element.scrollIntoView({ behavior: "smooth", block: "end", inline: "nearest" });
   }
 
-  public closeDetail = function (e) {
-    e.preventDefault();
-    this.recordSelected.emit(null);
-  };
-
   render() {
-    if (this.cleanRecord) {
+    if (this.cleanedRecord) {
       return (
-        <Host id={"id" + this.record.ID} class="mt-5">
-          <button type="button" class="close btn-sm mt-3 mr-3" aria-label="Close" onClick={e => this.closeDetail(e)}>
+        <Host class="mt-5">
+          <button type="button" class="close btn-sm mt-3 mr-3" aria-label="Close" onClick={() => this.close()}>
             Zurück <i class="fa fa-times-circle fa-lg" aria-hidden="true"></i>
           </button>
           <div class="border p-3 mt-3">
             <h2 class="mb-3 mb-md-4">{this.record.Person}</h2>
-            <table class="table border-bottom stacktable">
-              {Object.keys(this.cleanRecord).map(key => (
+            <table class="table border-bottom">
+              {Object.keys(this.cleanedRecord).map(key => (
                 <tr>
                   <td class="label">
                     <strong>{key}</strong>
                   </td>
-                  <td>{this.cleanRecord[key]}</td>
+                  <td>{this.cleanedRecord[key]}</td>
                 </tr>
               ))}
             </table>
           </div>
         </Host>
       );
+    } else {
+      return <app-loading></app-loading>;
     }
   }
 }

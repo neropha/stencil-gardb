@@ -1,4 +1,8 @@
 import { Component, Host, State, h, Prop, Listen } from "@stencil/core";
+import {} from "@stencil/router";
+import { Gardener } from "../../utils/interfaces";
+import { GardbService } from "../../services/gardb.service";
+import { MessageService } from "../../services/message.service";
 
 @Component({
   tag: "gardb-search",
@@ -6,94 +10,77 @@ import { Component, Host, State, h, Prop, Listen } from "@stencil/core";
   shadow: false,
 })
 export class MyComponent {
-  @State() selectedRecord: true;
-  @State() errors = [];
+  public gardbService: GardbService;
+  public messageService: MessageService;
+  @Prop() public api: string;
   @State() results: any;
   @State() filteredResults: any;
+  @State() public selectedRecord: Gardener;
+  @State() public loading: boolean = true;
 
-  @Prop() public api: string;
+  constructor() {
+    this.gardbService = GardbService.Instance;
+    this.messageService = MessageService.Instance;
+  }
 
-  @State() public loading = true;
-
-  async loadData() {
-    try {
-      let response = await fetch(this.api, {
-        method: "GET",
-        mode: "cors",
-        referrerPolicy: 'no-referrer', // no-referrer, *no-referrer-when-downgrade, origin, origin-when-cross-origin, same-origin, strict-origin, strict-origin-when-cross-origin, unsafe-url
+  componentWillLoad() {
+    this.messageService.clear();
+    if (this.api !== undefined) {
+      this.loading = true;
+      this.gardbService.getGardeners(this.api).finally(() => {
+        this.loading = false;
       });
-      if (!response.ok) {
-        // Prepare for catch(err)
-        throw new Error(response.status + ": " + response.statusText);
-      }
-      this.results = this.filteredResults = await response.json();
-    } catch (err) {
-      this.errors.push(err.message);
-      this.errors.push("Datenbank konnte nicht geladen werden.");
-    } finally {
+    }
+  }
+  componentDidLoad() {
+    if (this.api === undefined) {
+      this.messageService.add("api @Prop() not set.");
       this.loading = false;
     }
   }
-  componentWillLoad() {
-    if (!this.api) {
-      this.errors.push("Datenbank nicht definiert.");
-    } else {
-      this.loadData();
-    }
-  }
-
   @Listen("filterEvent")
   filterResultHandler(event: CustomEvent<any>) {
     this.filteredResults = event.detail;
-  }
-
-  @Listen("recordSelected")
-  recordSelectedHandler(record: CustomEvent<number>) {
-    if (record.detail) {
-      this.selectedRecord = this.filteredResults.filter(element => (element.ID == record.detail)).shift();
-      window.location.hash = "id" + record.detail;
-    } else {
-      window.location.hash = "results";
-      this.selectedRecord = null;
-    }
-  }
-
-  public return_errors(errors) {
-    return (
-      <Host>
-        <h5>Fehler</h5>
-        {errors.map(error => (
-          <div>{error}</div>
-        ))}
-      </Host>
-    );
+    // this.selectedRecord = GardbService.getSelectedRecord();
   }
 
   render() {
-    if (this.errors.length) {
-      return this.return_errors(this.errors);
-    }
-    else if (this.loading) {
-      return (
-        <Host>
-          <gardb-loading></gardb-loading>
-        </Host>
-      );
-    }
-    if (this.selectedRecord) {
-      return (
-        <Host>
+    return (
+      <Host>
+        <header>
+          <app-messages></app-messages>
+          <app-loading visible={this.loading}></app-loading>
           <gardb-filters results={this.results}></gardb-filters>
-          <gardb-detail record={this.selectedRecord}></gardb-detail>
-        </Host>
-      );
-    } else {
-      return (
-        <Host>
-          <gardb-filters results={this.results}></gardb-filters>
-          <gardb-results results={this.filteredResults}></gardb-results>
-        </Host>
-      );
-    }
+        </header>
+        <main>
+          <stencil-router>
+            <stencil-route url="/results" component="gardb-detail"></stencil-route>
+            <stencil-route url="/" component="gardb-results" exact={true}></stencil-route>
+          </stencil-router>
+        </main>
+      </Host>
+    );
+
+    // if (this.errors.length) {
+    //   return this.return_errors(this.errors);
+    // } else if (this.loading) {
+    //   return <app-loading></app-loading>;
+    // } else if (this.selectedRecord) {
+    //   return (
+    //     <Host>
+    //       <app-messages></app-messages>
+    //       <gardb-filters results={this.results}></gardb-filters>
+    //       <gardb-detail record={this.selectedRecord}></gardb-detail>
+    //     </Host>
+    //   );
+    // } else {
+    //   return (
+    //     <Host>
+    //       <app-messages></app-messages>
+    //       <gardb-filters results={this.results}></gardb-filters>
+    //       <gardb-results results={this.filteredResults}></gardb-results>
+    //     </Host>
+    //   );
+    // }
   }
 }

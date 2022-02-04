@@ -1,4 +1,4 @@
-import { Pagination } from './pagination';
+import { Pagination } from "./gardb-pagination";
 
 describe('gardb-pagination', () => {
   it('builds', () => {

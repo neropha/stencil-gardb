@@ -2,7 +2,39 @@ gardb-results {
   display: block;
   overflow: hidden;
   width: 100%;
-  overflow: hidden;
+
+  .table-wrapper {
+    position: relative;
+    overflow: hidden;
+
+    @include media-breakpoint-down(md) {
+      &:before,
+      &:after {
+        content: "";
+        position: absolute;
+        top: 0;
+        width: 20px;
+        height: 100%;
+        background: rgb(0, 0, 0);
+      }
+
+      &:before {
+        left: 0;
+        background: linear-gradient(90deg, rgba(0, 0, 0, 0.2) 0%, rgba(0, 0, 0, 0) 100%);
+      }
+
+      &:after {
+        content: "";
+        right: 0;
+        background: linear-gradient(-90deg, rgba(0, 0, 0, 0.2) 0%, rgba(0, 0, 0, 0) 100%);
+      }
+    }
+
+  }
+
+  .table-responsive {
+    scroll-behavior: smooth;
+  }
 
   table {
     table-layout: auto;

@@ -1,5 +1,8 @@
-import { Component, Host, h, Prop, State, Watch, Listen } from "@stencil/core";
+import { Component, Host, h, State, Watch, Listen } from "@stencil/core";
 import { Event, EventEmitter } from "@stencil/core";
+import { GardbService } from "../../services/gardb.service";
+import { Gardener } from "../../utils/interfaces";
+import { MessageService } from "../../services/message.service";
 
 @Component({
   tag: "gardb-results",
@@ -7,22 +10,37 @@ import { Event, EventEmitter } from "@stencil/core";
   shadow: false,
 })
 export class Results {
-  @Prop() public results: any;
+  private gardbService: GardbService;
+  private messageService: MessageService;
+  @State() public results: any;
   @State() public currentPage: number = 1;
-  @State() public selectedRecord: null;
   @State() public pages: number;
-  @State() public currentRecord: any;
-
+  @State() public selectedRecord: Gardener;
   public itemsPerPage: number = 50;
   public total: any;
 
-  componentWillRender() {
+  constructor() {
+    this.gardbService = GardbService.Instance;
+    this.messageService = MessageService.Instance;
+  }
+
+  getGardeners(): void {
+    this.gardbService.getGardeners();
+  }
+
+  componentWillLoad() {
+    this.results = this.getGardeners();
+    this.results = this.gardbService.getGardeners().finally((response) => {
+      console.log(response);
+    });
     this.total = this.results.length;
     this.pages = Math.ceil(this.total / this.itemsPerPage);
+    // this.selectedRecord = GardbService.getSelectedRecord();
   }
 
   @Watch("results")
   watchHandler(newValue: boolean, oldValue: boolean) {
+    this.messageService.add("Results: serving from store");
     if (newValue != oldValue) {
       this.currentPage = 1;
     }
@@ -48,10 +66,25 @@ export class Results {
     return this.results.slice(this.firstItemShown(), this.lastItemShown());
   }
 
-  @Event() recordSelected: EventEmitter<CustomEvent>;
-  recordSelectedHandler(record: CustomEvent<number>) {
-    this.recordSelected.emit(record);
+  @Event() recordSelected: EventEmitter<Gardener>;
+  selectRecord(record: Gardener) {
+    this.selectedRecord = record;
+    // GardbService.setSelectedRecord(record);
+    console.log("emit from results", record);
+    this.recordSelected.emit();
   }
+
+  // @Listen("recordSelected")
+  // recordSelectedHandler() {
+  //   if (!record) {
+  //     // this.recordSelected = null;
+  //     window.location.hash = "#results";
+  //     this.pagedResult();
+  //   } else {
+  //     window.location.hash = "#id" + record.ID;
+  //     // this.selectedRecord = this.filteredResults.filter(element => element.ID == 5).shift();
+  //   }
+  // }
 
   @Listen("pageSelected")
   changePageHandler(event: CustomEvent<any>) {
@@ -59,9 +92,19 @@ export class Results {
     this.pagedResult();
   }
 
+  @Listen("hashchange", { target: "window" })
+  handleHashChange() {
+    if (window.location.hash == "#results") {
+      // Hide Detail and Show Results
+    }
+    if (window.location.hash == "#id5") {
+      // this.selectedRecord = this.filteredResults.filter(element => element.ID == 5).shift();
+    }
+  }
+
   public resultInfo() {
     return (
-      <div class="py-3 py-md-4 small">
+      <div class="py-3 py-md-4 px-3 small">
         {"Zeige "}
         {this.total > 0 ? this.firstItemShown() + 1 + "–" + this.lastItemShown() + " von " + this.total + " Ergebnissen" : this.firstItemShown() + " Ergebnisse"}
       </div>
@@ -71,37 +114,46 @@ export class Results {
   render() {
     return (
       <Host>
+        Results
         {this.resultInfo()}
-        <table class="table stacktable border-bottom">
-          <thead>
-            <tr>
-              {/* <th class="id">ID</th> */}
-              <th class="person">Person</th>
-              <th class="content">Inhalt</th>
-              <th class="type">Dokumententyp</th>
-              <th class="year">Jahr</th>
-              <th class="author">Autor</th>
-              <th class="details">&nbsp;</th>
-            </tr>
-          </thead>
-          <tbody>
-            {this.pagedResult().map(gardener => (
-              <tr>
-                {/* <td class="id">{gardener.ID}</td> */}
-                <td>{gardener.Person}</td>
-                <td>{gardener.Inhalt}</td>
-                <td>{gardener.Dokumententyp}</td>
-                <td>{gardener.Jahr}</td>
-                <td>{gardener.Autor}</td>
-                <td>
-                  <a class="link" title="Details" href={'#id' + gardener['ID']} onClick={() => this.recordSelectedHandler(gardener.ID)}>
-                    <i class="fa fa-info-circle fa-lg"></i>
-                  </a>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+        <div class="table-wrapper">
+          <div class="table-responsive table-responsive-md">
+            <table class="table stacktable border-bottom">
+              <thead>
+                <tr>
+                  {/* <th class="id">ID</th> */}
+                  <th class="person">Person</th>
+                  <th class="content">Inhalt</th>
+                  <th class="type">Dokumententyp</th>
+                  <th class="year">Jahr</th>
+                  <th class="author">Autor</th>
+                  <th class="details">&nbsp;</th>
+                </tr>
+              </thead>
+              <tbody>
+                {this.pagedResult().map(gardener => (
+                  <tr>
+                    {/* <td class="id">{gardener.ID}</td> */}
+                    <td>
+                      <a href={"#id" + gardener.ID} onClick={() => this.selectRecord(gardener)}>
+                        {gardener.Person}
+                      </a>
+                    </td>
+                    <td>{gardener.Inhalt}</td>
+                    <td>{gardener.Dokumententyp}</td>
+                    <td>{gardener.Jahr}</td>
+                    <td>{gardener.Autor}</td>
+                    <td>
+                      <a class="link" title="Details" href={"#id" + gardener.ID} onClick={() => this.selectRecord(gardener)}>
+                        <i class="fa fa-info-circle fa-lg"></i>
+                      </a>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
         <gardb-pagination current-page={this.currentPage} pages={this.pages}></gardb-pagination>
       </Host>
     );

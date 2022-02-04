@@ -29,8 +29,6 @@ gardb-filters {
 
   button {
     -webkit-appearance: none;
-    -webkit-appearance: none;
-    display: block;
     display: block;
     flex: 1;
     margin: 10px 0 0;
@@ -83,8 +81,6 @@ gardb-filters {
     @include media-breakpoint-up(lg) {
       width: 100%;
     }
-
-    &.submit-all {}
   }
 
 }

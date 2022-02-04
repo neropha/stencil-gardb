@@ -5,27 +5,45 @@
  * It contains typing information for all components that exist in this project.
  */
 import { HTMLStencilElement, JSXBase } from "@stencil/core/internal";
+import { Gardener } from "./utils/interfaces";
 export namespace Components {
+    interface AppLoading {
+        "visible": boolean;
+    }
+    interface AppMessages {
+    }
     interface GardbDetail {
-        "record": any;
+        "close": () => Promise<void>;
+        "record": Gardener;
     }
     interface GardbFilters {
         "results": any;
-    }
-    interface GardbLoading {
     }
     interface GardbPagination {
         "currentPage": number;
         "pages": number;
     }
     interface GardbResults {
-        "results": any;
+    }
+    interface GardbRoot {
     }
     interface GardbSearch {
         "api": string;
     }
 }
 declare global {
+    interface HTMLAppLoadingElement extends Components.AppLoading, HTMLStencilElement {
+    }
+    var HTMLAppLoadingElement: {
+        prototype: HTMLAppLoadingElement;
+        new (): HTMLAppLoadingElement;
+    };
+    interface HTMLAppMessagesElement extends Components.AppMessages, HTMLStencilElement {
+    }
+    var HTMLAppMessagesElement: {
+        prototype: HTMLAppMessagesElement;
+        new (): HTMLAppMessagesElement;
+    };
     interface HTMLGardbDetailElement extends Components.GardbDetail, HTMLStencilElement {
     }
     var HTMLGardbDetailElement: {
@@ -37,12 +55,6 @@ declare global {
     var HTMLGardbFiltersElement: {
         prototype: HTMLGardbFiltersElement;
         new (): HTMLGardbFiltersElement;
-    };
-    interface HTMLGardbLoadingElement extends Components.GardbLoading, HTMLStencilElement {
-    }
-    var HTMLGardbLoadingElement: {
-        prototype: HTMLGardbLoadingElement;
-        new (): HTMLGardbLoadingElement;
     };
     interface HTMLGardbPaginationElement extends Components.GardbPagination, HTMLStencilElement {
     }
@@ -56,6 +68,12 @@ declare global {
         prototype: HTMLGardbResultsElement;
         new (): HTMLGardbResultsElement;
     };
+    interface HTMLGardbRootElement extends Components.GardbRoot, HTMLStencilElement {
+    }
+    var HTMLGardbRootElement: {
+        prototype: HTMLGardbRootElement;
+        new (): HTMLGardbRootElement;
+    };
     interface HTMLGardbSearchElement extends Components.GardbSearch, HTMLStencilElement {
     }
     var HTMLGardbSearchElement: {
@@ -63,25 +81,30 @@ declare global {
         new (): HTMLGardbSearchElement;
     };
     interface HTMLElementTagNameMap {
+        "app-loading": HTMLAppLoadingElement;
+        "app-messages": HTMLAppMessagesElement;
         "gardb-detail": HTMLGardbDetailElement;
         "gardb-filters": HTMLGardbFiltersElement;
-        "gardb-loading": HTMLGardbLoadingElement;
         "gardb-pagination": HTMLGardbPaginationElement;
         "gardb-results": HTMLGardbResultsElement;
+        "gardb-root": HTMLGardbRootElement;
         "gardb-search": HTMLGardbSearchElement;
     }
 }
 declare namespace LocalJSX {
+    interface AppLoading {
+        "visible"?: boolean;
+    }
+    interface AppMessages {
+    }
     interface GardbDetail {
-        "onRecordSelected"?: (event: CustomEvent<CustomEvent>) => void;
-        "record"?: any;
+        "onRecordSelected"?: (event: CustomEvent<Gardener>) => void;
+        "record"?: Gardener;
     }
     interface GardbFilters {
         "onFilterEvent"?: (event: CustomEvent<any>) => void;
-        "onRecordSelected"?: (event: CustomEvent<CustomEvent>) => void;
+        "onRecordSelected"?: (event: CustomEvent<any>) => void;
         "results"?: any;
-    }
-    interface GardbLoading {
     }
     interface GardbPagination {
         "currentPage"?: number;
@@ -89,18 +112,21 @@ declare namespace LocalJSX {
         "pages"?: number;
     }
     interface GardbResults {
-        "onRecordSelected"?: (event: CustomEvent<CustomEvent>) => void;
-        "results"?: any;
+        "onRecordSelected"?: (event: CustomEvent<Gardener>) => void;
+    }
+    interface GardbRoot {
     }
     interface GardbSearch {
         "api"?: string;
     }
     interface IntrinsicElements {
+        "app-loading": AppLoading;
+        "app-messages": AppMessages;
         "gardb-detail": GardbDetail;
         "gardb-filters": GardbFilters;
-        "gardb-loading": GardbLoading;
         "gardb-pagination": GardbPagination;
         "gardb-results": GardbResults;
+        "gardb-root": GardbRoot;
         "gardb-search": GardbSearch;
     }
 }
@@ -108,11 +134,13 @@ export { LocalJSX as JSX };
 declare module "@stencil/core" {
     export namespace JSX {
         interface IntrinsicElements {
+            "app-loading": LocalJSX.AppLoading & JSXBase.HTMLAttributes<HTMLAppLoadingElement>;
+            "app-messages": LocalJSX.AppMessages & JSXBase.HTMLAttributes<HTMLAppMessagesElement>;
             "gardb-detail": LocalJSX.GardbDetail & JSXBase.HTMLAttributes<HTMLGardbDetailElement>;
             "gardb-filters": LocalJSX.GardbFilters & JSXBase.HTMLAttributes<HTMLGardbFiltersElement>;
-            "gardb-loading": LocalJSX.GardbLoading & JSXBase.HTMLAttributes<HTMLGardbLoadingElement>;
             "gardb-pagination": LocalJSX.GardbPagination & JSXBase.HTMLAttributes<HTMLGardbPaginationElement>;
             "gardb-results": LocalJSX.GardbResults & JSXBase.HTMLAttributes<HTMLGardbResultsElement>;
+            "gardb-root": LocalJSX.GardbRoot & JSXBase.HTMLAttributes<HTMLGardbRootElement>;
             "gardb-search": LocalJSX.GardbSearch & JSXBase.HTMLAttributes<HTMLGardbSearchElement>;
         }
     }

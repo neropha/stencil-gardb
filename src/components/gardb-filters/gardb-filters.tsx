@@ -7,7 +7,9 @@ import { Component, Element, Host, h, State, Prop, Event, EventEmitter, Watch } 
 })
 export class FilterBar {
   @Element() host: HTMLElement;
+  @Event() recordSelected: EventEmitter;
   @Prop() results: any;
+  @State() letter: string;
   @State() filteredResults: any;
   @State() formValues = {
     person: "",
@@ -23,10 +25,6 @@ export class FilterBar {
     this.formValues[event.target.id] = event.target.value;
   }
 
-  @Event() recordSelected: EventEmitter<CustomEvent>;
-  recordSelectedHandler(record: CustomEvent<number>) {
-    this.recordSelected.emit(record);
-  }
 
   @Event() filterEvent: EventEmitter<any>;
 
@@ -80,7 +78,7 @@ export class FilterBar {
           this.filteredResults = this.filteredResults.filter(record => this.filterByKeyword(value, record));
         }
       }
-    };
+    }
   }
 
   public resetSearch(e) {
@@ -92,14 +90,14 @@ export class FilterBar {
       // Reset Form Value Properties
       // Will automatically empty form, because of Prop Value Variable
       this.formValues[key] = "";
-    };
+    }
   }
 
   public filterLetter(e) {
     e.preventDefault();
     this.resetSearch(e);
-    var letter = e.target.innerText.toLowerCase();
-    this.filteredResults = this.results.filter(record => this.filterByInitial(letter, record));
+    this.letter = e.target.innerText.toLowerCase();
+    this.filteredResults = this.results.filter(record => this.filterByInitial(this.letter, record));
   }
 
   public glossar() {
@@ -122,53 +120,51 @@ export class FilterBar {
   render() {
     return (
       <Host>
-        <div class="gardb-filters">
-          <form id="form" class="gardb-search-filter">
-            <div class="border p-3">
-              <h4 class="mb-3">Datensatz finden</h4>
-              <div class="row align-items-end">
-                <div class="field-person form-group col-12 col-md-4 col-lg-3">
-                  <label class="col-form-label">Person/Autor</label>
-                  <div>
-                    <input class="form-control" type="text" id="person" value={this.formValues.person} onInput={(event) => this.handleFormInput(event)} />
-                  </div>
+        <form id="form" class="gardb-search-filter">
+          <div class="border p-3">
+            <h4 class="mb-3">Datensatz finden</h4>
+            <div class="row align-items-end">
+              <div class="field-person form-group col-12 col-md-4 col-lg-3">
+                <label class="col-form-label">Person/Autor</label>
+                <div>
+                  <input class="form-control" type="text" id="person" value={this.formValues.person} onInput={event => this.handleFormInput(event)} />
                 </div>
-                <div class="field-year form-group col-12 col-md-4 col-lg-3">
-                  <label class="col-form-label">Jahr</label>
-                  <div>
-                    <input class="form-control" type="text" id="year" value={this.formValues.year} onInput={(event) => this.handleFormInput(event)} />
-                  </div>
+              </div>
+              <div class="field-year form-group col-12 col-md-4 col-lg-3">
+                <label class="col-form-label">Jahr</label>
+                <div>
+                  <input class="form-control" type="text" id="year" value={this.formValues.year} onInput={event => this.handleFormInput(event)} />
                 </div>
-                <div class="field-keyword form-group col-12 col-md-4 col-lg-3">
-                  <label class="col-form-label">Stichwort</label>
-                  <div>
-                    <input class="form-control" type="text" id="keyword" value={this.formValues.keyword} onInput={(event) => this.handleFormInput(event)} />
-                  </div>
+              </div>
+              <div class="field-keyword form-group col-12 col-md-4 col-lg-3">
+                <label class="col-form-label">Stichwort</label>
+                <div>
+                  <input class="form-control" type="text" id="keyword" value={this.formValues.keyword} onInput={event => this.handleFormInput(event)} />
                 </div>
-                <div class="form-group submit col pt-3 pt-lg-0">
-                  <button type="submit" class="btn btn-primary submit-all" onClick={e => this.submitSearch(e)}>
-                    Suchen
-                  </button>
-                </div>
+              </div>
+              <div class="form-group submit col pt-3 pt-lg-0">
+                <button type="submit" class="btn btn-primary submit-all" onClick={e => this.submitSearch(e)}>
+                  Suchen
+                </button>
               </div>
             </div>
-            <div class="row mt-3">
-              <div class="col-12 col-lg-9">
-                <div class="border p-3 ">
-                  <h4 class="mb-3">Nach Anfangsbuchstaben filtern</h4>
-                  <ul class="glossary d-flex flex-wrap justify-content-start">{this.glossar()}</ul>
-                </div>
-              </div>
-              <div class="gardb-search-reset col-12 col-lg-3 mt-3 mt-lg-0 pl-lg-0">
-                <div class="border p-3 h100">
-                  <button type="button" class="btn btn-outline-dark btn-sm submit-selection" onClick={e => this.resetSearch(e)}>
-                    Zurücksetzen
-                  </button>
-                </div>
+          </div>
+          <div class="row mt-3">
+            <div class="col-12 col-lg-9">
+              <div class="border p-3 ">
+                <h4 class="mb-3">Nach Anfangsbuchstaben filtern</h4>
+                <ul class="glossary d-flex flex-wrap justify-content-start">{this.glossar()}</ul>
               </div>
             </div>
-          </form>
-        </div>
+            <div class="gardb-search-reset col-12 col-lg-3 mt-3 mt-lg-0 pl-lg-0">
+              <div class="border p-3 h100">
+                <button type="button" class="btn btn-outline-dark btn-sm submit-selection" onClick={e => this.resetSearch(e)}>
+                  Zurücksetzen
+                </button>
+              </div>
+            </div>
+          </div>
+        </form>
       </Host>
     );
   }
