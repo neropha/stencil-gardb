@@ -10,12 +10,11 @@ import { MessageService } from "../../services/message.service";
   shadow: false,
 })
 export class Results {
-  private gardbService: GardbService;
-  private messageService: MessageService;
+  public gardbService: GardbService;
+  public messageService: MessageService;
   @State() public results: any;
   @State() public currentPage: number = 1;
   @State() public pages: number;
-  @State() public selectedRecord: Gardener;
   public itemsPerPage: number = 50;
   public total: any;
 
@@ -24,23 +23,21 @@ export class Results {
     this.messageService = MessageService.Instance;
   }
 
-  getGardeners(): void {
-    this.gardbService.getGardeners();
+  async getGardeners() {
+    let test = await this.gardbService.getGardeners()
+    console.log("then: ", test);
+    this.results = test;
   }
 
   componentWillLoad() {
-    this.results = this.getGardeners();
-    this.results = this.gardbService.getGardeners().finally((response) => {
-      console.log(response);
-    });
+    this.getGardeners();
     this.total = this.results.length;
     this.pages = Math.ceil(this.total / this.itemsPerPage);
-    // this.selectedRecord = GardbService.getSelectedRecord();
   }
 
   @Watch("results")
   watchHandler(newValue: boolean, oldValue: boolean) {
-    this.messageService.add("Results: serving from store");
+    this.messageService.add("Results: Change detected");
     if (newValue != oldValue) {
       this.currentPage = 1;
     }
@@ -68,8 +65,6 @@ export class Results {
 
   @Event() recordSelected: EventEmitter<Gardener>;
   selectRecord(record: Gardener) {
-    this.selectedRecord = record;
-    // GardbService.setSelectedRecord(record);
     console.log("emit from results", record);
     this.recordSelected.emit();
   }
@@ -111,7 +106,7 @@ export class Results {
     );
   }
 
-  render() {
+  async render() {
     return (
       <Host>
         Results

@@ -1,4 +1,4 @@
-import { Component, State, Host, h, Watch } from "@stencil/core";
+import { Component, State, Host, h } from "@stencil/core";
 import { MessageService } from "../../services/message.service";
 
 @Component({

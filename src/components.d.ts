@@ -25,8 +25,6 @@ export namespace Components {
     }
     interface GardbResults {
     }
-    interface GardbRoot {
-    }
     interface GardbSearch {
         "api": string;
     }
@@ -68,12 +66,6 @@ declare global {
         prototype: HTMLGardbResultsElement;
         new (): HTMLGardbResultsElement;
     };
-    interface HTMLGardbRootElement extends Components.GardbRoot, HTMLStencilElement {
-    }
-    var HTMLGardbRootElement: {
-        prototype: HTMLGardbRootElement;
-        new (): HTMLGardbRootElement;
-    };
     interface HTMLGardbSearchElement extends Components.GardbSearch, HTMLStencilElement {
     }
     var HTMLGardbSearchElement: {
@@ -87,7 +79,6 @@ declare global {
         "gardb-filters": HTMLGardbFiltersElement;
         "gardb-pagination": HTMLGardbPaginationElement;
         "gardb-results": HTMLGardbResultsElement;
-        "gardb-root": HTMLGardbRootElement;
         "gardb-search": HTMLGardbSearchElement;
     }
 }
@@ -114,8 +105,6 @@ declare namespace LocalJSX {
     interface GardbResults {
         "onRecordSelected"?: (event: CustomEvent<Gardener>) => void;
     }
-    interface GardbRoot {
-    }
     interface GardbSearch {
         "api"?: string;
     }
@@ -126,7 +115,6 @@ declare namespace LocalJSX {
         "gardb-filters": GardbFilters;
         "gardb-pagination": GardbPagination;
         "gardb-results": GardbResults;
-        "gardb-root": GardbRoot;
         "gardb-search": GardbSearch;
     }
 }
@@ -140,7 +128,6 @@ declare module "@stencil/core" {
             "gardb-filters": LocalJSX.GardbFilters & JSXBase.HTMLAttributes<HTMLGardbFiltersElement>;
             "gardb-pagination": LocalJSX.GardbPagination & JSXBase.HTMLAttributes<HTMLGardbPaginationElement>;
             "gardb-results": LocalJSX.GardbResults & JSXBase.HTMLAttributes<HTMLGardbResultsElement>;
-            "gardb-root": LocalJSX.GardbRoot & JSXBase.HTMLAttributes<HTMLGardbRootElement>;
             "gardb-search": LocalJSX.GardbSearch & JSXBase.HTMLAttributes<HTMLGardbSearchElement>;
         }
     }

@@ -32,7 +32,7 @@ export class GardbService {
 
   public handleResponse(response: any) {
     if (!response.ok) {
-      throw (`Error: ${response.status} (${response.statusText})`);
+      throw `Error: ${response.status} (${response.statusText})`;
     }
     return response;
   }
@@ -41,12 +41,12 @@ export class GardbService {
   async loadData(api: string) {
     this.messageService.add("GardbService: Fetching gardeners from API => " + this.api);
     try {
-      await fetch(api, this.apiOptions)
-      .then(this.handleResponse)
-      .then(response => {
-        return response.json();
-      });
-      this.messageService.add("GardbService: Succeeded fetching gardeners from API");
+      return await fetch(api, this.apiOptions)
+        .then(this.handleResponse)
+        .then(response => {
+          this.messageService.add("GardbService: Succeeded fetching gardeners from API");
+          return (this.gardeners = response.json());
+        });
     } catch (error) {
       if (error.message) {
         this.messageService.add(error.message);
@@ -57,13 +57,13 @@ export class GardbService {
     }
   }
 
-  public getGardeners(api?: string) {
-    this.api = api ?? api;
-    if (this.gardeners) {
-      this.messageService.add("GardbService: Serving gardeners from store");
-      return this.gardeners;
+  async getGardeners(api?: string) {
+    if (typeof api != "undefined") {
+      this.api = api;
+      return await this.loadData(api);
     } else {
-      return this.loadData(api);
+      this.messageService.add("GardbService: Serving gardeners from store");
+      return await this.gardeners;
     }
   }
 
