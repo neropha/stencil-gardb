@@ -22,14 +22,19 @@ export class MyComponent {
     this.messageService = MessageService.Instance;
   }
 
+  getGardeners(api: string) {
+    this.gardbService.loadData(api);
+
+    this.gardbService.subbo.subscribe(() => {
+      this.loading = false;
+    });
+  }
+
   componentWillLoad() {
     this.messageService.clear();
-
-    if (this.api !== undefined) {
+    if (this.api != "undefined") {
+      this.getGardeners(this.api);
       this.loading = true;
-      this.gardbService.getGardeners(this.api).then(() => {
-        this.loading = false;
-      });
     } else {
       this.messageService.add("api @Prop() not set.");
       this.loading = false;
@@ -48,7 +53,7 @@ export class MyComponent {
         <header>
           <app-messages></app-messages>
           <app-loading visible={this.loading}></app-loading>
-          <gardb-filters results={this.results}></gardb-filters>
+          <gardb-filters></gardb-filters>
         </header>
         <main>
           <stencil-router>

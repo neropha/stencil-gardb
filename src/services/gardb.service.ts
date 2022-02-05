@@ -1,10 +1,14 @@
+import { BehaviorSubject, AsyncSubject } from 'rxjs';
 import { Gardener } from "../utils/interfaces";
 import { MessageService } from "./message.service";
 
 export class GardbService {
   public api: string;
   public selectedRecord: Gardener = null;
-  public gardeners: any;
+  public gardeners: BehaviorSubject<any>;
+  public subbo = new AsyncSubject<any[]>();
+
+  // private testStorage: GarDB = []; // Just for testing
 
   public messageService: MessageService;
   private static _instance: GardbService;
@@ -38,37 +42,33 @@ export class GardbService {
   }
 
   // https://developer.mozilla.org/en-US/docs/Web/API/Fetch_API/Using_Fetch
-  async loadData(api: string) {
-    this.messageService.add("GardbService: Fetching gardeners from API => " + this.api);
-    try {
-      return await fetch(api, this.apiOptions)
-        .then(this.handleResponse)
-        .then(response => {
-          this.messageService.add("GardbService: Succeeded fetching gardeners from API");
-          return (this.gardeners = response.json());
-        });
-    } catch (error) {
-      if (error.message) {
-        this.messageService.add(error.message);
-      } else {
-        this.messageService.add(error);
-      }
-      this.messageService.add("Datenbank konnte nicht geladen werden.");
-    }
-  }
 
-  async getGardeners(api?: string) {
-    if (typeof api != "undefined") {
-      this.api = api;
-      return await this.loadData(api);
-    } else {
-      this.messageService.add("GardbService: Serving gardeners from store");
-      return await this.gardeners;
+  async loadData(api?: string) {
+    if (typeof api == "undefined") {
+      return;
     }
+    this.messageService.add("GardbService: Fetching gardeners from API => " + api);
+    let loadedData = await fetch(api, this.apiOptions)
+      .then(this.handleResponse)
+      .then(response => {
+        this.messageService.add("GardbService: Succeeded fetching gardeners from API");
+        this.api = api;
+        return response.json();
+      })
+      .catch(error => {
+        if (error.message) {
+          this.messageService.add(error.message);
+        } else {
+          this.messageService.add(error);
+        }
+        this.messageService.add("Datenbank konnte nicht geladen werden.");
+      });
+      this.subbo.next(loadedData);
+      this.subbo.complete();
+
   }
 
   public getSelectedRecord() {
-    console.log("get", this.selectedRecord);
     return this.selectedRecord;
   }
 

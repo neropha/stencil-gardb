@@ -12,25 +12,25 @@ import { MessageService } from "../../services/message.service";
 export class Results {
   public gardbService: GardbService;
   public messageService: MessageService;
-  @State() public results: any;
-  @State() public currentPage: number = 1;
-  @State() public pages: number;
+  @State() results: any;
+  @State() currentPage: number = 1;
+  @State() pages: number;
   public itemsPerPage: number = 50;
   public total: any;
 
   constructor() {
     this.gardbService = GardbService.Instance;
     this.messageService = MessageService.Instance;
+    this.getGardeners();
   }
 
-  async getGardeners() {
-    let test = await this.gardbService.getGardeners()
-    console.log("then: ", test);
-    this.results = test;
+  getGardeners() {
+    this.gardbService.subbo.subscribe((promise) => {
+      this.results = promise;
+    });
   }
 
   componentWillLoad() {
-    this.getGardeners();
     this.total = this.results.length;
     this.pages = Math.ceil(this.total / this.itemsPerPage);
   }
@@ -40,6 +40,7 @@ export class Results {
     this.messageService.add("Results: Change detected");
     if (newValue != oldValue) {
       this.currentPage = 1;
+      this.pagedResult()
     }
   }
 
@@ -106,7 +107,7 @@ export class Results {
     );
   }
 
-  async render() {
+render() {
     return (
       <Host>
         Results
