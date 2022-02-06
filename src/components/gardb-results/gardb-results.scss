@@ -8,6 +8,7 @@ gardb-results {
     overflow: hidden;
 
     @include media-breakpoint-down(md) {
+
       &:before,
       &:after {
         content: "";
@@ -36,12 +37,35 @@ gardb-results {
     scroll-behavior: smooth;
   }
 
+  .table__button {
+    padding: 0.25em;
+    cursor: pointer;
+
+    svg {
+      width: 25px;
+      height: 25px;
+
+      path {
+        fill: var(--gs-color-primary)
+      }
+    }
+  }
+
+  .table__link {
+    color: var(--gs-color-primary);
+    cursor: pointer;
+  }
+
   table {
     table-layout: auto;
     width: 100%;
 
+    td {
+      overflow: hidden;
+    }
+
     .person {
-      width: 20em;
+      min-width: 20em;
     }
 
     .id {
@@ -57,26 +81,15 @@ gardb-results {
     }
 
     .details {
-      width: 1em;
       overflow: hidden;
       white-space: nowrap;
+      vertical-align: middle;
     }
 
     .author {
       min-width: 12em;
     }
 
-    a.link {
-      padding: 0.25em;
-      display: block;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      text-decoration: none;
-    }
 
-    td {
-      overflow: hidden;
-    }
   }
 }

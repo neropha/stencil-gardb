@@ -1,5 +1,4 @@
-import { Component, Host, State, h, Prop, Listen } from "@stencil/core";
-import { Gardener } from "../../utils/interfaces";
+import { Component, Host, State, h, Prop } from "@stencil/core";
 import { GardbService } from "../../services/gardb.service";
 import { MessageService } from "../../services/message.service";
 
@@ -9,42 +8,37 @@ import { MessageService } from "../../services/message.service";
   shadow: false,
 })
 export class MyComponent {
-  public gardbService: GardbService;
-  public messageService: MessageService;
-  @Prop() public api: string;
-  @State() results: any;
-  @State() filteredResults: any;
-  @State() public selectedRecord: Gardener;
+  @State() gardbService: GardbService;
+  @State() messageService: MessageService;
+  @Prop() api: string;
+  // Debug property enables to show all messages from message.service, not just errors
+  @Prop({
+    mutable: true,
+  })
+  debug: boolean = false;
+
+  public results: any;
   @State() public loading: boolean = true;
 
   constructor() {
     this.gardbService = GardbService.Instance;
     this.messageService = MessageService.Instance;
+    this.messageService.debugMode.next(this.debug);
   }
 
-  getGardeners(api: string) {
-    this.gardbService.loadData(api);
-
-    this.gardbService.subbo.subscribe(() => {
+  @State() async getGardeners() {
+    return this.gardbService.loadData(this.api).then(() => {
       this.loading = false;
     });
   }
 
   componentWillLoad() {
-    this.messageService.clear();
-    if (this.api != "undefined") {
-      this.getGardeners(this.api);
-      this.loading = true;
-    } else {
-      this.messageService.add("api @Prop() not set.");
-      this.loading = false;
-    }
+    this.loading = true;
+    this.getGardeners();
   }
 
-  @Listen("filterEvent")
-  filterResultHandler(event: CustomEvent<any>) {
-    this.filteredResults = event.detail;
-    // this.selectedRecord = GardbService.getSelectedRecord();
+  componentDidUpdate() {
+    this.messageService.clear();
   }
 
   render() {
@@ -56,12 +50,8 @@ export class MyComponent {
           <gardb-filters></gardb-filters>
         </header>
         <main>
-          <stencil-router>
-            <stencil-route-switch scrollTopOffset={0}>
-              <stencil-route component="gardb-results" exact={false}></stencil-route>
-              <stencil-route url="/detail" component="gardb-detail"></stencil-route>
-            </stencil-route-switch>
-          </stencil-router>
+          <gardb-detail></gardb-detail>
+          <gardb-results></gardb-results>
         </main>
       </Host>
     );

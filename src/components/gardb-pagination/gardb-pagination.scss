@@ -1,3 +1,7 @@
 gardb-pagination {
   display: block;
+
+  .page-link {
+    cursor: pointer;
+  }
 }

@@ -1,15 +1,19 @@
-import { Observable, Subject } from 'rxjs';
+import { BehaviorSubject, Observable, Subject } from "rxjs";
 
 export class MessageService {
-
   private static _instance: MessageService;
-
   private messages: string[] = [];
   private subject: Subject<string[]> = new Subject();
+  public debugMode: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(true);
 
-  add(message: string) {
-    this.messages.push(message);
-    this.subject.next(this.messages);
+  add(message: string, error?: boolean) {
+    this.debugMode.subscribe(debug => {
+      if (debug || error) {
+        this.messages.push(message);
+        this.subject.next(this.messages);
+      }
+    });
+
   }
 
   clear() {
@@ -22,7 +26,7 @@ export class MessageService {
   }
 
   public static get Instance(): MessageService {
-      // Do you need arguments? Make it a regular method instead.
-      return this._instance || (this._instance = new this());
+    // Do you need arguments? Make it a regular method instead.
+    return this._instance || (this._instance = new this());
   }
 }
