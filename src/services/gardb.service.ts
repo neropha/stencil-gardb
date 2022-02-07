@@ -1,10 +1,19 @@
+import { AsyncSubject, BehaviorSubject, Subject, Observable } from "rxjs";
 import { Gardener } from "../utils/interfaces";
 import { MessageService } from "./message.service";
+import { ApiOptions } from "../utils/options";
 
+/**
+ * Handles Gardeneners, Filter and Detail
+ *
+ * @class GardbService>
+ */
 export class GardbService {
-  public api: string;
-  public selectedRecord: Gardener = null;
-  public gardeners: any;
+  public gardener = new BehaviorSubject({} as Gardener);
+  public garDBLoad = new AsyncSubject<any[]>();   // @see https://indepth.dev/reference/rxjs/subjects/async-subject
+
+  public garDBStore = new Subject<any[]>();
+  public apiOptions = {};
 
   public messageService: MessageService;
   private static _instance: GardbService;
@@ -16,64 +25,67 @@ export class GardbService {
 
   constructor() {
     this.messageService = MessageService.Instance;
+    this.apiOptions = ApiOptions;
   }
 
-  public apiOptions: {
-    method: "GET";
-    mode: "cors";
-    // cache: 'no-cache', // *default, no-cache, reload, force-cache, only-if-cached
-    // headers: {
-    //   "Content-Type": "application/json; charset=utf-8"
-    // },
-    redirect: "follow";
-    referrerPolicy: "no-referrer";
-    // body: JSON.stringify(data) // body data type must match "Content-Type" header
-  };
-
-  public handleResponse(response: any) {
+  // @todo //make it 200
+  private handleErrors(response: any) {
     if (!response.ok) {
       throw `Error: ${response.status} (${response.statusText})`;
     }
     return response;
   }
 
-  // https://developer.mozilla.org/en-US/docs/Web/API/Fetch_API/Using_Fetch
-  async loadData(api: string) {
-    this.messageService.add("GardbService: Fetching gardeners from API => " + this.api);
+  /**
+   * @description Filters by starting letter
+   * @param {api} str
+   *
+   * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/Fetch_API/Using_Fetch}
+   *
+   * @returns Promise
+   */
+  private loadFromApi(api: string): Promise<any> {
+    this.messageService.add("Fetching gardeners from API => " + api);
+    return fetch(api, this.apiOptions)
+      .then(this.handleErrors)
+      .then(response => {
+        this.messageService.add("GardbService: Succeeded fetching gardeners from API");
+        return response.json();
+      })
+      .then(data => {
+        this.garDBStore.next(data);
+        this.garDBLoad.next(data);
+        this.garDBLoad.complete();
+      })
+      .catch(error => {
+        if (error.message) this.messageService.add(error.message);
+        else this.messageService.add(error);
+        this.messageService.add("Fehler: Datenbank konnte nicht geladen werden.", true);
+      });
+  }
+
+  getAllGardeners(api: string): Promise<any> {
     try {
-      return await fetch(api, this.apiOptions)
-        .then(this.handleResponse)
-        .then(response => {
-          this.messageService.add("GardbService: Succeeded fetching gardeners from API");
-          return (this.gardeners = response.json());
-        });
+      if (api != "" && api != undefined) return this.loadFromApi(api);
+      else throw "property is required => api";
     } catch (error) {
-      if (error.message) {
-        this.messageService.add(error.message);
-      } else {
-        this.messageService.add(error);
-      }
-      this.messageService.add("Datenbank konnte nicht geladen werden.");
+      this.messageService.add(error, true);
     }
+    return;
   }
 
-  async getGardeners(api?: string) {
-    if (typeof api != "undefined") {
-      this.api = api;
-      return await this.loadData(api);
-    } else {
-      this.messageService.add("GardbService: Serving gardeners from store");
-      return await this.gardeners;
-    }
+  getGardener(): Observable<Gardener> {
+    this.messageService.add("GardbService: Get selected gardener");
+    return this.gardener.asObservable();
   }
 
-  public getSelectedRecord() {
-    console.log("get", this.selectedRecord);
-    return this.selectedRecord;
+  getGardenerFromId(id: number) {
+    console.log(id);
+    return;
   }
 
-  public setSelectedRecord(record: Gardener) {
-    console.log("set", record);
-    this.selectedRecord = record;
+  setGardener(record: Gardener) {
+    this.messageService.add(`GardbService: Gardener selected: ${record.Person}`);
+    this.gardener.next(record);
   }
 }

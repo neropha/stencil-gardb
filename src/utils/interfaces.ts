@@ -11,10 +11,10 @@ export interface Gardener {
   Seite: string,
   Signatur: string,
   Zeitschrift: string,
-  created?: string,
-  location?: string,
-  reserve01?:string,
-  reserve02?: string,
-  sourcefile?: string,
+  created: string,
+  location: string,
+  reserve01:string,
+  reserve02: string,
+  sourcefile: string,
   updated: string
 }

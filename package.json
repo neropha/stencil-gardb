@@ -1,7 +1,7 @@
 {
   "name": "gardb",
   "version": "0.0.1",
-  "description": "Stencil Component Starter",
+  "description": "Stencil app that searches over 15,000 references for sources that provide information about the lives of a wide variety of representatives of the green profession.",
   "main": "dist/index.cjs.js",
   "module": "dist/index.js",
   "es2015": "dist/esm/index.mjs",
@@ -23,7 +23,6 @@
   },
   "dependencies": {
     "@stencil/core": "^2.13.0",
-    "@stencil/router": "^1.0.1",
     "@stencil/sass": "^1.5.2",
     "rxjs": "^7.5.2"
   },

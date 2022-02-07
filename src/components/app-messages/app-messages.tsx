@@ -8,7 +8,7 @@ import { MessageService } from "../../services/message.service";
 })
 export class AppMessages {
   private messageService: MessageService;
-  @State() private messages: string[];
+  @State() messages: string[];
 
   constructor() {
     this.messageService = MessageService.Instance;

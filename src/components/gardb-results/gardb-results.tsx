@@ -1,8 +1,8 @@
-import { Component, Host, h, State, Watch, Listen } from "@stencil/core";
-import { Event, EventEmitter } from "@stencil/core";
+import { Component, Host, h, State, Listen } from "@stencil/core";
 import { GardbService } from "../../services/gardb.service";
 import { Gardener } from "../../utils/interfaces";
 import { MessageService } from "../../services/message.service";
+import arrow from "./arrow-right.svg";
 
 @Component({
   tag: "gardb-results",
@@ -12,10 +12,11 @@ import { MessageService } from "../../services/message.service";
 export class Results {
   public gardbService: GardbService;
   public messageService: MessageService;
-  @State() public results: any;
-  @State() public currentPage: number = 1;
-  @State() public pages: number;
-  public itemsPerPage: number = 50;
+  @State() results: any;
+  @State() pagedResults: any;
+  @State() currentPage: number = 1;
+  @State() pages: number;
+  public itemsPerPage: number = 40;
   public total: any;
 
   constructor() {
@@ -23,23 +24,57 @@ export class Results {
     this.messageService = MessageService.Instance;
   }
 
-  async getGardeners() {
-    let test = await this.gardbService.getGardeners()
-    console.log("then: ", test);
-    this.results = test;
+  getGardeners() {
+    // returns promise to componentWillLoad
+    // componentWillLoad() is able to have its parent component wait on it to finish loading its data.
+    return this.gardbService.garDBStore.subscribe(result => {
+      this.results = result;
+      this.total = result.length;
+      this.pages = Math.ceil(this.total / this.itemsPerPage);
+      this.page();
+    });
   }
 
   componentWillLoad() {
     this.getGardeners();
-    this.total = this.results.length;
-    this.pages = Math.ceil(this.total / this.itemsPerPage);
   }
 
-  @Watch("results")
-  watchHandler(newValue: boolean, oldValue: boolean) {
-    this.messageService.add("Results: Change detected");
-    if (newValue != oldValue) {
-      this.currentPage = 1;
+  // @Event() gardenerSelected: EventEmitter<Gardener>;
+
+  selectGardener(e, gardener: Gardener) {
+    // this.gardenerSelected.emit(gardener);
+    this.gardbService.gardener.next(gardener);
+    window.location.hash = "/" + gardener.ID;
+    this.appendDetails(e.target.closest("tr"));
+  }
+
+  removeOpenDetails(rows) {
+    for (var i = rows.length - 1; i >= 0; i--) {
+      rows[i].remove();
+    }
+  }
+
+  /**
+   *
+   * TODO find more elegant way to do this
+   *
+   * @param {Node} row
+   * @memberof Results
+   */
+  appendDetails(row) {
+    let openClass = "open";
+    let siblings = row.parentNode.getElementsByClassName("open");
+    this.removeOpenDetails(siblings);
+
+    if (!row.nextSibling || !row.nextSibling.classList.contains(openClass)) {
+      let el = document.createElement("gardb-detail");
+      let newRow = row.closest("table").insertRow(row.rowIndex + 1);
+      newRow.classList.add(openClass);
+      let newCol = newRow.insertCell(0);
+      newCol.setAttribute("colspan", "6");
+      newCol.classList.add("p-0");
+      newCol.appendChild(el);
+      newCol.scrollIntoView({ behavior: "smooth", block: "nearest", inline: "nearest" });
     }
   }
 
@@ -49,52 +84,22 @@ export class Results {
 
   lastItemShown() {
     let lastCount = this.itemsPerPage * this.currentPage;
-    let last: number;
-
-    if (lastCount > this.total) {
-      last = this.total;
-    } else {
-      last = lastCount;
-    }
-    return last;
+    return lastCount > this.total ? this.total : lastCount;
   }
 
-  pagedResult() {
-    return this.results.slice(this.firstItemShown(), this.lastItemShown());
+  page() {
+    this.pagedResults = this.results.slice(this.firstItemShown(), this.lastItemShown());
   }
-
-  @Event() recordSelected: EventEmitter<Gardener>;
-  selectRecord(record: Gardener) {
-    console.log("emit from results", record);
-    this.recordSelected.emit();
-  }
-
-  // @Listen("recordSelected")
-  // recordSelectedHandler() {
-  //   if (!record) {
-  //     // this.recordSelected = null;
-  //     window.location.hash = "#results";
-  //     this.pagedResult();
-  //   } else {
-  //     window.location.hash = "#id" + record.ID;
-  //     // this.selectedRecord = this.filteredResults.filter(element => element.ID == 5).shift();
-  //   }
-  // }
-
-  @Listen("pageSelected")
+/**
+ * @description Listens for pageSelected event from pagination
+ *
+ * @param {CustomEvent<any>} event
+ * @memberof Results
+ */
+@Listen("pageSelected")
   changePageHandler(event: CustomEvent<any>) {
     this.currentPage = event.detail;
-    this.pagedResult();
-  }
-
-  @Listen("hashchange", { target: "window" })
-  handleHashChange() {
-    if (window.location.hash == "#results") {
-      // Hide Detail and Show Results
-    }
-    if (window.location.hash == "#id5") {
-      // this.selectedRecord = this.filteredResults.filter(element => element.ID == 5).shift();
-    }
+    this.page();
   }
 
   public resultInfo() {
@@ -106,14 +111,13 @@ export class Results {
     );
   }
 
-  async render() {
-    return (
-      <Host>
-        Results
-        {this.resultInfo()}
-        <div class="table-wrapper">
-          <div class="table-responsive table-responsive-md">
-            <table class="table stacktable border-bottom">
+  render() {
+    if (this.pagedResults)
+      return (
+        <Host>
+          {this.resultInfo()}
+          <div class="table-wrapper">
+            <table class="table table-responsive-md border-bottom">
               <thead>
                 <tr>
                   {/* <th class="id">ID</th> */}
@@ -126,31 +130,26 @@ export class Results {
                 </tr>
               </thead>
               <tbody>
-                {this.pagedResult().map(gardener => (
-                  <tr>
+                {this.pagedResults.map(gardener => (
+                  <tr onClick={e => this.selectGardener(e, gardener)}>
                     {/* <td class="id">{gardener.ID}</td> */}
-                    <td>
-                      <a href={"#id" + gardener.ID} onClick={() => this.selectRecord(gardener)}>
-                        {gardener.Person}
-                      </a>
+                    <td class="person">
+                      <div class="table__link">{gardener.Person}</div>
                     </td>
-                    <td>{gardener.Inhalt}</td>
-                    <td>{gardener.Dokumententyp}</td>
-                    <td>{gardener.Jahr}</td>
-                    <td>{gardener.Autor}</td>
-                    <td>
-                      <a class="link" title="Details" href={"#id" + gardener.ID} onClick={() => this.selectRecord(gardener)}>
-                        <i class="fa fa-info-circle fa-lg"></i>
-                      </a>
+                    <td class="content">{gardener.Inhalt}</td>
+                    <td class="type">{gardener.Dokumententyp}</td>
+                    <td class="year">{gardener.Jahr}</td>
+                    <td class="author">{gardener.Autor}</td>
+                    <td class="details p-0">
+                      <div class="table__button" title="Details" innerHTML={arrow}></div>
                     </td>
                   </tr>
                 ))}
               </tbody>
             </table>
           </div>
-        </div>
-        <gardb-pagination current-page={this.currentPage} pages={this.pages}></gardb-pagination>
-      </Host>
-    );
+          <gardb-pagination current-page={this.currentPage} pages={this.pages}></gardb-pagination>
+        </Host>
+      );
   }
 }

@@ -20,12 +20,11 @@ gardb-detail {
       transform: translateX(-5%);
     }
   }
-  table {
-    table-layout: auto;
-
-    .label {
-      width: 12em;
-      text-transform: capitalize;
-    }
+  .detail__wrapper {
+    margin-top: -1px;
+    margin-bottom: -1px;
+  }
+  .label {
+    text-transform: capitalize;
   }
 }
