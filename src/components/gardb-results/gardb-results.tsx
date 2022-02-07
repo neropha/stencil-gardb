@@ -24,10 +24,6 @@ export class Results {
     this.messageService = MessageService.Instance;
   }
 
-  componentWillLoad() {
-    this.getGardeners();
-  }
-
   getGardeners() {
     // returns promise to componentWillLoad
     // componentWillLoad() is able to have its parent component wait on it to finish loading its data.
@@ -37,6 +33,10 @@ export class Results {
       this.pages = Math.ceil(this.total / this.itemsPerPage);
       this.page();
     });
+  }
+
+  componentWillLoad() {
+    this.getGardeners();
   }
 
   // @Event() gardenerSelected: EventEmitter<Gardener>;

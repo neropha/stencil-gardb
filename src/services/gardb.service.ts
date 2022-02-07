@@ -9,8 +9,9 @@ import { ApiOptions } from "../utils/options";
  * @class GardbService>
  */
 export class GardbService {
-  public gardener: BehaviorSubject<Gardener> = new BehaviorSubject(<Gardener>{});
-  public garDBLoad = new AsyncSubject<any[]>(); // @see https://indepth.dev/reference/rxjs/subjects/async-subject
+  public gardener = new BehaviorSubject({} as Gardener);
+  public garDBLoad = new AsyncSubject<any[]>();   // @see https://indepth.dev/reference/rxjs/subjects/async-subject
+
   public garDBStore = new Subject<any[]>();
   public apiOptions = {};
 
@@ -70,6 +71,7 @@ export class GardbService {
     } catch (error) {
       this.messageService.add(error, true);
     }
+    return;
   }
 
   getGardener(): Observable<Gardener> {

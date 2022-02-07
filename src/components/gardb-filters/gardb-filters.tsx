@@ -3,6 +3,13 @@ import { GardbService } from "../../services/gardb.service";
 import { MessageService } from "../../services/message.service";
 import { FilterService } from "../../services/filter.service";
 
+const formLabels = {
+  person: "Person/Autor",
+  year: "Jahr",
+  keyword: "Stichwort",
+};
+
+
 @Component({
   tag: "gardb-filters",
   styleUrl: "gardb-filters.scss",
@@ -30,12 +37,24 @@ export class FilterBar {
     // triggers state change - even for objects
     this.formValues = { ...this.formValues, [e.target.id]: e.target.value };
   }
+
   resetFormValues() {
     for (let [key] of Object.entries(this.formValues)) {
       // Reset Form Value Properties
       // Will automatically empty form, because of Prop Value Variable
       this.formValues = { ...this.formValues, [key]: "" };
     }
+  }
+
+  renderFormFields(key) {
+    return (
+      <div class="field-person form-group col-12 col-md-4 col-lg-3">
+        <label class="col-form-label">{formLabels[key]}</label>
+        <div>
+          <input class="form-control" type="text" id={key} name={key} value={this.formValues[key]} onInput={e => this.handleFormInput(e)} />
+        </div>
+      </div>
+    );
   }
 
   resetSearch(e) {
@@ -72,7 +91,6 @@ export class FilterBar {
       );
       letters.push(element);
     });
-
     return letters;
   }
 
@@ -83,24 +101,7 @@ export class FilterBar {
           <div class="border p-3">
             <h4 class="mb-3">Datensatz finden</h4>
             <div class="row align-items-end">
-              <div class="field-person form-group col-12 col-md-4 col-lg-3">
-                <label class="col-form-label">Person/Autor</label>
-                <div>
-                  <input class="form-control" type="text" id="person" name="person" value={this.formValues.person} onInput={e => this.handleFormInput(e)} />
-                </div>
-              </div>
-              <div class="field-year form-group col-12 col-md-4 col-lg-3">
-                <label class="col-form-label">Jahr</label>
-                <div>
-                  <input class="form-control" type="text" id="year" name="year" value={this.formValues.year} onInput={e => this.handleFormInput(e)} />
-                </div>
-              </div>
-              <div class="field-keyword form-group col-12 col-md-4 col-lg-3">
-                <label class="col-form-label">Stichwort</label>
-                <div>
-                  <input class="form-control" type="text" id="keyword" name="keyword" value={this.formValues.keyword} onInput={e => this.handleFormInput(e)} />
-                </div>
-              </div>
+              {Object.keys(this.formValues).map(key => this.renderFormFields(key))}
               <div class="form-group submit col pt-3 pt-lg-0">
                 <button type="submit" class="btn btn-primary submit-all">
                   Suchen

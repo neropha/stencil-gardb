@@ -25,6 +25,7 @@ export class FilterService {
     this.gardbService.garDBLoad.subscribe(results => {
       this.garDBLoad = results;
       this.garDBFiltered = results;
+      this.gardbService.garDBLoad;
     });
   }
 
@@ -71,7 +72,6 @@ export class FilterService {
    * @description Filters by starting letter
    * @param {needle} str
    *
-   * @returns {string} hash
    */
   public filterByInitial(needle: string) {
     let results = this.garDBLoad.filter((gardener: Gardener) => {
@@ -81,7 +81,7 @@ export class FilterService {
       }
       return true;
     });
-    this.messageService.add(`GardbService: Filtered by initial => ${needle}`);
+    this.messageService.add(`FilterService: Filtered by initial => ${needle}`);
     this.gardbService.garDBStore.next(results);
   }
 
@@ -90,12 +90,13 @@ export class FilterService {
    */
   public getAllResults() {
     this.gardbService.garDBStore.next(this.garDBLoad);
-    this.messageService.add(`GardbService: Reset filters`);
+    this.messageService.add(`FilterService: Reset filters`);
   }
 
   /**
    * @name filter
-   * @description Filterset with chained filter functions, contains a method chain for executing filter only based on currend result set
+   * @description Filterset with chained filter functions for form inputs,
+   * contains a method chain for executing filter based on current result set
    *
    * @param {string} [person]
    * @param {string} [year]
@@ -106,6 +107,7 @@ export class FilterService {
 
   public filter(person?: string, year?: string, keyword?: string) {
     var _self = this;
+    this.messageService.checkDebug(person, year, keyword);
 
     var filterStack = {
       result: this.garDBLoad,
@@ -124,6 +126,6 @@ export class FilterService {
     };
     filterStack.personFilter(person).yearFilter(year).keywordFilter(keyword);
     this.gardbService.garDBStore.next(filterStack.result);
-    this.messageService.add(`GardbService: Filtered by year => ${person}, ${year}, ${keyword}`);
+    this.messageService.add(`FilterService: Filtered by year => ${person}, ${year}, ${keyword}`);
   }
 }
