@@ -8,8 +8,8 @@ import { MessageService } from "../../services/message.service";
   shadow: false,
 })
 export class MyComponent {
-  @State() gardbService: GardbService;
-  @State() messageService: MessageService;
+  public gardbService: GardbService;
+  public messageService: MessageService;
   @Prop() api: string;
   // Debug property enables to show all messages from message.service, not just errors
   @Prop({
@@ -18,7 +18,7 @@ export class MyComponent {
   debug: boolean = false;
 
   public results: any;
-  @State() public loading: boolean = true;
+  @State() loading: boolean = true;
 
   constructor() {
     this.gardbService = GardbService.Instance;
@@ -26,8 +26,8 @@ export class MyComponent {
     this.messageService.debugMode.next(this.debug);
   }
 
-  @State() async getGardeners() {
-    return this.gardbService.loadData(this.api).then(() => {
+  getGardeners() {
+    return this.gardbService.getAllGardeners(this.api).then(() => {
       this.loading = false;
     });
   }
@@ -35,10 +35,6 @@ export class MyComponent {
   componentWillLoad() {
     this.loading = true;
     this.getGardeners();
-  }
-
-  componentDidUpdate() {
-    this.messageService.clear();
   }
 
   render() {
@@ -50,7 +46,6 @@ export class MyComponent {
           <gardb-filters></gardb-filters>
         </header>
         <main>
-          <gardb-detail></gardb-detail>
           <gardb-results></gardb-results>
         </main>
       </Host>

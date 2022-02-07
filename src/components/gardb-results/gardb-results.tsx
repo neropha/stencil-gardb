@@ -1,4 +1,4 @@
-import { Component, Host, h, State, Listen, Prop, Event, EventEmitter } from "@stencil/core";
+import { Component, Host, h, State, Listen } from "@stencil/core";
 import { GardbService } from "../../services/gardb.service";
 import { Gardener } from "../../utils/interfaces";
 import { MessageService } from "../../services/message.service";
@@ -31,21 +31,53 @@ export class Results {
   getGardeners() {
     // returns promise to componentWillLoad
     // componentWillLoad() is able to have its parent component wait on it to finish loading its data.
-    return this.gardbService.garDB.subscribe(promise => {
-      this.results = promise;
-      this.total = promise.length;
+    return this.gardbService.garDBStore.subscribe(result => {
+      this.results = result;
+      this.total = result.length;
       this.pages = Math.ceil(this.total / this.itemsPerPage);
       this.page();
     });
   }
 
-  @Event() gardenerSelected: EventEmitter<Gardener>;
+  // @Event() gardenerSelected: EventEmitter<Gardener>;
 
-  selectGardener(gardener: Gardener) {
+  selectGardener(e, gardener: Gardener) {
+    // this.gardenerSelected.emit(gardener);
     this.gardbService.gardener.next(gardener);
     window.location.hash = "/" + gardener.ID;
-    this.gardenerSelected.emit(gardener);
+    this.appendDetails(e.target.closest("tr"));
   }
+
+  removeOpenDetails(rows) {
+    for (var i = rows.length - 1; i >= 0; i--) {
+      rows[i].remove();
+    }
+  }
+
+  /**
+   *
+   * TODO find more elegant way to do this
+   *
+   * @param {Node} row
+   * @memberof Results
+   */
+  appendDetails(row) {
+    let openClass = "open";
+    let siblings = row.parentNode.getElementsByClassName("open");
+    this.removeOpenDetails(siblings);
+
+    if (!row.nextSibling || !row.nextSibling.classList.contains(openClass)) {
+      let el = document.createElement("gardb-detail");
+      let newRow = row.closest("table").insertRow(row.rowIndex + 1);
+      newRow.classList.add(openClass);
+      let newCol = newRow.insertCell(0);
+      newCol.setAttribute("colspan", "6");
+      newCol.classList.add("p-0");
+      newCol.appendChild(el);
+      newCol.scrollIntoView({ behavior: "smooth", block: "nearest", inline: "nearest" });
+    }
+  }
+
   firstItemShown() {
     return this.itemsPerPage * this.currentPage - this.itemsPerPage;
   }
@@ -58,9 +90,14 @@ export class Results {
   page() {
     this.pagedResults = this.results.slice(this.firstItemShown(), this.lastItemShown());
   }
-
-  @Listen("pageSelected")
-  changePageHandler(event: CustomEvent<number>) {
+/**
+ * @description Listens for pageSelected event from pagination
+ *
+ * @param {CustomEvent<any>} event
+ * @memberof Results
+ */
+@Listen("pageSelected")
+  changePageHandler(event: CustomEvent<any>) {
     this.currentPage = event.detail;
     this.page();
   }
@@ -80,40 +117,36 @@ export class Results {
         <Host>
           {this.resultInfo()}
           <div class="table-wrapper">
-            <div class="table-responsive table-responsive-md">
-              <table class="table border-bottom">
-                <thead>
-                  <tr>
-                    {/* <th class="id">ID</th> */}
-                    <th class="person">Person</th>
-                    <th class="content">Inhalt</th>
-                    <th class="type">Dokumententyp</th>
-                    <th class="year">Jahr</th>
-                    <th class="author">Autor</th>
-                    <th class="details">&nbsp;</th>
+            <table class="table table-responsive-md border-bottom">
+              <thead>
+                <tr>
+                  {/* <th class="id">ID</th> */}
+                  <th class="person">Person</th>
+                  <th class="content">Inhalt</th>
+                  <th class="type">Dokumententyp</th>
+                  <th class="year">Jahr</th>
+                  <th class="author">Autor</th>
+                  <th class="details">&nbsp;</th>
+                </tr>
+              </thead>
+              <tbody>
+                {this.pagedResults.map(gardener => (
+                  <tr onClick={e => this.selectGardener(e, gardener)}>
+                    {/* <td class="id">{gardener.ID}</td> */}
+                    <td class="person">
+                      <div class="table__link">{gardener.Person}</div>
+                    </td>
+                    <td class="content">{gardener.Inhalt}</td>
+                    <td class="type">{gardener.Dokumententyp}</td>
+                    <td class="year">{gardener.Jahr}</td>
+                    <td class="author">{gardener.Autor}</td>
+                    <td class="details p-0">
+                      <div class="table__button" title="Details" innerHTML={arrow}></div>
+                    </td>
                   </tr>
-                </thead>
-                <tbody>
-                  {this.pagedResults.map(gardener => (
-                    <tr>
-                      {/* <td class="id">{gardener.ID}</td> */}
-                      <td>
-                        <div class="table__link" onClick={() => this.selectGardener(gardener)}>
-                          {gardener.Person}
-                        </div>
-                      </td>
-                      <td>{gardener.Inhalt}</td>
-                      <td>{gardener.Dokumententyp}</td>
-                      <td>{gardener.Jahr}</td>
-                      <td>{gardener.Autor}</td>
-                      <td class="details p-0">
-                        <div class="table__button" title="Details" onClick={() => this.selectGardener(gardener)} innerHTML={arrow}></div>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
+                ))}
+              </tbody>
+            </table>
           </div>
           <gardb-pagination current-page={this.currentPage} pages={this.pages}></gardb-pagination>
         </Host>

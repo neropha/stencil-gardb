@@ -1,5 +1,9 @@
 import { BehaviorSubject, Observable, Subject } from "rxjs";
-
+/**
+ * @description Provides Methods for Message component
+ *
+ * @class MessageService
+ */
 export class MessageService {
   private static _instance: MessageService;
   private messages: string[] = [];
@@ -13,7 +17,6 @@ export class MessageService {
         this.subject.next(this.messages);
       }
     });
-
   }
 
   clear() {

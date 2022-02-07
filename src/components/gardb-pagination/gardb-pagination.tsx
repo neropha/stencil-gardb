@@ -7,7 +7,9 @@ import { Event, EventEmitter } from "@stencil/core";
   shadow: false,
 })
 export class Pagination {
-  @Prop() currentPage: number;
+  @Prop({
+    mutable: true
+  }) currentPage: number;
   @Prop() pages: number;
 
   @Event() pageSelected: EventEmitter<number>;

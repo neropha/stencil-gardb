@@ -5,7 +5,6 @@
  * It contains typing information for all components that exist in this project.
  */
 import { HTMLStencilElement, JSXBase } from "@stencil/core/internal";
-import { Gardener } from "./utils/interfaces";
 export namespace Components {
     interface AppLoading {
         "visible": boolean;
@@ -15,7 +14,6 @@ export namespace Components {
     interface GardbDetail {
     }
     interface GardbFilters {
-        "results": any;
     }
     interface GardbPagination {
         "currentPage": number;
@@ -90,9 +88,6 @@ declare namespace LocalJSX {
     interface GardbDetail {
     }
     interface GardbFilters {
-        "onFilterEvent"?: (event: CustomEvent<any>) => void;
-        "onRecordSelected"?: (event: CustomEvent<any>) => void;
-        "results"?: any;
     }
     interface GardbPagination {
         "currentPage"?: number;
@@ -100,7 +95,6 @@ declare namespace LocalJSX {
         "pages"?: number;
     }
     interface GardbResults {
-        "onGardenerSelected"?: (event: CustomEvent<Gardener>) => void;
     }
     interface GardbSearch {
         "api"?: string;

@@ -33,10 +33,6 @@ gardb-results {
 
   }
 
-  .table-responsive {
-    scroll-behavior: smooth;
-  }
-
   .table__button {
     padding: 0.25em;
     cursor: pointer;
@@ -57,25 +53,53 @@ gardb-results {
   }
 
   table {
-    table-layout: auto;
     width: 100%;
+    overflow: scroll;
 
-    td {
-      overflow: hidden;
+    // thead, tbody {
+    //   width: 100%;
+    //   display: block;
+    // }
+    // tr {
+    //   width: 100%;
+    //   display: block;
+    // }
+    thead tr,
+    tr:nth-child(2n) {
+      background: #f5f5f5;
+    }
+    tr {
+      cursor: pointer;
+      transition: 1s all cubic-bezier(0.075, 0.82, 0.165, 1);
     }
 
+    tr:not(.open):hover {
+      background: white;
+    }
+
+    // .content,
+    // .details,
+    // .author {
+    //   @include media-breakpoint-down(sm) {
+    //     display: none;
+    //   }
+    // }
     .person {
-      min-width: 20em;
+      min-width: 8em;
+
+      @include media-breakpoint-up(md) {
+        min-width: 12em;
+      }
     }
 
     .id {
-      width: 4em;
+      max-width: 4em;
       overflow: hidden;
       white-space: nowrap;
     }
 
     .year {
-      width: 4em;
+      max-width: 4em;
       overflow: hidden;
       white-space: nowrap;
     }
@@ -89,7 +113,5 @@ gardb-results {
     .author {
       min-width: 12em;
     }
-
-
   }
 }
