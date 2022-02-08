@@ -1,13 +1,7 @@
-import { Component, Element, Host, h, State } from "@stencil/core";
+import { Component, Host, h, State } from "@stencil/core";
 import { GardbService } from "../../services/gardb.service";
 import { MessageService } from "../../services/message.service";
 import { FilterService } from "../../services/filter.service";
-
-const formLabels = {
-  person: "Person/Autor",
-  year: "Jahr",
-  keyword: "Stichwort",
-};
 
 
 @Component({
@@ -19,12 +13,18 @@ export class FilterBar {
   public gardbService: GardbService;
   public messageService: MessageService;
   public filterService = new FilterService();
+  public form: HTMLElement;
 
-  @Element() host: HTMLElement;
   @State() formValues = {
     person: "",
     year: "",
     keyword: "",
+  };
+
+  private formLabels = {
+    person: "Person/Autor",
+    year: "Jahr",
+    keyword: "Stichwort",
   };
 
   constructor() {
@@ -40,8 +40,7 @@ export class FilterBar {
 
   resetFormValues() {
     for (let [key] of Object.entries(this.formValues)) {
-      // Reset Form Value Properties
-      // Will automatically empty form, because of Prop Value Variable
+      // Spread operator to actually update formValues prop
       this.formValues = { ...this.formValues, [key]: "" };
     }
   }
@@ -49,7 +48,7 @@ export class FilterBar {
   renderFormFields(key) {
     return (
       <div class="field-person form-group col-12 col-md-4 col-lg-3">
-        <label class="col-form-label">{formLabels[key]}</label>
+        <label class="col-form-label">{this.formLabels[key]}</label>
         <div>
           <input class="form-control" type="text" id={key} name={key} value={this.formValues[key]} onInput={e => this.handleFormInput(e)} />
         </div>
@@ -65,9 +64,6 @@ export class FilterBar {
 
   submitSearch(e) {
     e.preventDefault();
-    let formData = new FormData(e.target);
-    // let formProps = Object.fromEntries(this.formData);
-    console.log(e, formData);
     this.filterService.filter(this.formValues.person, this.formValues.year, this.formValues.keyword);
   }
 
@@ -103,7 +99,7 @@ export class FilterBar {
             <div class="row align-items-end">
               {Object.keys(this.formValues).map(key => this.renderFormFields(key))}
               <div class="form-group submit col pt-3 pt-lg-0">
-                <button type="submit" class="btn btn-primary submit-all">
+                <button type="submit" value="submit" class="btn btn-primary submit-all">
                   Suchen
                 </button>
               </div>
