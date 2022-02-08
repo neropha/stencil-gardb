@@ -5,6 +5,7 @@
  * It contains typing information for all components that exist in this project.
  */
 import { HTMLStencilElement, JSXBase } from "@stencil/core/internal";
+import { Gardener } from "./utils/interfaces";
 export namespace Components {
     interface AppLoading {
         "visible": boolean;
@@ -12,6 +13,8 @@ export namespace Components {
     interface AppMessages {
     }
     interface GardbDetail {
+        "gardener": Gardener;
+        "open": boolean;
     }
     interface GardbFilters {
     }
@@ -86,6 +89,8 @@ declare namespace LocalJSX {
     interface AppMessages {
     }
     interface GardbDetail {
+        "gardener"?: Gardener;
+        "open"?: boolean;
     }
     interface GardbFilters {
     }

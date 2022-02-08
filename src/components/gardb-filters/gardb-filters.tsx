@@ -48,7 +48,7 @@ export class FilterBar {
   renderFormFields(key) {
     return (
       <div class="field-person form-group col-12 col-md-4 col-lg-3">
-        <label class="col-form-label">{this.formLabels[key]}</label>
+        <label htmlFor={key} class="col-form-label">{this.formLabels[key]}</label>
         <div>
           <input class="form-control" type="text" id={key} name={key} value={this.formValues[key]} onInput={e => this.handleFormInput(e)} />
         </div>
