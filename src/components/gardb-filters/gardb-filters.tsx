@@ -2,7 +2,7 @@ import { Component, Host, h, State } from "@stencil/core";
 import { GardbService } from "../../services/gardb.service";
 import { MessageService } from "../../services/message.service";
 import { FilterService } from "../../services/filter.service";
-
+import { DefaultHash } from '../../utils/options';
 
 @Component({
   tag: "gardb-filters",
@@ -39,6 +39,7 @@ export class FilterBar {
   }
 
   resetFormValues() {
+    window.location.hash = DefaultHash;
     for (let [key] of Object.entries(this.formValues)) {
       // Spread operator to actually update formValues prop
       this.formValues = { ...this.formValues, [key]: "" };
@@ -48,7 +49,9 @@ export class FilterBar {
   renderFormFields(key) {
     return (
       <div class="field-person form-group col-12 col-md-4 col-lg-3">
-        <label class="col-form-label">{this.formLabels[key]}</label>
+        <label htmlFor={key} class="col-form-label">
+          {this.formLabels[key]}
+        </label>
         <div>
           <input class="form-control" type="text" id={key} name={key} value={this.formValues[key]} onInput={e => this.handleFormInput(e)} />
         </div>
@@ -64,6 +67,7 @@ export class FilterBar {
 
   submitSearch(e) {
     e.preventDefault();
+    window.location.hash = DefaultHash;
     this.filterService.filter(this.formValues.person, this.formValues.year, this.formValues.keyword);
   }
 
@@ -114,9 +118,11 @@ export class FilterBar {
             </div>
             <div class="gardb-search-reset col-12 col-lg-3 mt-3 mt-lg-0 pl-lg-0">
               <div class="border p-3 h100">
-                <button type="button" class="btn btn-outline-dark btn-sm submit-selection" onClick={e => this.resetSearch(e)}>
-                  Zurücksetzen
-                </button>
+                <div class="form-group reset">
+                  <button type="button" class="btn btn-outline-dark btn-sm submit-selection" onClick={e => this.resetSearch(e)}>
+                    Zurücksetzen
+                  </button>
+                </div>
               </div>
             </div>
           </div>

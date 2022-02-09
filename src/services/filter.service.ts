@@ -107,7 +107,7 @@ export class FilterService {
 
   public filter(person?: string, year?: string, keyword?: string) {
     var _self = this;
-    this.messageService.checkDebug(person, year, keyword);
+    this.messageService.checkDebug(person, keyword);
 
     var filterStack = {
       result: this.garDBLoad,

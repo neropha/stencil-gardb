@@ -11,8 +11,6 @@ export namespace Components {
     }
     interface AppMessages {
     }
-    interface GardbDetail {
-    }
     interface GardbFilters {
     }
     interface GardbPagination {
@@ -38,12 +36,6 @@ declare global {
     var HTMLAppMessagesElement: {
         prototype: HTMLAppMessagesElement;
         new (): HTMLAppMessagesElement;
-    };
-    interface HTMLGardbDetailElement extends Components.GardbDetail, HTMLStencilElement {
-    }
-    var HTMLGardbDetailElement: {
-        prototype: HTMLGardbDetailElement;
-        new (): HTMLGardbDetailElement;
     };
     interface HTMLGardbFiltersElement extends Components.GardbFilters, HTMLStencilElement {
     }
@@ -72,7 +64,6 @@ declare global {
     interface HTMLElementTagNameMap {
         "app-loading": HTMLAppLoadingElement;
         "app-messages": HTMLAppMessagesElement;
-        "gardb-detail": HTMLGardbDetailElement;
         "gardb-filters": HTMLGardbFiltersElement;
         "gardb-pagination": HTMLGardbPaginationElement;
         "gardb-results": HTMLGardbResultsElement;
@@ -84,8 +75,6 @@ declare namespace LocalJSX {
         "visible"?: boolean;
     }
     interface AppMessages {
-    }
-    interface GardbDetail {
     }
     interface GardbFilters {
     }
@@ -103,7 +92,6 @@ declare namespace LocalJSX {
     interface IntrinsicElements {
         "app-loading": AppLoading;
         "app-messages": AppMessages;
-        "gardb-detail": GardbDetail;
         "gardb-filters": GardbFilters;
         "gardb-pagination": GardbPagination;
         "gardb-results": GardbResults;
@@ -116,7 +104,6 @@ declare module "@stencil/core" {
         interface IntrinsicElements {
             "app-loading": LocalJSX.AppLoading & JSXBase.HTMLAttributes<HTMLAppLoadingElement>;
             "app-messages": LocalJSX.AppMessages & JSXBase.HTMLAttributes<HTMLAppMessagesElement>;
-            "gardb-detail": LocalJSX.GardbDetail & JSXBase.HTMLAttributes<HTMLGardbDetailElement>;
             "gardb-filters": LocalJSX.GardbFilters & JSXBase.HTMLAttributes<HTMLGardbFiltersElement>;
             "gardb-pagination": LocalJSX.GardbPagination & JSXBase.HTMLAttributes<HTMLGardbPaginationElement>;
             "gardb-results": LocalJSX.GardbResults & JSXBase.HTMLAttributes<HTMLGardbResultsElement>;

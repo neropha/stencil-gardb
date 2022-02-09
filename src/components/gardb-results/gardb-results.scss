@@ -56,34 +56,20 @@ gardb-results {
     width: 100%;
     overflow: scroll;
 
-    // thead, tbody {
-    //   width: 100%;
-    //   display: block;
-    // }
-    // tr {
-    //   width: 100%;
-    //   display: block;
-    // }
     thead tr,
-    tr:nth-child(2n) {
+    tbody tr:nth-child(2n) {
       background: #f5f5f5;
     }
-    tr {
-      cursor: pointer;
+    tbody tr {
       transition: 1s all cubic-bezier(0.075, 0.82, 0.165, 1);
     }
-
-    tr:not(.open):hover {
-      background: white;
+    tbody tr:not(.detail) {
+      cursor: pointer;
+      &:hover {
+        background: white;
+      }
     }
 
-    // .content,
-    // .details,
-    // .author {
-    //   @include media-breakpoint-down(sm) {
-    //     display: none;
-    //   }
-    // }
     .person {
       min-width: 8em;
 

@@ -1,7 +1,7 @@
-import { AsyncSubject, BehaviorSubject, Subject, Observable } from "rxjs";
-import { Gardener } from "../utils/interfaces";
+import { AsyncSubject, Subject} from "rxjs";
 import { MessageService } from "./message.service";
 import { ApiOptions } from "../utils/options";
+import { Gardener } from "../../dist/types/utils/interfaces";
 
 /**
  * Handles Gardeneners, Filter and Detail
@@ -9,9 +9,7 @@ import { ApiOptions } from "../utils/options";
  * @class GardbService>
  */
 export class GardbService {
-  public gardener = new BehaviorSubject({} as Gardener);
-  public garDBLoad = new AsyncSubject<any[]>();   // @see https://indepth.dev/reference/rxjs/subjects/async-subject
-
+  public garDBLoad = new AsyncSubject<any[]>(); // @see https://indepth.dev/reference/rxjs/subjects/async-subject
   public garDBStore = new Subject<any[]>();
   public apiOptions = {};
 
@@ -74,18 +72,12 @@ export class GardbService {
     return;
   }
 
-  getGardener(): Observable<Gardener> {
-    this.messageService.add("GardbService: Get selected gardener");
-    return this.gardener.asObservable();
-  }
-
-  getGardenerFromId(id: number) {
-    console.log(id);
-    return;
-  }
-
-  setGardener(record: Gardener) {
-    this.messageService.add(`GardbService: Gardener selected: ${record.Person}`);
-    this.gardener.next(record);
+  getGardenerById(id: number) {
+    this.garDBLoad.subscribe(results => {
+      results.filter((gardener: Gardener) => {
+        if (id === gardener.ID) return;
+      });
+      return results.shift();
+    });
   }
 }
