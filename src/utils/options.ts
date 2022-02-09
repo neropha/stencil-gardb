@@ -9,3 +9,5 @@ export const ApiOptions = {
   referrerPolicy: "no-referrer",
   // body: JSON.stringify(data) // body data type must match "Content-Type" header
 };
+
+export const DefaultHash = "/";

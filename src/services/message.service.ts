@@ -8,15 +8,20 @@ export class MessageService {
   private static _instance: MessageService;
   private messages: string[] = [];
   private subject: Subject<string[]> = new Subject();
+  private debug: boolean;
   public debugMode: BehaviorSubject<boolean> = new BehaviorSubject(false);
 
-  add(message: string, error?: boolean): void {
+  constructor() {
     this.debugMode.subscribe(debug => {
-      if (debug || error) {
-        this.messages.push(message);
-        this.subject.next(this.messages);
-      }
+      this.debug = debug;
     });
+  }
+
+  add(message: string, error?: boolean): void {
+    if (this.debug || error) {
+      this.messages.push(message);
+      this.subject.next(this.messages);
+    }
   }
 
   clear(): void {
@@ -32,19 +37,16 @@ export class MessageService {
    * @description little helper to enable logging in live environment
    * it's not really a secret!
    *
-   * TODO make sure to disable logging when debug is set to FALSE!
-   * ! Logging happens even in debug mode!
-   *
    * @param {string} person
    * @param {string} year
    * @param {string} keyword
    * @memberof MessageService
    */
-  checkDebug(person: string, year: string, keyword: string): void {
-    if (person == "debug" && year == "2000" && keyword == "true") {
+  checkDebug(person: string, keyword: string): void {
+    if (person == "debug" && keyword == "true") {
       this.debugMode.next(true);
       this.add("Debug mode enabled");
-    } else if (person == "Annika" && year == "1982" && keyword == "false") {
+    } else if (person == "debug" && keyword == "false") {
       this.add("Debug mode disabled");
       this.debugMode.next(false);
     }

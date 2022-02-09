@@ -16,7 +16,7 @@ export class Spinner {
     if (this.visible) {
       return (
         <Host>
-          <div class="d-flex justify-content-lg-center py-3">
+          <div class="d-flex justify-content-center py-3">
             <span class="loader" innerHTML={loader}></span>
           </div>
         </Host>

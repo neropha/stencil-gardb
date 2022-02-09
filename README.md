@@ -84,7 +84,7 @@ If the app is running in live environment with debugging disabled, there's still
 
 **Submit the following form values:**
 
-Person: `debug` - Year: `2000` - Keyword: `true` (`false`to disable)
+Person: `debug` - Keyword: `true` (`false`to disable)
 
 ## Modules
 

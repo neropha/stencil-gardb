@@ -8,7 +8,7 @@ import { MessageService } from "../../services/message.service";
 })
 export class AppMessages {
   private messageService: MessageService;
-  @State() messages: string[];
+  @State() messages: string[] = [];
 
   constructor() {
     this.messageService = MessageService.Instance;
@@ -26,16 +26,16 @@ export class AppMessages {
   }
 
   render() {
-    return (
-      <Host class="p-3 text-dark mb-3">
-        <strong>Messages: </strong>
-        {this.messages ? (
-          <button class="btn btn-dark btn-sm" onClick={() => this.messageService.clear()}>
-            clear
-          </button>
-        ) : null}
-        {this.messages ? this.messages.map(message => <div>- {message}</div>) : null}
-      </Host>
-    );
+    if (this.messages.length)
+      return (
+        <Host class="p-3 text-dark mb-3">
+          {this.messages ? this.messages.map(message => <div>- {message}</div>) : null}
+          <div class="d-flex justify-content-end">
+            <button class="btn btn-outline-dark btn-sm" onClick={() => this.messageService.clear()}>
+              clear
+            </button>
+          </div>
+        </Host>
+      );
   }
 }

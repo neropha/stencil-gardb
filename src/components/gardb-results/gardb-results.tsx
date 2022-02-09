@@ -2,8 +2,8 @@ import { Component, Host, h, State, Listen } from "@stencil/core";
 import { GardbService } from "../../services/gardb.service";
 import { Gardener } from "../../utils/interfaces";
 import { MessageService } from "../../services/message.service";
-// import arrow from "./arrow-right.svg";
-import { GardenerDetail, GardenerRow } from "./gardener";
+import { GardenerDetail, GardenerRow } from "../../models/gardener";
+import { DefaultHash } from "../../utils/options";
 
 @Component({
   tag: "gardb-results",
@@ -13,13 +13,38 @@ import { GardenerDetail, GardenerRow } from "./gardener";
 export class Results {
   public gardbService: GardbService;
   public messageService: MessageService;
-  @State() openGardener: number;
+  public itemsPerPage: number = 40;
+  public total: any;
+  @State() openRow!: HTMLElement;
+  @State() openGardenerID: number;
   @State() results: any;
   @State() pagedResults: any;
   @State() currentPage: number = 1;
   @State() pages: number;
-  public itemsPerPage: number = 40;
-  public total: any;
+
+  /**
+   * @description Listens for pageSelected event from pagination
+   *
+   * @param {CustomEvent<any>} event
+   * @memberof Results
+   */
+  @Listen("pageSelected")
+  changePageHandler(event: CustomEvent<any>) {
+    this.currentPage = event.detail;
+    this.page();
+  }
+
+  @Listen("hashchange", { target: "window" })
+  handlehashChange(e) {
+    let idHash = "#/" + this.openGardenerID;
+    if (window.location.hash === idHash && this.openGardenerID > 0) {
+      setTimeout(() => {
+        this.openRow = document.getElementById(`g${this.openGardenerID}`) as HTMLTableRowElement;
+        this.openRow.scrollIntoView({ behavior: "smooth", block: "start", inline: "nearest" });
+        this.messageService.add(`Results: Opened gardener ID ${this.openGardenerID}`);
+    }, 300);
+    }
+  }
 
   constructor() {
     this.gardbService = GardbService.Instance;
@@ -33,6 +58,7 @@ export class Results {
       this.results = result;
       this.total = result.length;
       this.currentPage = 1;
+      this.openGardenerID = -1;
       this.pages = Math.ceil(this.total / this.itemsPerPage);
       this.page();
     });
@@ -43,11 +69,13 @@ export class Results {
   }
 
   // @Event() gardenerSelected: EventEmitter<Gardener>;
-  selectGardener(id: number) {
-    if (id === this.openGardener) {
-      this.openGardener = -1;
+  selectGardener(e, id: number) {
+    if (id === this.openGardenerID) {
+      this.openGardenerID = -1;
+      window.location.hash = DefaultHash;
     } else {
-      this.openGardener = id;
+      this.openGardenerID = id;
+      window.location.hash = DefaultHash + this.openGardenerID;
     }
   }
 
@@ -75,18 +103,6 @@ export class Results {
     this.pagedResults = this.results.slice(this.firstItemShown(), this.lastItemShown());
   }
 
-  /**
-   * @description Listens for pageSelected event from pagination
-   *
-   * @param {CustomEvent<any>} event
-   * @memberof Results
-   */
-  @Listen("pageSelected")
-  changePageHandler(event: CustomEvent<any>) {
-    this.currentPage = event.detail;
-    this.page();
-  }
-
   public renderResultInfo() {
     return [
       <div class="py-3 py-md-4 px-3 small">
@@ -97,11 +113,11 @@ export class Results {
   }
 
   public renderRow(gardener: Gardener) {
-    return <GardenerRow gardener={gardener} onClick={() => this.selectGardener(gardener.ID)}></GardenerRow>;
+    return <GardenerRow gardener={gardener} onClick={(e) => this.selectGardener(e, gardener.ID)}></GardenerRow>;
   }
 
   public renderDetail(gardener: Gardener) {
-    if (this.openGardener == gardener.ID) return <GardenerDetail gardener={this.cleanGardener(gardener)}></GardenerDetail>;
+    if (this.openGardenerID == gardener.ID) return <GardenerDetail gardener={this.cleanGardener(gardener)}></GardenerDetail>;
   }
 
   render() {
@@ -118,7 +134,6 @@ export class Results {
                   <th class="type">Dokumententyp</th>
                   <th class="year">Jahr</th>
                   <th class="author">Autor</th>
-                  <th class="details">&nbsp;</th>
                 </tr>
               </thead>
               <tbody>{this.pagedResults.map(gardener => [this.renderRow(gardener), this.renderDetail(gardener)])}</tbody>
