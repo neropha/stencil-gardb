@@ -1,7 +1,7 @@
 import { AsyncSubject, Subject} from "rxjs";
 import { MessageService } from "./message.service";
 import { ApiOptions } from "../utils/options";
-import { Gardener } from "../../dist/types/utils/interfaces";
+import { Gardener } from "../utils/interfaces";
 
 /**
  * Handles Gardeneners, Filter and Detail
