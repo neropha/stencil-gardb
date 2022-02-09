@@ -35,7 +35,7 @@ export class Results {
   }
 
   @Listen("hashchange", { target: "window" })
-  handlehashChange(e) {
+  handlehashChange() {
     let idHash = "#/" + this.openGardenerID;
     if (window.location.hash === idHash && this.openGardenerID > 0) {
       setTimeout(() => {
@@ -69,7 +69,7 @@ export class Results {
   }
 
   // @Event() gardenerSelected: EventEmitter<Gardener>;
-  selectGardener(e, id: number) {
+  selectGardener(id: number) {
     if (id === this.openGardenerID) {
       this.openGardenerID = -1;
       window.location.hash = DefaultHash;
@@ -113,7 +113,7 @@ export class Results {
   }
 
   public renderRow(gardener: Gardener) {
-    return <GardenerRow gardener={gardener} onClick={(e) => this.selectGardener(e, gardener.ID)}></GardenerRow>;
+    return <GardenerRow gardener={gardener} onClick={() => this.selectGardener(gardener.ID)}></GardenerRow>;
   }
 
   public renderDetail(gardener: Gardener) {

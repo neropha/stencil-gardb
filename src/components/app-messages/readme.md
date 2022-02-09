@@ -1,4 +1,4 @@
-# gardb-filters
+# app-messages
 
 
 
@@ -14,8 +14,8 @@
 ### Graph
 ```mermaid
 graph TD;
-  gardb-search --> gardb-filters
-  style gardb-filters fill:#f9f,stroke:#333,stroke-width:4px
+  gardb-search --> app-messages
+  style app-messages fill:#f9f,stroke:#333,stroke-width:4px
 ```
 
 ----------------------------------------------

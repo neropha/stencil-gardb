@@ -5,20 +5,6 @@
 <!-- Auto Generated Below -->
 
 
-## Properties
-
-| Property  | Attribute | Description | Type  | Default     |
-| --------- | --------- | ----------- | ----- | ----------- |
-| `results` | `results` |             | `any` | `undefined` |
-
-
-## Events
-
-| Event            | Description | Type                            |
-| ---------------- | ----------- | ------------------------------- |
-| `recordSelected` |             | `CustomEvent<CustomEvent<any>>` |
-
-
 ## Dependencies
 
 ### Used by
