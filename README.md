@@ -11,7 +11,7 @@ This is an application Built with [Stencil](https://stenciljs.com/) component st
 
 ## Getting Started
 ```bash
-git clone https://... gardb (TODO)
+git clone https://github.com/neropha/stencil-gardb.git
 cd gardb
 ```
 
@@ -92,4 +92,4 @@ Person: `debug` - Keyword: `true` (`false`to disable)
 - tailwind css
 
 ## Testing local
-Since you don't have access to my api, there's an export with mock data in `src/utils/gardeners.ts` (TODO)
+Since you don't have access to my API, there's an export with mock data in `src/utils/gardeners.ts` (TODO)
